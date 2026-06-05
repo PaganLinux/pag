@@ -1,0 +1,184 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pag 0.1.0\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "missing app name for -f"
+msgstr "missing app name for -f"
+
+msgid "missing search query for -fs"
+msgstr "missing search query for -fs"
+
+msgid "missing search query for -s"
+msgstr "missing search query for -s"
+
+msgid "missing package name for -i"
+msgstr "missing package name for -i"
+
+msgid "usage:\n  pag -f <app-id>   install app from Flatpak\n  pag -fs <query>   search in Flatpak\n  pag -s <query>    search packages in pag repositories\n  pag -i <package>  install package from repository\n  pag -u            refresh local package indices\n  pag -uall         atomically update installed packages"
+msgstr "usage:\n  pag -f <app-id>   install app from Flatpak\n  pag -fs <query>   search in Flatpak\n  pag -s <query>    search packages in pag repositories\n  pag -i <package>  install package from repository\n  pag -u            refresh local package indices\n  pag -uall         atomically update installed packages"
+
+msgid "cannot read config file"
+msgstr "cannot read config file"
+
+msgid "invalid TOML file"
+msgstr "invalid TOML file"
+
+msgid "missing [[repositories]] section in pag.conf"
+msgstr "missing [[repositories]] section in pag.conf"
+
+msgid "pag.conf not found (checked: ./pag.conf, /etc/pag.conf, $PAG_CONFIG)"
+msgstr "pag.conf not found (checked: ./pag.conf, /etc/pag.conf, $PAG_CONFIG)"
+
+msgid "missing HOME environment variable"
+msgstr "missing HOME environment variable"
+
+msgid "failed to execute flatpak search"
+msgstr "failed to execute flatpak search"
+
+msgid "flatpak search failed"
+msgstr "flatpak search failed"
+
+msgid "failed to execute flatpak install"
+msgstr "failed to execute flatpak install"
+
+msgid "flatpak install failed"
+msgstr "flatpak install failed"
+
+msgid "failed to build index from pag.info"
+msgstr "failed to build index from pag.info"
+
+msgid "repo has neither index_url nor repo_dir"
+msgstr "repo has neither index_url nor repo_dir"
+
+msgid "failed to fetch repository index"
+msgstr "failed to fetch repository index"
+
+msgid "invalid repository index"
+msgstr "invalid repository index"
+
+msgid "updated index"
+msgstr "updated index"
+
+msgid "no description"
+msgstr "no description"
+
+msgid "no results for"
+msgstr "no results for"
+
+msgid "alias mapping"
+msgstr "alias mapping"
+
+msgid "installed"
+msgstr "installed"
+
+msgid "no packages to update"
+msgstr "no packages to update"
+
+msgid "failed to create stage directory"
+msgstr "failed to create stage directory"
+
+msgid "updated"
+msgstr "updated"
+
+msgid "system is already up to date"
+msgstr "system is already up to date"
+
+msgid "failed to move staged generation"
+msgstr "failed to move staged generation"
+
+msgid "atomic update completed"
+msgstr "atomic update completed"
+
+msgid "packages"
+msgstr "packages"
+
+msgid "failed to read symlink"
+msgstr "failed to read symlink"
+
+msgid "package or alias not found"
+msgstr "package or alias not found"
+
+msgid "maybe"
+msgstr "maybe"
+
+msgid "package has neither source_url nor distfiles"
+msgstr "package has neither source_url nor distfiles"
+
+msgid "package has neither source_sha256 nor checksum"
+msgstr "package has neither source_sha256 nor checksum"
+
+msgid "package does not contain install_map"
+msgstr "package does not contain install_map"
+
+msgid "missing artifact after build"
+msgstr "missing artifact after build"
+
+msgid "install_map.to must be a relative path"
+msgstr "install_map.to must be a relative path"
+
+msgid "failed to run build step"
+msgstr "failed to run build step"
+
+msgid "build step failed"
+msgstr "build step failed"
+
+msgid "failed to run build step in bubblewrap"
+msgstr "failed to run build step in bubblewrap"
+
+msgid "invalid index"
+msgstr "invalid index"
+
+msgid "no local indices found; run: pag -u"
+msgstr "no local indices found; run: pag -u"
+
+msgid "required command is not available"
+msgstr "required command is not available"
+
+msgid "repository directory does not exist"
+msgstr "repository directory does not exist"
+
+msgid "cannot read"
+msgstr "cannot read"
+
+msgid "invalid TOML in"
+msgstr "invalid TOML in"
+
+msgid "no pag.info files in"
+msgstr "no pag.info files in"
+
+msgid "local source does not exist"
+msgstr "local source does not exist"
+
+msgid "cannot fetch source"
+msgstr "cannot fetch source"
+
+msgid "repo has neither repo_dir nor base_url"
+msgstr "repo has neither repo_dir nor base_url"
+
+msgid "HTTP GET failed"
+msgstr "HTTP GET failed"
+
+msgid "failed to read HTTP response"
+msgstr "failed to read HTTP response"
+
+msgid "download failed"
+msgstr "download failed"
+
+msgid "SHA256 checksum mismatch for"
+msgstr "SHA256 checksum mismatch for"
+
+msgid "expected"
+msgstr "expected"
+
+msgid "got"
+msgstr "got"
+
+msgid "absolute path is not allowed"
+msgstr "absolute path is not allowed"
+
+msgid "forbidden path (path traversal)"
+msgstr "forbidden path (path traversal)"

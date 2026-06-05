@@ -1,0 +1,39 @@
+{
+  "packages": [
+    {
+      "name": "7zip",
+      "version": "26.01",
+      "description": "File archiver with a high compression ratio",
+      "aliases": ["7z", "7za", "7zr", "7zz", "p7zip"],
+      "replaces": ["p7zip"],
+      "distfiles": ["https://www.7-zip.org/a/7z2601-src.tar.xz"],
+      "checksum": "b2389e0e930b2f9a348cf0fe7d9870a46482a8ec044ee0bdf42e2136db31c3d6",
+      "build_steps": [
+        "cd CPP/7zip/Bundles/Alone2 && make -f ../../cmpl_gcc.mak O=b/norar DISABLE_RAR_COMPRESS=1"
+      ],
+      "install_map": [
+        {
+          "from": "CPP/7zip/Bundles/Alone2/b/norar/7zz",
+          "to": "usr/bin/7zip"
+        }
+      ]
+    },
+    {
+      "name": "hello-pag",
+      "version": "1.0.0",
+      "description": "Minimalny przykład pakietu dla pag",
+      "aliases": ["hello"],
+      "distfiles": ["sources/hello-pag-1.0.0.tar.gz"],
+      "checksum": "PUT_REAL_SHA256_HERE",
+      "build_steps": [
+        "cc -O2 hello.c -o hello-pag"
+      ],
+      "install_map": [
+        {
+          "from": "hello-pag",
+          "to": "usr/bin/hello-pag"
+        }
+      ]
+    }
+  ]
+}

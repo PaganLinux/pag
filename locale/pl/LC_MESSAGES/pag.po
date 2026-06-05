@@ -1,0 +1,184 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pag 0.1.0\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "missing app name for -f"
+msgstr "brak nazwy aplikacji dla -f"
+
+msgid "missing search query for -fs"
+msgstr "brak frazy wyszukiwania dla -fs"
+
+msgid "missing search query for -s"
+msgstr "brak frazy wyszukiwania dla -s"
+
+msgid "missing package name for -i"
+msgstr "brak nazwy pakietu dla -i"
+
+msgid "usage:\n  pag -f <app-id>   install app from Flatpak\n  pag -fs <query>   search in Flatpak\n  pag -s <query>    search packages in pag repositories\n  pag -i <package>  install package from repository\n  pag -u            refresh local package indices\n  pag -uall         atomically update installed packages"
+msgstr "użycie:\n  pag -f <app-id>   instalacja aplikacji z Flatpak\n  pag -fs <fraza>   szukanie w Flatpak\n  pag -s <fraza>    szukanie pakietów w repo pag\n  pag -i <pakiet>   instalacja pakietu z repo pag\n  pag -u            aktualizacja lokalnej bazy indeksów\n  pag -uall         atomowa aktualizacja wszystkich zainstalowanych pakietów"
+
+msgid "cannot read config file"
+msgstr "nie można odczytać configu"
+
+msgid "invalid TOML file"
+msgstr "nieprawidłowy plik TOML"
+
+msgid "missing [[repositories]] section in pag.conf"
+msgstr "brak sekcji [[repositories]] w pag.conf"
+
+msgid "pag.conf not found (checked: ./pag.conf, /etc/pag.conf, $PAG_CONFIG)"
+msgstr "nie znaleziono pag.conf (sprawdzone: ./pag.conf, /etc/pag.conf, $PAG_CONFIG)"
+
+msgid "missing HOME environment variable"
+msgstr "brak zmiennej HOME"
+
+msgid "failed to execute flatpak search"
+msgstr "nie udało się uruchomić flatpak search"
+
+msgid "flatpak search failed"
+msgstr "flatpak search zakończył się błędem"
+
+msgid "failed to execute flatpak install"
+msgstr "nie udało się uruchomić flatpak install"
+
+msgid "flatpak install failed"
+msgstr "flatpak install zakończył się błędem"
+
+msgid "failed to build index from pag.info"
+msgstr "nie udało się zbudować indeksu z pag.info"
+
+msgid "repo has neither index_url nor repo_dir"
+msgstr "repo nie ma index_url ani repo_dir"
+
+msgid "failed to fetch repository index"
+msgstr "nie udało się pobrać indeksu repo"
+
+msgid "invalid repository index"
+msgstr "niepoprawny indeks repo"
+
+msgid "updated index"
+msgstr "zaktualizowano indeks"
+
+msgid "no description"
+msgstr "brak opisu"
+
+msgid "no results for"
+msgstr "brak wyników dla"
+
+msgid "alias mapping"
+msgstr "alias"
+
+msgid "installed"
+msgstr "zainstalowano"
+
+msgid "no packages to update"
+msgstr "brak pakietów do aktualizacji"
+
+msgid "failed to create stage directory"
+msgstr "nie udało się utworzyć katalogu stage"
+
+msgid "updated"
+msgstr "aktualizacja"
+
+msgid "system is already up to date"
+msgstr "system już aktualny"
+
+msgid "failed to move staged generation"
+msgstr "nie udało się przenieść staged generation"
+
+msgid "atomic update completed"
+msgstr "atomowa aktualizacja zakończona"
+
+msgid "packages"
+msgstr "pakietów"
+
+msgid "failed to read symlink"
+msgstr "nie udało się odczytać symlink"
+
+msgid "package or alias not found"
+msgstr "nie znaleziono pakietu ani aliasu"
+
+msgid "maybe"
+msgstr "może"
+
+msgid "package has neither source_url nor distfiles"
+msgstr "pakiet nie ma source_url ani distfiles"
+
+msgid "package has neither source_sha256 nor checksum"
+msgstr "pakiet nie ma source_sha256 ani checksum"
+
+msgid "package does not contain install_map"
+msgstr "pakiet nie zawiera install_map"
+
+msgid "missing artifact after build"
+msgstr "brak artefaktu po buildzie"
+
+msgid "install_map.to must be a relative path"
+msgstr "install_map.to musi być ścieżką relatywną"
+
+msgid "failed to run build step"
+msgstr "błąd uruchomienia kroku build"
+
+msgid "build step failed"
+msgstr "krok build zakończony błędem"
+
+msgid "failed to run build step in bubblewrap"
+msgstr "błąd uruchomienia kroku build w bubblewrap"
+
+msgid "invalid index"
+msgstr "niepoprawny indeks"
+
+msgid "no local indices found; run: pag -u"
+msgstr "brak lokalnych indeksów; uruchom: pag -u"
+
+msgid "required command is not available"
+msgstr "wymagane polecenie nie jest dostępne"
+
+msgid "repository directory does not exist"
+msgstr "katalog repo nie istnieje"
+
+msgid "cannot read"
+msgstr "nie można odczytać"
+
+msgid "invalid TOML in"
+msgstr "niepoprawny TOML w"
+
+msgid "no pag.info files in"
+msgstr "brak plików pag.info w"
+
+msgid "local source does not exist"
+msgstr "lokalne źródło nie istnieje"
+
+msgid "cannot fetch source"
+msgstr "nie można pobrać źródła"
+
+msgid "repo has neither repo_dir nor base_url"
+msgstr "repo nie ma repo_dir ani base_url"
+
+msgid "HTTP GET failed"
+msgstr "błąd HTTP GET"
+
+msgid "failed to read HTTP response"
+msgstr "błąd odczytu odpowiedzi HTTP"
+
+msgid "download failed"
+msgstr "błąd pobierania"
+
+msgid "SHA256 checksum mismatch for"
+msgstr "checksum SHA256 niezgodna dla"
+
+msgid "expected"
+msgstr "oczekiwano"
+
+msgid "got"
+msgstr "otrzymano"
+
+msgid "absolute path is not allowed"
+msgstr "ścieżka absolutna jest niedozwolona"
+
+msgid "forbidden path (path traversal)"
+msgstr "niedozwolona ścieżka (path traversal)"
