@@ -38,7 +38,8 @@ bubblewrap_level = 3
 
 [[repositories]]
 name = "official"
-repo_dir = "../pag-repo/packages"
+index_url = "https://paganos.mijsys.pl/index.json"
+base_url = "https://paganos.mijsys.pl/"
 
 # opcjonalnie nadpisz, jesli chcesz:
 # state_dir = "~/.local/state/pag"
