@@ -64,49 +64,39 @@ interface GhContent {
   size: number;
 }
 
-// Pobiera listę portów (katalogów z plikiem pagbuild)
+// Pobiera listę portów (katalogów z plikiem pagbuild) — zoptymalizowane
 export async function listPorts(dir: string = ''): Promise<PortEntry[]> {
   try {
+    // 1. Pobierz całe drzewo (1 zapytanie API zamiast 231)
     const { tree } = await ghFetch<{ tree: GhTreeItem[] }>(
       `/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${BRANCH}?recursive=1`
     );
 
-    // Znajdź wszystkie pliki pagbuild
     const pagbuildFiles = tree.filter(
       item => item.type === 'blob' && item.path.endsWith('/pagbuild')
     );
 
-    // Dla każdego pagbuild, pobierz metadane
-    const ports: PortEntry[] = [];
+    // 2. Mapuj tylko nazwy z drzewa — bez pobierania zawartości
+    const ports: PortEntry[] = pagbuildFiles.map(file => {
+      const parts = file.path.split('/');
+      const portName = parts.length >= 2 ? parts[parts.length - 2] : file.path.replace('/pagbuild', '');
 
-    for (const file of pagbuildFiles) {
-      const portName = file.path.split('/').slice(-2, -1)[0] || file.path.replace('/pagbuild', '');
-      try {
-        const content = await ghFetch<GhContent>(
-          `/repos/${REPO_OWNER}/${REPO_NAME}/contents/${file.path}?ref=${BRANCH}`
-        );
-        const text = Buffer.from(content.content, 'base64').toString('utf-8');
-        const meta = parsePagbuildMeta(text);
-
-        ports.push({
-          name: portName,
-          path: file.path,
-          version: meta.pkgver || '?',
-          release: meta.pkgrel || 1,
-          description: meta.pkgdesc || '',
-          license: meta.license || 'custom',
-          arch: meta.arch || 'x86_64',
-          maintainer: meta.maintainer || null,
-          url: meta.url || null,
-          depends: meta.depends || [],
-          makedepends: meta.makedepends || [],
-          sha: content.sha,
-          size: content.size,
-        });
-      } catch {
-        // Pomijaj błędy pojedynczych plików
-      }
-    }
+      return {
+        name: portName,
+        path: file.path,
+        version: '?',
+        release: 1,
+        description: '',
+        license: '',
+        arch: 'x86_64',
+        maintainer: null,
+        url: null,
+        depends: [],
+        makedepends: [],
+        sha: file.sha,
+        size: file.size || 0,
+      };
+    });
 
     return ports.sort((a, b) => a.name.localeCompare(b.name));
   } catch {
