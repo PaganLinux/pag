@@ -288,7 +288,7 @@ fn parse_list(value: &str) -> Vec<String> {
 }
 
 /// Parsuje listę wieloliniową (dla source i sha512sums)
-fn parse_multiline_list(initial: &str, full_content: &str) -> Vec<String> {
+fn parse_multiline_list(initial: &str, _full_content: &str) -> Vec<String> {
     // Jeśli wartość jest pusta, szukaj kontynuacji wieloliniowej
     if initial.is_empty() {
         // Znajdź następne linie aż do końca listy

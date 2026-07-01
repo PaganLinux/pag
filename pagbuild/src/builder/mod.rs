@@ -8,7 +8,6 @@
 // 5. Pakowanie do .pag
 
 use colored::*;
-use indicatif::{ProgressBar, ProgressStyle};
 use std::path::{Path, PathBuf};
 
 /// Główna funkcja budowania
@@ -119,7 +118,7 @@ pub async fn build(
 async fn download_sources(sources: &[String], srcdir: &Path) -> anyhow::Result<()> {
     let client = reqwest::Client::new();
 
-    for (i, source) in sources.iter().enumerate() {
+    for (_i, source) in sources.iter().enumerate() {
         let source = source.trim();
         if source.is_empty() {
             continue;
@@ -155,8 +154,8 @@ async fn download_sources(sources: &[String], srcdir: &Path) -> anyhow::Result<(
 }
 
 /// Weryfikuje sumy SHA512 źródeł
-fn verify_source_checksums(srcdir: &Path, sources: &[String], sums: &[String]) -> anyhow::Result<()> {
-    for (i, sum_line) in sums.iter().enumerate() {
+fn verify_source_checksums(srcdir: &Path, _sources: &[String], sums: &[String]) -> anyhow::Result<()> {
+    for (_i, sum_line) in sums.iter().enumerate() {
         let sum_line = sum_line.trim();
         if sum_line.is_empty() {
             continue;
@@ -404,8 +403,6 @@ fn create_pag_package(
     output_dir: &str,
     arch: &str,
 ) -> anyhow::Result<PathBuf> {
-    use std::io::Write;
-
     std::fs::create_dir_all(output_dir)?;
 
     // Stwórz tar.zst plików
@@ -554,7 +551,7 @@ fn collect_file_list(base: &Path, current: &Path) -> anyhow::Result<Vec<crate::p
 }
 
 /// Czyści katalogi build
-pub fn clean(pagports_dir: &str, package: Option<&str>, all: bool) -> anyhow::Result<()> {
+pub fn clean(_pagports_dir: &str, package: Option<&str>, all: bool) -> anyhow::Result<()> {
     let dirs = if all {
         vec!["src", "build", "pkg"]
     } else {
