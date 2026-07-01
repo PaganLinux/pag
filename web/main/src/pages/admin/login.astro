@@ -1,7 +1,6 @@
 ---
 // Strona logowania do panelu admin
-import { validateLogin } from '../lib/auth';
-import '../styles/admin.css';
+import { validateLogin } from '../../lib/auth';
 
 let error = '';
 if (Astro.request.method === 'POST') {
