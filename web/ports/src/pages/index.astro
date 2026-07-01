@@ -180,49 +180,6 @@ if (query) {
       </div>
     )}
 
-    <div class="howto-section">
-      <h2>📖 Jak używać PagPorts?</h2>
-      <code class="block">
-        <span class="comment"># Sklonuj repozytorium</span>
-        git clone https://github.com/PaganLinux/pagports.git
-        cd pagports/main
-
-        <span class="comment"># Zbuduj pakiet</span>
-        pagbuild build 7zip
-
-        <span class="comment"># Podpisz i wyślij do repo</span>
-        pagbuild sign 7zip
-        PAGBUILD_API_TOKEN=twój_token pagbuild upload packages/7zip-*.pag --repo extra
-      </code>
-
-      <h2 style="margin-top:1.5rem;">Struktura <code>pagbuild</code></h2>
-      <code class="block">
-        <span class="keyword">maintainer</span>=<span style="color:#10b981;">"Imię &lt;email&gt;"</span>
-        <span class="keyword">pkgname</span>=<span style="color:#10b981;">myapp</span>
-        <span class="keyword">pkgver</span>=<span style="color:#10b981;">1.0.0</span>
-        <span class="keyword">pkgrel</span>=<span style="color:#10b981;">1</span>
-        <span class="keyword">pkgdesc</span>=<span style="color:#10b981;">"Opis pakietu"</span>
-        <span class="keyword">arch</span>=<span style="color:#10b981;">"x86_64"</span>
-        <span class="keyword">license</span>=<span style="color:#10b981;">"MIT"</span>
-        <span class="keyword">source</span>=<span style="color:#10b981;">"https://example.com/myapp-$pkgver.tar.gz"</span>
-
-        <span class="keyword">build()</span> {
-            ./configure --prefix=/usr && make
-        }
-
-        <span class="keyword">package()</span> {
-            make DESTDIR=<span style="color:#a78bfa;">"$pkgdir"</span> install
-        }
-
-        <span class="keyword">sha512sums</span>=<span style="color:#10b981;">"abc123...  myapp-1.0.0.tar.gz"</span>
-      </code>
-    </div>
-  </div>
-
-  <footer>
-    PaganLinux © 2026 · <a href="https://paganlinux.eu">paganlinux.eu</a> ·
-    <a href="https://github.com/PaganLinux/pagports">GitHub</a> ·
-    Dane z GitHub API — dynamiczne
-  </footer>
+    </footer>
 </body>
 </html>
