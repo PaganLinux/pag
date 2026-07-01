@@ -1,0 +1,138 @@
+---
+import Layout from '../components/Layout.astro';
+
+const API = 'http://localhost:3005/api/v1';
+const token = Astro.cookies.get('pagan_cms_session')?.value;
+
+let stats = null;
+let submissions: any[] = [];
+let builds: any[] = [];
+let error = '';
+
+if (token) {
+  try {
+    const [statsRes, subsRes, buildsRes] = await Promise.all([
+      fetch(`${API}/dashboard/stats`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${API}/submissions?status=pending`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${API}/builds`, { headers: { Authorization: `Bearer ${token}` } }),
+    ]);
+
+    if (statsRes.ok) stats = await statsRes.json();
+    else error = 'Failed to load stats';
+
+    if (subsRes.ok) submissions = await subsRes.json();
+    if (buildsRes.ok) builds = await buildsRes.json();
+  } catch (e) {
+    error = 'Connection error — is the CMS backend running on port 3005?';
+  }
+} else {
+  error = 'Not authenticated';
+}
+---
+
+<Layout title="Dashboard">
+  <h1>📊 Dashboard</h1>
+
+  {error && <div class="error-msg">{error}</div>}
+
+  {stats && (
+    <>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label">Opublikowane pakiety</div>
+          <div class="value green">{stats.published_packages}</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Oczekujące zgłoszenia</div>
+          <div class="value yellow">{stats.pending_submissions}</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Aktywne buildy</div>
+          <div class="value accent">{stats.active_builds}</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Ukończone dziś</div>
+          <div class="value green">{stats.completed_builds_today}</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Nieudane dziś</div>
+          <div class="value red">{stats.failed_builds_today}</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="flex-between mb-2">
+          <h2 style="border:none;padding:0;margin:0;">🔔 Ostatnie zgłoszenia (Pending)</h2>
+          <a href="/submissions" class="btn btn-sm">Zobacz wszystkie →</a>
+        </div>
+
+        {submissions.length > 0 ? (
+          <table>
+            <thead>
+              <tr>
+                <th>Pakiet</th>
+                <th>Wersja</th>
+                <th>Zgłaszający</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Akcje</th>
+              </tr>
+            </thead>
+            <tbody>
+              {submissions.slice(0, 5).map((sub: any) => (
+                <tr>
+                  <td><strong>{sub.package_name}</strong></td>
+                  <td class="mono">{sub.package_version}</td>
+                  <td>{sub.submitter}</td>
+                  <td><span class={`badge ${sub.status}`}>{sub.status}</span></td>
+                  <td class="text-muted">{new Date(sub.created_at).toLocaleDateString('pl')}</td>
+                  <td class="actions">
+                    <a href={`/submissions?id=${sub.id}`} class="btn btn-sm">Szczegóły</a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p class="text-muted">Brak oczekujących zgłoszeń 🎉</p>
+        )}
+      </div>
+
+      <div class="section">
+        <div class="flex-between mb-2">
+          <h2 style="border:none;padding:0;margin:0;">🔨 Ostatnie buildy</h2>
+          <a href="/builds" class="btn btn-sm">Zobacz wszystkie →</a>
+        </div>
+
+        {builds.length > 0 ? (
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Pakiet</th>
+                <th>Status</th>
+                <th>Rozpoczęty</th>
+                <th>Akcje</th>
+              </tr>
+            </thead>
+            <tbody>
+              {builds.slice(0, 5).map((build: any) => (
+                <tr>
+                  <td class="mono">{build.job_uuid.substring(0, 8)}...</td>
+                  <td><strong>{build.package_name}</strong> <span class="text-muted">{build.package_version}</span></td>
+                  <td><span class={`badge ${build.status}`}>{build.status}</span></td>
+                  <td class="text-muted">{build.started_at ? new Date(build.started_at).toLocaleString('pl') : '—'}</td>
+                  <td>
+                    <a href={`/builds/${build.job_uuid}`} class="btn btn-sm">Logi</a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p class="text-muted">Brak buildów</p>
+        )}
+      </div>
+    </>
+  )}
+</Layout>

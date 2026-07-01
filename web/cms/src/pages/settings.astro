@@ -1,0 +1,124 @@
+---
+import Layout from '../components/Layout.astro';
+
+const API = 'http://localhost:3005/api/v1';
+const token = Astro.cookies.get('pagan_cms_session')?.value;
+
+let settings: any[] = [];
+let error = '';
+let saved = false;
+
+if (token) {
+  try {
+    const res = await fetch(`${API}/settings`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) settings = await res.json();
+    else error = 'Failed to load settings';
+  } catch {
+    error = 'Connection error';
+  }
+}
+---
+
+<Layout title="Ustawienia CMS">
+  <h1>⚙️ Ustawienia CMS</h1>
+
+  {error && <div class="error-msg">{error}</div>}
+
+  <div id="saved-msg"></div>
+
+  <form id="settings-form">
+    <div class="section">
+      <h2>Źródła portów</h2>
+      {settings.filter((s: any) => s.key.includes('repo') || s.key.includes('source')).map((s: any) => (
+        <div class="form-group">
+          <label for={`setting-${s.key}`}>{s.key}</label>
+          <input type="text" id={`setting-${s.key}`} name={s.key} value={s.value} />
+        </div>
+      ))}
+    </div>
+
+    <div class="section">
+      <h2>Buildy</h2>
+      {settings.filter((s: any) => s.key.includes('build') || s.key.includes('timeout') || s.key.includes('concurrent')).map((s: any) => (
+        <div class="form-group">
+          <label for={`setting-${s.key}`}>{s.key}</label>
+          <input type="text" id={`setting-${s.key}`} name={s.key} value={s.value} />
+        </div>
+      ))}
+    </div>
+
+    <div class="section">
+      <h2>Powiadomienia i inne</h2>
+      {settings.filter((s: any) => !s.key.includes('repo') && !s.key.includes('source') && !s.key.includes('build') && !s.key.includes('timeout') && !s.key.includes('concurrent')).map((s: any) => (
+        <div class="form-group">
+          <label for={`setting-${s.key}`}>{s.key}</label>
+          <input type="text" id={`setting-${s.key}`} name={s.key} value={s.value} />
+        </div>
+      ))}
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Zapisz ustawienia</button>
+  </form>
+
+  <div class="section" style="margin-top:2rem">
+    <h2>ℹ️ Informacje o systemie</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div>
+        <div class="text-muted mb-1">Backend API</div>
+        <div class="mono">{API}</div>
+      </div>
+      <div>
+        <div class="text-muted mb-1">CMS Frontend</div>
+        <div>Astro SSR — port 3006</div>
+      </div>
+      <div>
+        <div class="text-muted mb-1">Baza danych</div>
+        <div class="mono">/opt/pagan-cms/cms.db</div>
+      </div>
+      <div>
+        <div class="text-muted mb-1">Build space</div>
+        <div class="mono">/var/pagan-os/build-space</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('cms_token');
+    const API = 'http://localhost:3005/api/v1';
+    const savedMsg = document.getElementById('saved-msg')!;
+
+    document.getElementById('settings-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target as HTMLFormElement;
+      const fd = new FormData(form);
+      const settings: { key: string; value: string }[] = [];
+
+      for (const [key, value] of fd.entries()) {
+        settings.push({ key, value: value as string });
+      }
+
+      try {
+        const res = await fetch(`${API}/settings`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ settings }),
+        });
+
+        if (res.ok) {
+          savedMsg.innerHTML = '<div class="success-msg">✅ Ustawienia zapisane!</div>';
+          setTimeout(() => { savedMsg.innerHTML = ''; }, 3000);
+        } else {
+          const err = await res.json();
+          savedMsg.innerHTML = `<div class="error-msg">❌ ${err.error}</div>`;
+        }
+      } catch {
+        savedMsg.innerHTML = '<div class="error-msg">❌ Connection error</div>';
+      }
+    });
+  </script>
+</Layout>

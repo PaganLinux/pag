@@ -396,8 +396,142 @@ systemctl restart pag-repo
 cd /opt/pag/web/main && npm install && npm run build
 cd /opt/pag/web/repos && npm install && npm run build
 cd /opt/pag/web/ports && npm install && npm run build
+cd /opt/pag/web/cms && npm install && npm run build
 pm2 restart all
 ```
+
+---
+
+## 🟢 Krok 11: CMS Panel (Panel Administracyjny)
+
+### 11a. Budowanie backendu CMS (Rust)
+
+```bash
+cd /opt/pag/cms-server
+cargo build --release
+cp target/release/pag-cms /usr/local/bin/
+
+# Konfiguracja
+mkdir -p /etc/pag /opt/pagan-cms /var/pagan-os/build-space
+cp cms.example.toml /etc/pag/cms.toml
+# Edytuj /etc/pag/cms.toml — ustaw hasło admina i klucze
+
+# Uruchom jako serwis systemd
+cat > /etc/systemd/system/pag-cms.service << 'EOF'
+[Unit]
+Description=PaganOS CMS Backend
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/pag-cms
+Restart=always
+RestartSec=5
+Environment=RUST_LOG=info,pag_cms=debug
+Environment=PAG_CMS_ADMIN_PASSWORD=ZmienToHaslo!
+Environment=PAG_CMS_CONFIG=/etc/pag/cms.toml
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable pag-cms --now
+```
+
+### 11b. Budowanie frontendu CMS (Astro)
+
+```bash
+cd /opt/pag/web/cms
+npm install
+npm run build
+
+pm2 start dist/server/entry.mjs --name pagan-cms -- --port 3006
+pm2 save
+```
+
+### 11c. Konfiguracja Nginx dla CMS
+
+```bash
+cat > /etc/nginx/sites-available/cms.paganlinux.eu << 'EOF'
+server {
+    listen 80;
+    server_name cms.paganlinux.eu;
+
+    # Podstawowa autoryzacja HTTP (dodatkowa warstwa)
+    auth_basic "PaganOS CMS";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location / {
+        proxy_pass http://127.0.0.1:3006;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # WebSocket (live build logs)
+    location /api/v1/builds/ {
+        proxy_pass http://127.0.0.1:3005;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+}
+EOF
+
+ln -s /etc/nginx/sites-available/cms.paganlinux.eu /etc/nginx/sites-enabled/
+nginx -t && systemctl reload nginx
+
+# Ustaw hasło HTTP (dodatkowa warstwa bezpieczeństwa)
+apt install -y apache2-utils
+htpasswd -c /etc/nginx/.htpasswd admin
+```
+
+### 11d. Webhook z Forgejo/Gitea
+
+W repozytorium `pagan-community` na Forgejo:
+1. Ustawienia → Webhooks → Add Webhook
+2. URL: `https://cms.paganlinux.eu/api/v1/hooks/forgejo`
+3. Content Type: `application/json`
+4. Secret: (taki sam jak w `cms.toml`)
+5. Events: "Pull Request" → "Opened"
+
+### 11e. CMS API Endpoints
+
+| Endpoint | Metoda | Opis |
+|----------|--------|------|
+| `/api/v1/auth/login` | POST | Logowanie admina |
+| `/api/v1/auth/me` | GET | Dane zalogowanego |
+| `/api/v1/dashboard/stats` | GET | Statystyki dashboardu |
+| `/api/v1/submissions` | GET | Lista zgłoszeń |
+| `/api/v1/submissions/{id}` | GET/PATCH | Szczegóły / edycja zgłoszenia |
+| `/api/v1/submissions/{id}/approve-build` | POST | Zatwierdź i buduj |
+| `/api/v1/builds` | GET/POST | Lista / utwórz build |
+| `/api/v1/builds/{uuid}` | GET | Szczegóły builda |
+| `/api/v1/builds/{uuid}/ws` | WS | Live logi (WebSocket) |
+| `/api/v1/builds/{uuid}/cancel` | POST | Anuluj build |
+| `/api/v1/settings` | GET/PUT | Ustawienia CMS |
+| `/api/v1/hooks/forgejo` | POST | Webhook z Forgejo |
+| `/api/v1/health` | GET | Health check |
+
+---
+
+## 📊 Podsumowanie portów i endpointów
+
+| Serwis | Port | URL |
+|--------|------|-----|
+| paganlinux.eu (Astro SSR) | 3004 | https://paganlinux.eu |
+| repos.paganlinux.eu (Astro SSR) | 3002 | https://repos.paganlinux.eu |
+| pagports.paganlinux.eu (Astro SSR) | 3003 | https://pagports.paganlinux.eu |
+| **cms.paganlinux.eu (Astro SSR)** | **3006** | **https://cms.paganlinux.eu** |
+| repo-server API | 3001 | https://repos.paganlinux.eu/api/v1/ |
+| **cms-server API (Rust)** | **3005** | **https://cms.paganlinux.eu/api/v1/** |
+| Nginx | 80, 443 | Reverse proxy + SSL |
 
 ---
 

@@ -2,6 +2,7 @@
 cli/target/
 pagbuild/target/
 repo-server/target/
+cms-server/target/
 
 # Node / Astro
 web/*/node_modules/

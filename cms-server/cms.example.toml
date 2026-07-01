@@ -1,0 +1,29 @@
+# PaganOS CMS Server — przykładowa konfiguracja
+# Skopiuj do: /etc/pag/cms.toml
+
+[server]
+bind = "0.0.0.0"
+port = 3005
+cors_origins = ["http://localhost:3006", "https://cms.paganlinux.eu"]
+
+[database]
+path = "/opt/pagan-cms/cms.db"
+
+[build]
+stage3_path = "/var/pagan-os/stage3-base"
+build_space = "/var/pagan-os/build-space"
+max_concurrent_builds = 2
+build_timeout_seconds = 7200
+
+[forgejo]
+base_url = "https://git.paganlinux.eu"
+api_token = "twoj-forgejo-api-token"
+community_repo = "pagan-community"
+webhook_secret = "twoj-webhook-secret"
+
+[auth]
+session_secret = "wygeneruj-losowy-ciag-znakow-32-bajty"
+admin_username = "admin"
+# Hasło ustawiane przez zmienną środowiskową PAG_CMS_ADMIN_PASSWORD
+admin_password_hash = ""
+token_expiry_days = 7

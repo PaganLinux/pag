@@ -1,0 +1,35 @@
+# Caddyfile — Reverse proxy dla PaganOS
+
+# CMS Panel (chroniony hasłem)
+cms.paganlinux.eu {
+    reverse_proxy cms-frontend:3006
+    basicauth {
+        admin $2a$14$PLACEHOLDER_HASH
+    }
+}
+
+# Repozytorium API
+repos.paganlinux.eu {
+    reverse_proxy repo-server:3001
+}
+
+# Strona główna
+paganlinux.eu {
+    reverse_proxy main-web:3004
+}
+
+# Porty online
+pagports.paganlinux.eu {
+    reverse_proxy ports-web:3003
+}
+
+# Git (Forgejo — osobny serwis, nie w docker-compose)
+# git.paganlinux.eu {
+#     reverse_proxy localhost:3000
+# }
+
+# Statyczne pliki repo
+# files.paganlinux.eu {
+#     root * /var/www/repos.paganlinux.eu
+#     file_server
+# }

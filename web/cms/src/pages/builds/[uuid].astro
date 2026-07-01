@@ -1,0 +1,167 @@
+---
+import Layout from '../../components/Layout.astro';
+
+const { uuid } = Astro.params;
+const API = 'http://localhost:3005/api/v1';
+const token = Astro.cookies.get('pagan_cms_session')?.value;
+
+let build: any = null;
+let error = '';
+
+if (token) {
+  try {
+    const res = await fetch(`${API}/builds/${uuid}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) build = await res.json();
+    else if (res.status === 404) error = 'Build not found';
+    else error = 'Failed to load build';
+  } catch {
+    error = 'Connection error';
+  }
+}
+---
+
+<Layout title={`Build ${uuid.substring(0, 8)}...`}>
+  <a href="/builds" style="color:var(--text2);font-size:0.85rem;margin-bottom:1rem;display:inline-block">← Powrót do listy</a>
+
+  {error && <div class="error-msg">{error}</div>}
+
+  {build && (
+    <>
+      <div class="flex-between mb-2">
+        <h1 style="margin:0">📋 Build: {build.package_name} — {build.package_version}</h1>
+        <span class={`badge ${build.status}`}>{build.status}</span>
+      </div>
+
+      <div class="section">
+        <div class="flex-between mb-2">
+          <div>
+            <span class="text-muted">UUID: </span>
+            <span class="mono">{build.job_uuid}</span>
+          </div>
+          <div>
+            <span class="text-muted">Created: </span>
+            {new Date(build.created_at).toLocaleString('pl')}
+          </div>
+        </div>
+        <div class="flex-between">
+          <div>
+            <span class="text-muted">Started: </span>
+            {build.started_at ? new Date(build.started_at).toLocaleString('pl') : '—'}
+          </div>
+          <div>
+            <span class="text-muted">Finished: </span>
+            {build.finished_at ? new Date(build.finished_at).toLocaleString('pl') : '—'}
+          </div>
+          <div>
+            <span class="text-muted">Exit code: </span>
+            <span class="mono" class:list={[
+              {'green': build.exit_code === 0},
+              {'red': build.exit_code !== null && build.exit_code !== 0}
+            ]}>{build.exit_code ?? '—'}</span>
+          </div>
+        </div>
+        {build.artifact_path && (
+          <div class="mt-1">
+            <span class="text-muted">Artifact: </span>
+            <span class="mono">{build.artifact_path}</span>
+          </div>
+        )}
+      </div>
+
+      <div class="build-log-container">
+        <div class="build-log-header">
+          <span class="title">📟 Terminal wyjściowy (live)</span>
+          <span id="connection-status" style="font-size:0.75rem;color:var(--text2)">Łączenie...</span>
+        </div>
+        <div class="terminal" id="build-log" style="max-height:600px">
+          <slot name="log-content">
+            {build.log_output ? (
+              build.log_output.split('\n').map((line: string) => (
+                <div class="line">{line}</div>
+              ))
+            ) : (
+              <div class="line text-muted">Oczekiwanie na logi...</div>
+            )}
+          </slot>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:1rem">
+        <h2>Skrypt budujący</h2>
+        <div class="terminal" style="max-height:300px">{build.build_script || '—'}</div>
+      </div>
+    </>
+  )}
+</Layout>
+
+<script>
+  const logEl = document.getElementById('build-log')!;
+  const statusEl = document.getElementById('connection-status')!;
+  const jobUuid = '{uuid}';
+  const isActive = '{build?.status}' === 'running' || '{build?.status}' === 'queued';
+
+  let ws: WebSocket | null = null;
+
+  function connectWebSocket() {
+    const wsUrl = `ws://localhost:3005/api/v1/builds/${jobUuid}/ws`;
+
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      statusEl.textContent = '🟢 Live';
+      statusEl.style.color = 'var(--green)';
+    };
+
+    ws.onmessage = (event) => {
+      // Append new log lines
+      const lines = event.data.split('\n');
+      for (const line of lines) {
+        if (line) {
+          const div = document.createElement('div');
+          div.className = 'line';
+          div.textContent = line;
+          logEl.appendChild(div);
+        }
+      }
+      // Auto-scroll
+      logEl.scrollTop = logEl.scrollHeight;
+    };
+
+    ws.onclose = () => {
+      statusEl.textContent = 'Rozłączono';
+      statusEl.style.color = 'var(--text2)';
+    };
+
+    ws.onerror = () => {
+      statusEl.textContent = '⚠️ Błąd połączenia';
+      statusEl.style.color = 'var(--red)';
+    };
+  }
+
+  if (isActive) {
+    connectWebSocket();
+
+    // Reload page when build completes (check every 5s)
+    const pollInterval = setInterval(async () => {
+      try {
+        const token = localStorage.getItem('cms_token');
+        const res = await fetch(`http://localhost:3005/api/v1/builds/${jobUuid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled') {
+            clearInterval(pollInterval);
+            ws?.close();
+            window.location.reload();
+          }
+        }
+      } catch {}
+    }, 5000);
+  }
+
+  // Auto-resize log to fit content on initial load
+  logEl.scrollTop = logEl.scrollHeight;
+</script>

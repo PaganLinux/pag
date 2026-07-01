@@ -1,0 +1,98 @@
+# PaganOS — Docker Compose (deweloperski)
+
+services:
+  # ─── CMS Backend (Rust) ────────────────────────────────
+  cms-server:
+    build:
+      context: ./cms-server
+      dockerfile: Dockerfile
+    container_name: pagan-cms-server
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    environment:
+      - RUST_LOG=info,pag_cms=debug
+      - PAG_CMS_ADMIN_PASSWORD=admin123
+      - PAG_CMS_CONFIG=/etc/pag/cms.toml
+    volumes:
+      - cms-data:/opt/pagan-cms
+      - build-space:/var/pagan-os/build-space
+      - ./stage3-base:/var/pagan-os/stage3-base:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # ─── CMS Frontend (Astro SSR) ──────────────────────────
+  cms-frontend:
+    build:
+      context: ./web/cms
+      dockerfile: Dockerfile
+    container_name: pagan-cms-frontend
+    restart: unless-stopped
+    ports:
+      - "3006:3006"
+    environment:
+      - CMS_API_URL=http://cms-server:3005
+    depends_on:
+      - cms-server
+
+  # ─── Repo Server ───────────────────────────────────────
+  repo-server:
+    build:
+      context: ./repo-server
+      dockerfile: Dockerfile
+    container_name: pagan-repo-server
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PAG_REPO_DIR=/var/lib/pag/repo
+      - PAG_REPO_BIND=0.0.0.0:3001
+    volumes:
+      - repo-data:/var/lib/pag/repo
+
+  # ─── Main Website ──────────────────────────────────────
+  main-web:
+    build:
+      context: ./web/main
+      dockerfile: Dockerfile
+    container_name: pagan-main-web
+    restart: unless-stopped
+    ports:
+      - "3004:3004"
+
+  # ─── Ports Website ────────────────────────────────────
+  ports-web:
+    build:
+      context: ./web/ports
+      dockerfile: Dockerfile
+    container_name: pagan-ports-web
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+
+  # ─── Repos Static ──────────────────────────────────────
+  repos-web:
+    build:
+      context: ./web/repos
+      dockerfile: Dockerfile
+    container_name: pagan-repos-web
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+
+  # ─── Reverse Proxy (Caddy) ─────────────────────────────
+  caddy:
+    image: caddy:alpine
+    container_name: pagan-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+
+volumes:
+  cms-data:
+  repo-data:
+  build-space:
+  caddy-data:

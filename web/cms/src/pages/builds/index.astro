@@ -1,0 +1,101 @@
+---
+import Layout from '../../components/Layout.astro';
+
+const API = 'http://localhost:3005/api/v1';
+const token = Astro.cookies.get('pagan_cms_session')?.value;
+
+const url = new URL(Astro.request.url);
+const filterStatus = url.searchParams.get('status') || '';
+
+let builds: any[] = [];
+let error = '';
+
+if (token) {
+  try {
+    const qs = filterStatus ? `?status=${filterStatus}` : '';
+    const res = await fetch(`${API}/builds${qs}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) builds = await res.json();
+  } catch {
+    error = 'Connection error';
+  }
+}
+---
+
+<Layout title="Kolejka buildów">
+  <h1>🔨 Kolejka buildów</h1>
+
+  {error && <div class="error-msg">{error}</div>}
+
+  <div class="tabs">
+    <a href="/builds" class="tab" class:list={[{ active: !filterStatus }]}>Wszystkie</a>
+    <a href="/builds?status=queued" class="tab" class:list={[{ active: filterStatus === 'queued' }]}>W kolejce</a>
+    <a href="/builds?status=running" class="tab" class:list={[{ active: filterStatus === 'running' }]}>Aktywne</a>
+    <a href="/builds?status=completed" class="tab" class:list={[{ active: filterStatus === 'completed' }]}>Ukończone</a>
+    <a href="/builds?status=failed" class="tab" class:list={[{ active: filterStatus === 'failed' }]}>Nieudane</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>UUID</th>
+        <th>Pakiet</th>
+        <th>Status</th>
+        <th>Czas</th>
+        <th>Exit</th>
+        <th>Akcje</th>
+      </tr>
+    </thead>
+    <tbody>
+      {builds.map((build: any) => (
+        <tr>
+          <td class="mono">{build.job_uuid.substring(0, 8)}...</td>
+          <td>
+            <strong>{build.package_name}</strong>
+            <span class="text-muted"> {build.package_version}</span>
+          </td>
+          <td><span class={`badge ${build.status}`}>{build.status}</span></td>
+          <td class="text-muted">
+            {build.started_at ? new Date(build.started_at).toLocaleString('pl') : '—'}
+          </td>
+          <td class="mono">
+            {build.exit_code !== null ? (
+              <span class:list={[{ green: build.exit_code === 0 }, { red: build.exit_code !== 0 }]}>
+                {build.exit_code}
+              </span>
+            ) : '—'}
+          </td>
+          <td class="actions">
+            <a href={`/builds/${build.job_uuid}`} class="btn btn-sm">📋 Logi</a>
+            {(build.status === 'queued' || build.status === 'running') && (
+              <button class="btn btn-sm btn-danger cancel-btn" data-uuid={build.job_uuid}>
+                ❌ Anuluj
+              </button>
+            )}
+          </td>
+        </tr>
+      ))}
+      {builds.length === 0 && (
+        <tr><td colspan="6" class="text-muted" style="text-align:center;padding:2rem">Brak buildów</td></tr>
+      )}
+    </tbody>
+  </table>
+
+  <script>
+    const token = localStorage.getItem('cms_token');
+    const API = 'http://localhost:3005/api/v1';
+
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const uuid = (btn as HTMLElement).dataset.uuid!;
+        if (!confirm('Anulować ten build?')) return;
+        const res = await fetch(`${API}/builds/${uuid}/cancel`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) window.location.reload();
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,188 @@
+---
+import Layout from '../../components/Layout.astro';
+
+const API = 'http://localhost:3005/api/v1';
+const token = Astro.cookies.get('pagan_cms_session')?.value;
+
+const url = new URL(Astro.request.url);
+const selectedId = url.searchParams.get('id');
+const filterStatus = url.searchParams.get('status') || '';
+
+let submissions: any[] = [];
+let selected: any = null;
+let error = '';
+
+if (token) {
+  try {
+    const qs = filterStatus ? `?status=${filterStatus}` : '';
+    const res = await fetch(`${API}/submissions${qs}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) submissions = await res.json();
+
+    if (selectedId) {
+      const sres = await fetch(`${API}/submissions/${selectedId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (sres.ok) selected = await sres.json();
+    }
+  } catch {
+    error = 'Connection error';
+  }
+}
+---
+
+<Layout title="Zgłoszenia pakietów">
+  <h1>📦 Zgłoszenia pakietów</h1>
+
+  {error && <div class="error-msg">{error}</div>}
+
+  <div class="tabs">
+    <a href="/submissions" class="tab" class:list={[{ active: !filterStatus }]}>Wszystkie</a>
+    <a href="/submissions?status=pending" class="tab" class:list={[{ active: filterStatus === 'pending' }]}>Oczekujące</a>
+    <a href="/submissions?status=approved" class="tab" class:list={[{ active: filterStatus === 'approved' }]}>Zatwierdzone</a>
+    <a href="/submissions?status=building" class="tab" class:list={[{ active: filterStatus === 'building' }]}>Budujące się</a>
+    <a href="/submissions?status=published" class="tab" class:list={[{ active: filterStatus === 'published' }]}>Opublikowane</a>
+    <a href="/submissions?status=failed" class="tab" class:list={[{ active: filterStatus === 'failed' }]}>Nieudane</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Pakiet</th>
+        <th>Wersja</th>
+        <th>Zgłaszający</th>
+        <th>Status</th>
+        <th>Data</th>
+        <th>Akcje</th>
+      </tr>
+    </thead>
+    <tbody>
+      {submissions.map((sub: any) => (
+        <tr>
+          <td class="mono">#{sub.id}</td>
+          <td><strong>{sub.package_name}</strong></td>
+          <td class="mono">{sub.package_version}</td>
+          <td>{sub.submitter}</td>
+          <td><span class={`badge ${sub.status}`}>{sub.status}</span></td>
+          <td class="text-muted">{new Date(sub.created_at).toLocaleDateString('pl')}</td>
+          <td class="actions">
+            <a href={`/submissions?id=${sub.id}`} class="btn btn-sm">Szczegóły</a>
+            {sub.status === 'pending' && (
+              <button class="btn btn-sm btn-primary approve-btn" data-id={sub.id}>
+                ✅ Zatwierdź i buduj
+              </button>
+            )}
+            {sub.forgejo_pr_url && (
+              <a href={sub.forgejo_pr_url} target="_blank" class="btn btn-sm" style="font-size:0.75rem">
+                🔗 PR
+              </a>
+            )}
+          </td>
+        </tr>
+      ))}
+      {submissions.length === 0 && (
+        <tr><td colspan="7" class="text-muted" style="text-align:center;padding:2rem">Brak zgłoszeń</td></tr>
+      )}
+    </tbody>
+  </table>
+
+  {selected && (
+    <div class="section" style="margin-top:2rem" id="detail-view">
+      <div class="flex-between mb-2">
+        <h2 style="border:none;padding:0;margin:0">
+          📋 #{selected.id}: {selected.package_name} — {selected.package_version}
+        </h2>
+        <span class={`badge ${selected.status}`}>{selected.status}</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div>
+          <div class="text-muted mb-1">Zgłaszający</div>
+          <div>{selected.submitter}</div>
+        </div>
+        <div>
+          <div class="text-muted mb-1">Data zgłoszenia</div>
+          <div>{new Date(selected.created_at).toLocaleString('pl')}</div>
+        </div>
+        <div>
+          <div class="text-muted mb-1">Opis</div>
+          <div>{selected.description || '—'}</div>
+        </div>
+        <div>
+          <div class="text-muted mb-1">PR</div>
+          <div>
+            {selected.forgejo_pr_url ? (
+              <a href={selected.forgejo_pr_url} target="_blank" class="mono" style="color:var(--accent)">{selected.forgejo_pr_url}</a>
+            ) : '—'}
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <div class="text-muted mb-1">Skrypt budujący (PaganBuild)</div>
+        <div class="terminal" style="max-height:300px" id="build-script">{selected.build_script || '—'}</div>
+      </div>
+
+      <div class="actions">
+        {selected.status === 'pending' && (
+          <>
+            <button class="btn btn-primary approve-build-btn" data-id={selected.id}>
+              ✅ Zatwierdź i kompiluj
+            </button>
+            <button class="btn btn-danger reject-btn" data-id={selected.id}>
+              ❌ Odrzuć
+            </button>
+          </>
+        )}
+        {selected.status === 'failed' && (
+          <button class="btn btn-primary approve-build-btn" data-id={selected.id}>
+            🔄 Ponów kompilację
+          </button>
+        )}
+      </div>
+    </div>
+  )}
+
+  <script>
+    const token = localStorage.getItem('cms_token');
+    const API = 'http://localhost:3005/api/v1';
+
+    function api(path: string, method = 'GET', body?: any) {
+      return fetch(`${API}${path}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    }
+
+    document.querySelectorAll('.approve-btn, .approve-build-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = (btn as HTMLElement).dataset.id!;
+        if (!confirm('Zatwierdzić zgłoszenie i rozpocząć kompilację?')) return;
+        const res = await api(`/submissions/${id}/approve-build`, 'POST');
+        if (res.ok) {
+          alert('✅ Zatwierdzono i dodano do kolejki buildów!');
+          window.location.reload();
+        } else {
+          const err = await res.json();
+          alert(`❌ Błąd: ${err.error}`);
+        }
+      });
+    });
+
+    document.querySelectorAll('.reject-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = (btn as HTMLElement).dataset.id!;
+        if (!confirm('Odrzucić to zgłoszenie?')) return;
+        const res = await api(`/submissions/${id}`, 'PATCH', { status: 'rejected' });
+        if (res.ok) window.location.reload();
+        else alert('Błąd');
+      });
+    });
+  </script>
+</Layout>
