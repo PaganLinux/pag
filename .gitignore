@@ -1,0 +1,21 @@
+# Rust
+cli/target/
+pagbuild/target/
+repo-server/target/
+
+# Node / Astro
+web/*/node_modules/
+web/*/dist/
+web/*/.astro/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cargo lock — keep for binary projects (committed)

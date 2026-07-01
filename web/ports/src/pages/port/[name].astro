@@ -1,0 +1,236 @@
+---
+// pagports.paganlinux.eu/port/[name] — Szczegóły portu z kodem pagbuild
+import Nav from '../../components/Nav.astro';
+import { getPort } from '../../lib/github';
+
+const { name } = Astro.params;
+
+let port = null;
+let error = null;
+
+try {
+  port = await getPort(name);
+} catch (e) {
+  error = '⚠️ Nie udało się pobrać danych portu z GitHub API';
+}
+
+if (!port) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: '/?error=notfound' },
+  });
+}
+
+// Kolorowanie składni pagbuild (uproszczone)
+function highlightPagbuild(code: string): string {
+  return code
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/^(\s*)([a-zA-Z_][a-zA-Z0-9_]*)=/gm,
+      '$1<span class="syn-var">$2</span>=')
+    .replace(/^(\s*)([a-zA-Z_][a-zA-Z0-9_]*)\(\)/gm,
+      '$1<span class="syn-func">$2</span>()')
+    .replace(/(["'])((?:\\.|[^\\])*?)\1/g,
+      '<span class="syn-str">$1$2$1</span>')
+    .replace(/(^|\s)(#.*$)/gm,
+      '$1<span class="syn-comment">$2</span>')
+    .replace(/\$([a-zA-Z_][a-zA-Z0-9_]*|\{[^}]+\})/g,
+      '<span class="syn-var-ref">$$$1</span>');
+}
+---
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{port.name} {port.version}-r{port.release} — PagPorts</title>
+  <meta name="description" content={port.description} />
+  <style>
+    :root {
+      --bg: #0a0a0f; --bg2: #12121a; --fg: #e0e0e0;
+      --accent: #7c3aed; --accent2: #a78bfa; --green: #10b981;
+      --card: #1a1a2e; --border: #2a2a3e; --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--fg); line-height: 1.6; min-height: 100vh;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+    .breadcrumb {
+      display: flex; gap: 0.5rem; margin-bottom: 2rem; font-size: 0.9rem; color: #808090;
+    }
+    .breadcrumb a { color: var(--accent2); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .port-header {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem; margin-bottom: 1.5rem;
+    }
+    .port-title { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .port-title h1 { font-size: 2rem; color: var(--accent2); }
+    .port-title .version {
+      font-size: 1.3rem; color: var(--green); font-family: 'Fira Code', monospace;
+    }
+    .port-desc { color: #b0b0c0; font-size: 1.05rem; margin-top: 0.5rem; }
+
+    .meta-row {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;
+    }
+    .meta-tag {
+      background: rgba(255,255,255,0.04); padding: 0.3rem 0.8rem;
+      border-radius: 6px; font-size: 0.85rem; color: #b0b0c0;
+    }
+    .meta-tag strong { color: var(--fg); }
+
+    .code-section {
+      margin-bottom: 2rem;
+    }
+    .code-section h2 {
+      font-size: 1.2rem; margin-bottom: 0.8rem; color: var(--fg);
+    }
+
+    .code-block {
+      background: #0a0a0f; border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .code-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.6rem 1rem; background: #111118; border-bottom: 1px solid var(--border);
+    }
+    .code-filename {
+      font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #808090;
+    }
+    .code-actions { display: flex; gap: 0.5rem; }
+    .code-actions a, .code-actions button {
+      padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.8rem;
+      text-decoration: none; cursor: pointer; border: 1px solid var(--border);
+      background: var(--card); color: #b0b0c0; transition: all 0.2s;
+    }
+    .code-actions a:hover, .code-actions button:hover {
+      border-color: var(--accent2); color: var(--accent2);
+    }
+    .code-content {
+      padding: 1.2rem; overflow-x: auto; font-family: 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.85rem; line-height: 1.65; white-space: pre; color: #c0c0d0;
+    }
+    .code-content .syn-var { color: #f59e0b; font-weight: 600; }
+    .code-content .syn-func { color: #60a5fa; font-weight: 600; }
+    .code-content .syn-str { color: #10b981; }
+    .code-content .syn-comment { color: #6b7280; font-style: italic; }
+    .code-content .syn-var-ref { color: #a78bfa; }
+
+    .deps-section {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .dep-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.2rem;
+    }
+    .dep-card h3 {
+      font-size: 0.85rem; text-transform: uppercase; color: #808090;
+      letter-spacing: 0.05em; margin-bottom: 0.8rem;
+    }
+    .dep-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .dep-tag {
+      background: rgba(124,58,237,0.12); color: var(--accent2);
+      padding: 0.2rem 0.6rem; border-radius: 5px; font-size: 0.85rem;
+      font-family: 'Fira Code', monospace; text-decoration: none;
+    }
+    .dep-tag:hover { background: rgba(124,58,237,0.25); }
+
+    .error-banner {
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+      padding: 0.6rem 1rem; border-radius: 8px; margin-bottom: 1rem;
+      color: #f59e0b; font-size: 0.9rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 1.5rem 2rem;
+      text-align: center; color: #606070; font-size: 0.85rem; margin-top: 3rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <Nav />
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/">PagPorts</a>
+      <span>/</span>
+      <span>{port.name}</span>
+    </div>
+
+    {error && <div class="error-banner">{error}</div>}
+
+    <div class="port-header">
+      <div class="port-title">
+        <h1>{port.name}</h1>
+        <span class="version">{port.version}-r{port.release}</span>
+      </div>
+      <p class="port-desc">{port.description}</p>
+      <div class="meta-row">
+        <span class="meta-tag"><strong>Licencja:</strong> {port.license}</span>
+        <span class="meta-tag"><strong>Arch:</strong> {port.arch}</span>
+        {port.maintainer && <span class="meta-tag"><strong>Opiekun:</strong> {port.maintainer.split('<')[0].trim()}</span>}
+        {port.url && <span class="meta-tag"><strong>Upstream:</strong> <a href={port.url} style="color:var(--accent2);">{port.url}</a></span>}
+      </div>
+    </div>
+
+    <div class="deps-section">
+      <div class="dep-card">
+        <h3>📦 Zależności ({port.depends.length})</h3>
+        <div class="dep-list">
+          {port.depends.length > 0
+            ? port.depends.map(d => <a href={`/port/${d}`} class="dep-tag">{d}</a>)
+            : <span style="color:#606070;font-style:italic;">Brak</span>}
+        </div>
+      </div>
+      <div class="dep-card">
+        <h3>🔨 Build Deps ({port.makedepends.length})</h3>
+        <div class="dep-list">
+          {port.makedepends.length > 0
+            ? port.makedepends.map(d => <span class="dep-tag">{d}</span>)
+            : <span style="color:#606070;font-style:italic;">Brak</span>}
+        </div>
+      </div>
+    </div>
+
+    <div class="code-section">
+      <h2>📄 pagbuild</h2>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">📁 pagports/{port.path}</span>
+          <div class="code-actions">
+            <a href={`https://github.com/PaganLinux/pagports/blob/main/${port.path}`} target="_blank">
+              GitHub ↗
+            </a>
+            <a href={`https://raw.githubusercontent.com/PaganLinux/pagports/main/${port.path}`} target="_blank">
+              Raw
+            </a>
+          </div>
+        </div>
+        <div class="code-content" set:html={highlightPagbuild(port.pagbuildContent)} />
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;padding:1.2rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
+      <h3 style="margin-bottom:0.5rem;">📥 Jak zbudować?</h3>
+      <code style="display:block;background:#0a0a0f;padding:0.8rem;border-radius:6px;font-family:'Fira Code',monospace;font-size:0.85rem;color:var(--accent2);">
+        cd pagports/main<br/>
+        pagbuild build {port.name}
+      </code>
+    </div>
+  </div>
+
+  <footer>
+    PaganLinux © 2026 · <a href="https://paganlinux.eu">paganlinux.eu</a> ·
+    <a href={`https://github.com/PaganLinux/pagports/blob/main/${port.path}`}>GitHub</a>
+  </footer>
+</body>
+</html>

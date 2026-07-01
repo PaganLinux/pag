@@ -1,0 +1,228 @@
+---
+// pagports.paganlinux.eu — Strona główna
+import Nav from '../components/Nav.astro';
+import PortCard from '../components/PortCard.astro';
+import { listPorts } from '../lib/github';
+
+const url = new URL(Astro.request.url);
+const query = url.searchParams.get('q') || '';
+
+let ports = [];
+let error = null;
+
+try {
+  ports = await listPorts();
+} catch (e) {
+  error = '⚠️ GitHub API niedostępny — pokazuję dane demonstracyjne';
+  ports = []; // Fallback jest wbudowany w listPorts
+}
+
+if (query) {
+  ports = ports.filter(p =>
+    p.name.toLowerCase().includes(query.toLowerCase()) ||
+    p.description.toLowerCase().includes(query.toLowerCase())
+  );
+}
+---
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{query ? `"${query}" — ` : ''}PagPorts — System Portów PaganLinux</title>
+  <meta name="description" content="PagPorts - system budowania pakietów .pag z plików pagbuild. Fork aports, inspirowany AUR." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>" />
+  <style>
+    :root {
+      --bg: #0a0a0f; --bg2: #12121a; --fg: #e0e0e0;
+      --accent: #7c3aed; --accent2: #a78bfa; --green: #10b981;
+      --card: #1a1a2e; --border: #2a2a3e; --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--fg); line-height: 1.6; min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+    .subtitle { color: #808090; margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .subtitle code {
+      background: var(--card); padding: 0.15rem 0.4rem; border-radius: 4px;
+      font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent2);
+    }
+
+    .search-bar {
+      display: flex; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 600px;
+    }
+    .search-bar input {
+      flex: 1; padding: 0.85rem 1.2rem; border-radius: 10px;
+      border: 2px solid var(--border); background: var(--card); color: var(--fg);
+      font-size: 1rem; outline: none; transition: border-color 0.2s;
+    }
+    .search-bar input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+    .search-bar button {
+      padding: 0.85rem 1.5rem; border-radius: 10px; border: none;
+      background: var(--accent); color: white; cursor: pointer;
+      font-weight: 600; font-size: 1rem; transition: background 0.2s;
+    }
+    .search-bar button:hover { background: #6d28d9; }
+
+    .stats-bar {
+      display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem;
+      padding: 1rem 1.5rem; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-num {
+      font-size: 1.5rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2), var(--green));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.8rem; color: #808090; text-transform: uppercase; }
+
+    .branch-tabs {
+      display: flex; gap: 0; margin-bottom: 1.5rem;
+    }
+    .branch-tab {
+      padding: 0.5rem 1.2rem; border: 1px solid var(--border);
+      background: var(--card); color: #b0b0c0; cursor: pointer;
+      font-size: 0.85rem; text-decoration: none; transition: all 0.2s;
+    }
+    .branch-tab:first-child { border-radius: 8px 0 0 8px; }
+    .branch-tab:last-child { border-radius: 0 8px 8px 0; }
+    .branch-tab.active, .branch-tab:hover {
+      background: var(--accent); border-color: var(--accent); color: white;
+    }
+
+    .port-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1rem;
+    }
+
+    .error-banner {
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+      padding: 0.6rem 1rem; border-radius: 8px; margin-bottom: 1rem;
+      color: #f59e0b; font-size: 0.9rem;
+    }
+
+    .howto-section {
+      margin-top: 3rem; padding: 2rem; background: var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .howto-section h2 { font-size: 1.3rem; margin-bottom: 1rem; }
+    .howto-section code.block {
+      display: block; background: #0a0a0f; border: 1px solid var(--border);
+      padding: 1.2rem; border-radius: 8px; font-family: 'Fira Code', monospace;
+      color: var(--accent2); font-size: 0.85rem; overflow-x: auto;
+      margin-bottom: 1rem; line-height: 1.7;
+    }
+    .howto-section .comment { color: #6b7280; }
+    .howto-section .keyword { color: #f59e0b; }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 1.5rem 2rem;
+      text-align: center; color: #606070; font-size: 0.85rem; margin-top: 3rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <Nav />
+
+  <div class="container">
+    <h1>🏗️ PagPorts — System Budowania Pakietów</h1>
+    <p class="subtitle">
+      System portów PaganLinux. Każdy pakiet ma swój plik <code>pagbuild</code> —
+      wzorowany na PKGBUID (Arch) i APKBUILD (Alpine). Zbuduj, podpisz i wyślij do repozytorium.
+    </p>
+
+    <form class="search-bar" action="/" method="GET">
+      <input type="text" name="q" value={query} placeholder="Szukaj portów... (7zip, nginx, hyprland, rust...)" autocomplete="off" />
+      <button type="submit">🔍 Szukaj</button>
+    </form>
+
+    {error && <div class="error-banner">{error}</div>}
+
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-num">{ports.length}</span>
+        <span class="stat-label">Portów</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">🌐</span>
+        <span class="stat-label">main / testing / community</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">🔄</span>
+        <span class="stat-label">Live z GitHub</span>
+      </div>
+    </div>
+
+    <div class="branch-tabs">
+      <span class="branch-tab active">main</span>
+      <span class="branch-tab">testing</span>
+      <span class="branch-tab">community</span>
+    </div>
+
+    {ports.length === 0 ? (
+      <p style="text-align:center;padding:3rem;color:#808090;">
+        {query ? '🔍 Brak wyników. Spróbuj innego zapytania.' : '📭 Ładowanie portów...'}
+      </p>
+    ) : (
+      <div class="port-grid">
+        {ports.map(port => <PortCard port={port} />)}
+      </div>
+    )}
+
+    <div class="howto-section">
+      <h2>📖 Jak używać PagPorts?</h2>
+      <code class="block">
+        <span class="comment"># Sklonuj repozytorium</span>
+        git clone https://github.com/PaganLinux/pagports.git
+        cd pagports/main
+
+        <span class="comment"># Zbuduj pakiet</span>
+        pagbuild build 7zip
+
+        <span class="comment"># Podpisz i wyślij do repo</span>
+        pagbuild sign 7zip
+        PAGBUILD_API_TOKEN=twój_token pagbuild upload packages/7zip-*.pag --repo extra
+      </code>
+
+      <h2 style="margin-top:1.5rem;">Struktura <code>pagbuild</code></h2>
+      <code class="block">
+        <span class="keyword">maintainer</span>=<span style="color:#10b981;">"Imię &lt;email&gt;"</span>
+        <span class="keyword">pkgname</span>=<span style="color:#10b981;">myapp</span>
+        <span class="keyword">pkgver</span>=<span style="color:#10b981;">1.0.0</span>
+        <span class="keyword">pkgrel</span>=<span style="color:#10b981;">1</span>
+        <span class="keyword">pkgdesc</span>=<span style="color:#10b981;">"Opis pakietu"</span>
+        <span class="keyword">arch</span>=<span style="color:#10b981;">"x86_64"</span>
+        <span class="keyword">license</span>=<span style="color:#10b981;">"MIT"</span>
+        <span class="keyword">source</span>=<span style="color:#10b981;">"https://example.com/myapp-$pkgver.tar.gz"</span>
+
+        <span class="keyword">build()</span> {
+            ./configure --prefix=/usr && make
+        }
+
+        <span class="keyword">package()</span> {
+            make DESTDIR=<span style="color:#a78bfa;">"$pkgdir"</span> install
+        }
+
+        <span class="keyword">sha512sums</span>=<span style="color:#10b981;">"abc123...  myapp-1.0.0.tar.gz"</span>
+      </code>
+    </div>
+  </div>
+
+  <footer>
+    PaganLinux © 2026 · <a href="https://paganlinux.eu">paganlinux.eu</a> ·
+    <a href="https://github.com/PaganLinux/pagports">GitHub</a> ·
+    Dane z GitHub API — dynamiczne
+  </footer>
+</body>
+</html>

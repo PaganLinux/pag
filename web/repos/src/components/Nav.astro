@@ -1,0 +1,73 @@
+---
+// Komponent: Nawigacja
+import { getStats } from '../lib/api';
+
+let stats;
+try { stats = await getStats(); } catch { stats = { total_packages: '...' }; }
+---
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <span class="logo-icon">📦</span>
+      <span>repos.paganlinux.eu</span>
+    </a>
+    <div class="nav-links">
+      <a href="https://paganlinux.eu">← paganlinux.eu</a>
+      <a href="https://pagports.paganlinux.eu">PagPorts</a>
+      <a href="/api/v1/index.json" target="_blank">API</a>
+      <span class="pkg-count">{stats.total_packages} pakietów</span>
+    </div>
+  </div>
+</nav>
+
+<style>
+  nav {
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    padding: 0 2rem;
+  }
+  .logo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .logo-icon { font-size: 1.4rem; }
+  .nav-links { display: flex; gap: 1.2rem; align-items: center; }
+  .nav-links a {
+    color: #b0b0c0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent2); }
+  .pkg-count {
+    background: rgba(124,58,237,0.15);
+    color: var(--accent2);
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .nav-links a:not(.pkg-count) { display: none; }
+  }
+</style>

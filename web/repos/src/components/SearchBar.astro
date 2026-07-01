@@ -1,0 +1,59 @@
+---
+// Komponent: Live Search z debounce i wynikami
+---
+
+<form id="search-form" class="search-bar" action="/" method="GET">
+  <input
+    id="search-input"
+    type="text"
+    name="q"
+    placeholder="Szukaj pakietów... (nginx, python, rust, hyprland...)"
+    autocomplete="off"
+    autofocus
+  />
+  <button type="submit">🔍 Szukaj</button>
+</form>
+
+<style>
+  .search-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    max-width: 700px;
+  }
+  .search-bar input {
+    flex: 1;
+    padding: 0.85rem 1.2rem;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .search-bar input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  }
+  .search-bar button {
+    padding: 0.85rem 1.5rem;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .search-bar button:hover {
+    background: #6d28d9;
+  }
+
+  @media (max-width: 600px) {
+    .search-bar { flex-direction: column; }
+    .search-bar button { width: 100%; }
+  }
+</style>

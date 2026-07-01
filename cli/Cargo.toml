@@ -1,0 +1,93 @@
+[package]
+name = "pag"
+version = "0.1.0"
+edition = "2024"
+description = "PaganLinux Package Manager - zaawansowany, bezpieczny i szybki menedżer pakietów"
+authors = ["PaganLinux Team"]
+license = "GPL-2.0-only"
+repository = "https://github.com/PaganLinux/pag"
+homepage = "https://paganlinux.eu"
+
+[[bin]]
+name = "pag"
+path = "src/main.rs"
+
+[dependencies]
+# CLI framework
+clap = { version = "4.5", features = ["derive", "cargo", "env", "unicode", "wrap_help"] }
+indicatif = "0.17"
+console = "0.15"
+dialoguer = "0.11"
+colored = "3.0"
+crossterm = "0.28"
+
+# Async runtime
+tokio = { version = "1.42", features = ["full"] }
+
+# HTTP client
+reqwest = { version = "0.12", features = ["rustls-tls", "stream", "gzip", "brotli", "json"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# Compression
+flate2 = "1.0"
+xz2 = "0.1"
+zstd = { version = "0.13", features = ["zstdmt"] }
+tar = "0.4"
+
+# Crypto & signing
+ring = "0.17"
+sequoia-openpgp = { version = "1.21", features = ["crypto-nettle", "compression-deflate"] }
+sha2 = "0.10"
+base64 = "0.22"
+
+# Database
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# System
+nix = { version = "0.29", features = ["fs", "process", "mount"] }
+libc = "0.2"
+walkdir = "2.5"
+tempfile = "3.14"
+dirs = "5.0"
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Regex & parsing
+regex = "1.11"
+nom = "7.1"
+
+# Internationalization
+fluent = "0.16"
+fluent-bundle = "0.15"
+unic-langid = { version = "0.9", features = ["macros"] }
+intl-memoizer = "0.5"
+
+# Async utilities
+futures = "0.3"
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Hash
+blake3 = "1.5"
+hex = "0.4"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 1

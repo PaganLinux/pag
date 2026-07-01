@@ -1,0 +1,192 @@
+---
+// paganlinux.eu/docs — Dokumentacja (multilang)
+import Nav from '../components/Nav.astro';
+import { t, getLocaleFromUrl } from '../i18n/utils';
+
+const url = new URL(Astro.request.url);
+const locale = getLocaleFromUrl(url);
+---
+
+<!DOCTYPE html>
+<html lang={locale}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{t(locale, 'docs.title')}</title>
+  <meta name="description" content={t(locale, 'docs.subtitle')} />
+  <style>
+    :root {
+      --bg: #0a0a0f; --bg2: #12121a; --fg: #e0e0e0;
+      --accent: #7c3aed; --accent2: #a78bfa; --green: #10b981;
+      --card: #1a1a2e; --border: #2a2a3e; --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--fg); line-height: 1.6; min-height: 100vh;
+    }
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.4rem; margin: 2rem 0 0.8rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+    p, li { color: #b0b0c0; line-height: 1.7; margin-bottom: 0.8rem; }
+    code {
+      background: var(--card); padding: 0.15rem 0.4rem; border-radius: 4px;
+      font-family: 'Fira Code', monospace; font-size: 0.88rem; color: var(--accent2);
+    }
+    pre {
+      background: #0a0a0f; border: 1px solid var(--border);
+      padding: 1.2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0;
+    }
+    pre code {
+      background: none; padding: 0; color: var(--accent2);
+      font-size: 0.85rem; line-height: 1.7;
+    }
+    .comment { color: #6b7280; }
+    .doc-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem; margin: 2rem 0;
+    }
+    .doc-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem; text-decoration: none;
+      color: var(--fg); transition: border-color 0.2s;
+    }
+    .doc-card:hover { border-color: var(--accent); }
+    .doc-card h3 { margin: 0 0 0.5rem; color: var(--accent2); font-size: 1.1rem; border: none; padding: 0; }
+    .doc-card p { color: #808090; font-size: 0.9rem; margin: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--border); color: #808090; }
+    td { padding: 0.4rem 0.5rem; }
+    ul { margin-left: 1.5rem; }
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: #606070; font-size: 0.85rem; margin-top: 3rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <Nav />
+
+  <div class="container">
+    <h1>{t(locale, 'docs.title')}</h1>
+    <p>{t(locale, 'docs.subtitle')}</p>
+
+    <div class="doc-grid">
+      <a href="#quickstart" class="doc-card">
+        <h3>{t(locale, 'docs.quickstart')}</h3>
+        <p>{t(locale, 'docs.quickstart.desc')}</p>
+      </a>
+      <a href="#pag-cli" class="doc-card">
+        <h3>{t(locale, 'docs.pag')}</h3>
+        <p>{t(locale, 'docs.pag.desc')}</p>
+      </a>
+      <a href="#pagbuild" class="doc-card">
+        <h3>{t(locale, 'docs.build')}</h3>
+        <p>{t(locale, 'docs.build.desc')}</p>
+      </a>
+      <a href="#config" class="doc-card">
+        <h3>{t(locale, 'docs.config')}</h3>
+        <p>{t(locale, 'docs.config.desc')}</p>
+      </a>
+      <a href="#repo" class="doc-card">
+        <h3>{t(locale, 'docs.repo')}</h3>
+        <p>{t(locale, 'docs.repo.desc')}</p>
+      </a>
+      <a href="#security" class="doc-card">
+        <h3>{t(locale, 'docs.security')}</h3>
+        <p>{t(locale, 'docs.security.desc')}</p>
+      </a>
+    </div>
+
+    <h2 id="quickstart">{t(locale, 'docs.quickstart')}</h2>
+    <pre><code><span class="comment">{t(locale, 'docs.quickstart.code')}</span>
+curl -fsSL https://paganlinux.eu/install.sh | bash
+
+<span class="comment"># Init</span>
+sudo pag init
+
+<span class="comment"># Update indexes</span>
+sudo pag update
+
+<span class="comment"># Install packages</span>
+sudo pag install nginx postgresql redis
+
+<span class="comment"># Search</span>
+pag search python
+
+<span class="comment"># Stats</span>
+pag stats</code></pre>
+
+    <h2 id="pag-cli">{t(locale, 'docs.cli.table')}</h2>
+    <table>
+      <thead><tr><th>Komenda</th><th>Opis</th></tr></thead>
+      <tbody>
+        <tr><td><code>pag install</code></td><td>{t(locale, 'docs.cli.install')}</td></tr>
+        <tr><td><code>pag remove</code></td><td>{t(locale, 'docs.cli.remove')}</td></tr>
+        <tr><td><code>pag update</code></td><td>{t(locale, 'docs.cli.update')}</td></tr>
+        <tr><td><code>pag search</code></td><td>{t(locale, 'docs.cli.search')}</td></tr>
+        <tr><td><code>pag info</code></td><td>{t(locale, 'docs.cli.info')}</td></tr>
+        <tr><td><code>pag list</code></td><td>{t(locale, 'docs.cli.list')}</td></tr>
+        <tr><td><code>pag check</code></td><td>{t(locale, 'docs.cli.check')}</td></tr>
+        <tr><td><code>pag clean</code></td><td>{t(locale, 'docs.cli.clean')}</td></tr>
+        <tr><td><code>pag flatpak</code></td><td>{t(locale, 'docs.cli.flatpak')}</td></tr>
+        <tr><td><code>pag repo</code></td><td>{t(locale, 'docs.cli.repo')}</td></tr>
+        <tr><td><code>pag key</code></td><td>{t(locale, 'docs.cli.key')}</td></tr>
+        <tr><td><code>pag query</code></td><td>{t(locale, 'docs.cli.query')}</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="pagbuild">{t(locale, 'docs.build')}</h2>
+    <pre><code><span class="comment">{t(locale, 'docs.build.code')}</span>
+pagbuild new my-package -v 1.0.0
+
+<span class="comment"># Build</span>
+pagbuild build my-package
+pagbuild build --clean --container 7zip
+
+<span class="comment"># Sign with GPG</span>
+pagbuild sign -k 0xABC12345 packages/my-package*.pag
+
+<span class="comment"># Upload to repo</span>
+PAGBUILD_API_TOKEN=token pagbuild upload packages/*.pag --repo extra</code></pre>
+
+    <h2 id="config">{t(locale, 'docs.config')}</h2>
+    <pre><code>[general]
+root = "/"
+db_path = "/var/lib/pag/db.sqlite"
+cache_path = "/var/cache/pag"
+parallel_downloads = 5
+lang = "pl"
+
+[[repositories]]
+name = "core"
+url = "https://repos.paganlinux.eu/core"
+enabled = true
+priority = 0
+
+[network]
+timeout = 30
+retries = 3
+
+[security]
+require_signatures = true
+verify_checksums = true</code></pre>
+
+    <h2 id="security">{t(locale, 'docs.sec.title')}</h2>
+    <ul>
+      <li>{t(locale, 'docs.sec.li1')}</li>
+      <li>{t(locale, 'docs.sec.li2')}</li>
+      <li>{t(locale, 'docs.sec.li3')}</li>
+      <li>{t(locale, 'docs.sec.li4')}</li>
+      <li>{t(locale, 'docs.sec.li5')}</li>
+    </ul>
+  </div>
+
+  <footer>
+    PaganLinux © 2026 · <a href="https://github.com/PaganLinux/pag">GitHub</a> ·
+    <a href="/download">{t(locale, 'nav.download')}</a>
+  </footer>
+</body>
+</html>

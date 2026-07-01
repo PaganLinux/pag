@@ -1,0 +1,164 @@
+---
+// paganlinux.eu/download — dynamiczna strona pobierania (multilang)
+import Nav from '../components/Nav.astro';
+import { t, getLocaleFromUrl } from '../i18n/utils';
+
+const url = new URL(Astro.request.url);
+const locale = getLocaleFromUrl(url);
+
+const releases = [
+  {
+    version: '2026.07',
+    date: '2026-07-01',
+    type: 'stable',
+    archs: ['x86_64', 'aarch64'],
+    isoSize: '1.8 GiB',
+    sha512: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855...',
+  },
+  {
+    version: '2026.06',
+    date: '2026-06-01',
+    type: 'stable',
+    archs: ['x86_64'],
+    isoSize: '1.7 GiB',
+    sha512: 'a1b2c3d4...',
+  },
+];
+---
+
+<!DOCTYPE html>
+<html lang={locale}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{t(locale, 'dl.title')}</title>
+  <meta name="description" content={t(locale, 'dl.subtitle')} />
+  <style>
+    :root {
+      --bg: #0a0a0f; --bg2: #12121a; --fg: #e0e0e0;
+      --accent: #7c3aed; --accent2: #a78bfa; --green: #10b981;
+      --card: #1a1a2e; --border: #2a2a3e; --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--fg); line-height: 1.6; min-height: 100vh;
+    }
+    .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #808090; margin-bottom: 2rem; }
+    .release-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem; margin-bottom: 1.5rem;
+    }
+    .release-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem;
+    }
+    .release-version {
+      font-size: 1.5rem; font-weight: 700; color: var(--accent2);
+    }
+    .release-badge {
+      background: rgba(16,185,129,0.2); color: var(--green);
+      padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+    }
+    .release-date { color: #808090; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .release-meta {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .meta-item { display: flex; flex-direction: column; }
+    .meta-label { font-size: 0.8rem; color: #808090; text-transform: uppercase; }
+    .meta-value { font-size: 0.95rem; color: var(--fg); font-family: 'Fira Code', monospace; }
+    .download-links { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .dl-btn {
+      padding: 0.8rem 1.8rem; border-radius: 8px; font-weight: 600;
+      text-decoration: none; display: inline-flex; align-items: center;
+      gap: 0.5rem; transition: all 0.2s;
+    }
+    .dl-primary { background: var(--accent); color: white; }
+    .dl-primary:hover { background: #6d28d9; transform: translateY(-2px); }
+    .dl-secondary {
+      background: transparent; border: 1px solid var(--border); color: var(--fg);
+    }
+    .dl-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
+    .install-script {
+      background: #0a0a0f; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem; margin-top: 2rem;
+    }
+    .install-script h3 { margin-bottom: 0.8rem; color: var(--green); }
+    .install-script code {
+      display: block; font-family: 'Fira Code', monospace;
+      color: var(--accent2); font-size: 0.85rem; line-height: 1.7;
+    }
+    .install-script .comment { color: #6b7280; }
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: #606070; font-size: 0.85rem; margin-top: 3rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <Nav />
+
+  <div class="container">
+    <h1>{t(locale, 'dl.title')}</h1>
+    <p class="subtitle">{t(locale, 'dl.subtitle')}</p>
+
+    {releases.map(release => (
+      <div class="release-card">
+        <div class="release-header">
+          <span class="release-version">PaganLinux {release.version}</span>
+          <span class="release-badge">{release.type}</span>
+        </div>
+        <div class="release-date">📅 {t(locale, 'dl.released')}: {release.date}</div>
+        <div class="release-meta">
+          <div class="meta-item">
+            <span class="meta-label">{t(locale, 'dl.isoSize')}</span>
+            <span class="meta-value">{release.isoSize}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">{t(locale, 'dl.archs')}</span>
+            <span class="meta-value">{release.archs.join(', ')}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">SHA512</span>
+            <span class="meta-value" style="font-size:0.75rem;">{release.sha512.substring(0, 40)}...</span>
+          </div>
+        </div>
+        <div class="download-links">
+          {release.archs.map(arch => (
+            <a href={`/iso/paganlinux-${release.version}-${arch}.iso`} class="dl-btn dl-primary">
+              📥 {arch}
+            </a>
+          ))}
+          <a href={`/iso/paganlinux-${release.version}-x86_64.iso.sig`} class="dl-btn dl-secondary">
+            {t(locale, 'dl.signature')}
+          </a>
+          <a href="/docs" class="dl-btn dl-secondary">
+            {t(locale, 'dl.notes')}
+          </a>
+        </div>
+      </div>
+    ))}
+
+    <div class="install-script">
+      <h3>{t(locale, 'dl.altTitle')}</h3>
+      <code>
+        <span class="comment">{t(locale, 'dl.altDesc')}</span>
+        curl -fsSL https://paganlinux.eu/install.sh | bash
+
+        <span class="comment">{t(locale, 'dl.altManual')}</span>
+        curl -LO https://paganlinux.eu/iso/paganlinux-latest.iso
+        gpg --verify paganlinux-latest.iso.sig
+        dd if=paganlinux-latest.iso of=/dev/sdX bs=4M status=progress
+      </code>
+    </div>
+  </div>
+
+  <footer>
+    PaganLinux © 2026 · <a href="/">{t(locale, 'nav.docs')}</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "paganlinux-web",
+  "private": true,
+  "scripts": {
+    "dev:main": "cd web/main && astro dev",
+    "dev:repos": "cd web/repos && astro dev",
+    "dev:ports": "cd web/ports && astro dev",
+    "build:main": "cd web/main && astro build",
+    "build:repos": "cd web/repos && astro build",
+    "build:ports": "cd web/ports && astro build",
+    "start:main": "cd web/main && node dist/server/entry.mjs",
+    "start:repos": "cd web/repos && node dist/server/entry.mjs",
+    "start:ports": "cd web/ports && node dist/server/entry.mjs"
+  }
+}

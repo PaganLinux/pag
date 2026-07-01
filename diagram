@@ -1,0 +1,24 @@
+graph TB
+    subgraph "CLI Tools"
+        PAG[pag - Package Manager<br/>Rust, szybki, bezpieczny]
+        PAGBUILD[pagbuild - Build System<br/>Konteneryzowane budowanie]
+    end
+    
+    subgraph "Web"
+        MAIN[paganlinux.eu<br/>Strona główna + docs]
+        REPOS[repos.paganlinux.eu<br/>Repo pakietów]
+        PORTS[pagports.paganlinux.eu<br/>Porty / źródła]
+    end
+    
+    subgraph "Infra"
+        REPO[Repozytorium .pag<br/>Podpisane pakiety]
+        BUILD[Build Farm<br/>CI/CD budowanie]
+        CDN[CDN / Mirror]
+    end
+    
+    PAG -->|instaluje| REPO
+    PAGBUILD -->|buduje .pag| REPO
+    PAGBUILD -->|pobiera| PORTS
+    REPOS -->|serwuje| REPO
+    PORTS -->|serwuje| PAGBUILD
+    MAIN -->|dokumentacja| PAG

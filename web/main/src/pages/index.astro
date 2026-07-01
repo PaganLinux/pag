@@ -1,0 +1,210 @@
+---
+// paganlinux.eu — Strona główna (multilang)
+import Nav from '../components/Nav.astro';
+import LiveStats from '../components/LiveStats.astro';
+import { t, getLocaleFromUrl } from '../i18n/utils';
+
+const url = new URL(Astro.request.url);
+const locale = getLocaleFromUrl(url);
+---
+
+<!DOCTYPE html>
+<html lang={locale}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaganLinux — {t(locale, 'hero.subtitle1')}</title>
+  <meta name="description" content={t(locale, 'hero.subtitle2')} />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <style>
+    :root {
+      --bg: #0a0a0f; --bg2: #12121a; --fg: #e0e0e0;
+      --accent: #7c3aed; --accent2: #a78bfa; --green: #10b981;
+      --card: #1a1a2e; --border: #2a2a3e; --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--fg); line-height: 1.7;
+      min-height: 100vh;
+    }
+    .hero {
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.18), transparent 65%);
+    }
+    .hero h1 {
+      font-size: 3.8rem; font-weight: 900; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent2) 0%, #ec4899 50%, #f59e0b 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.25rem; color: #a0a0b0; max-width: 650px;
+      margin: 0 auto 2.5rem; line-height: 1.7;
+    }
+    .hero p strong { color: var(--accent2); }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 0.9rem 2.2rem; border-radius: 10px; font-weight: 600;
+      font-size: 1rem; text-decoration: none; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-primary {
+      background: var(--accent); color: white;
+    }
+    .btn-primary:hover {
+      background: #6d28d9; transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(124,58,237,0.35);
+    }
+    .btn-outline {
+      background: transparent; color: var(--fg); border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-2px); }
+    .features { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
+    .features h2 { text-align: center; font-size: 2rem; margin-bottom: 3rem; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .feature-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    .feature-card p { color: #9090a0; font-size: 0.95rem; line-height: 1.65; }
+    .install {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); max-width: 850px; margin: 4rem auto; padding: 2.5rem;
+    }
+    .install h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+    .install code {
+      display: block; background: #0a0a0f; border: 1px solid var(--border);
+      padding: 1.2rem; border-radius: 8px; font-family: 'Fira Code', monospace;
+      color: var(--accent2); font-size: 0.88rem; overflow-x: auto;
+      line-height: 1.7;
+    }
+    .install .comment { color: #6b7280; }
+    .install .cmd { color: var(--green); }
+    .cta {
+      text-align: center; padding: 4rem 2rem;
+      background: radial-gradient(ellipse at 50% 100%, rgba(124,58,237,0.1), transparent 60%);
+    }
+    .cta h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .cta p { color: #9090a0; margin-bottom: 2rem; }
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: #606070; font-size: 0.9rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .hero p { font-size: 1.05rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <Nav />
+
+  <main>
+    <section class="hero">
+      <h1>{t(locale, 'hero.title')}</h1>
+      <p>
+        {t(locale, 'hero.subtitle1')}<br/>
+        <strong>{t(locale, 'hero.subtitle2')}</strong><br/>
+        {t(locale, 'hero.subtitle3')}
+      </p>
+      <div class="hero-buttons">
+        <a href="/download" class="btn btn-primary">{t(locale, 'hero.download')}</a>
+        <a href="/docs" class="btn btn-outline">{t(locale, 'hero.docs')}</a>
+        <a href="https://repos.paganlinux.eu" class="btn btn-outline">{t(locale, 'hero.repo')}</a>
+        <a href="https://github.com/PaganLinux/pag" class="btn btn-outline">{t(locale, 'hero.github')}</a>
+      </div>
+    </section>
+
+    <LiveStats />
+
+    <section class="features">
+      <h2>{t(locale, 'features.title')}</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="feature-icon">⚡</span>
+          <h3>{t(locale, 'features.fast.title')}</h3>
+          <p>{t(locale, 'features.fast.desc')}</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🔐</span>
+          <h3>{t(locale, 'features.secure.title')}</h3>
+          <p>{t(locale, 'features.secure.desc')}</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📦</span>
+          <h3>{t(locale, 'features.packages.title')}</h3>
+          <p>{t(locale, 'features.packages.desc')}</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🏗️</span>
+          <h3>{t(locale, 'features.build.title')}</h3>
+          <p>{t(locale, 'features.build.desc')}</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🌍</span>
+          <h3>{t(locale, 'features.i18n.title')}</h3>
+          <p>{t(locale, 'features.i18n.desc')}</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🐧</span>
+          <h3>{t(locale, 'features.systemd.title')}</h3>
+          <p>{t(locale, 'features.systemd.desc')}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="install">
+      <h2>{t(locale, 'install.title')}</h2>
+      <p style="color:#9090a0;margin-bottom:1rem;">{t(locale, 'install.hint')}</p>
+      <code>
+        <span class="comment">{t(locale, 'install.step1')}</span>
+        <span class="cmd">$ curl -LO https://paganlinux.eu/iso/paganlinux-latest.iso</span>
+        <span class="cmd">$ curl -LO https://paganlinux.eu/iso/paganlinux-latest.iso.sig</span>
+        <span class="cmd">$ gpg --verify paganlinux-latest.iso.sig</span>
+
+        <span class="comment">{t(locale, 'install.step2')}</span>
+        <span class="cmd">$ curl -fsSL https://paganlinux.eu/install.sh | bash</span>
+        <span class="cmd">$ sudo pag init && pag update</span>
+        <span class="cmd">$ sudo pag install nginx postgresql redis</span>
+
+        <span class="comment">{t(locale, 'install.step3')}</span>
+        <span class="cmd">$ sudo pag repo add core https://repos.paganlinux.eu/core</span>
+        <span class="cmd">$ sudo pag repo add extra https://repos.paganlinux.eu/extra</span>
+      </code>
+    </section>
+
+    <section class="cta">
+      <h2>{t(locale, 'cta.title')}</h2>
+      <p>{t(locale, 'cta.desc')}</p>
+      <div class="hero-buttons">
+        <a href="/download" class="btn btn-primary">{t(locale, 'cta.download')}</a>
+        <a href="https://github.com/PaganLinux/pag" class="btn btn-outline">{t(locale, 'cta.github')}</a>
+        <a href="https://pagports.paganlinux.eu" class="btn btn-outline">{t(locale, 'cta.ports')}</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      PaganLinux © 2026 ·
+      <a href="https://github.com/PaganLinux">GitHub</a> ·
+      <a href="https://repos.paganlinux.eu">repos.paganlinux.eu</a> ·
+      <a href="https://pagports.paganlinux.eu">pagports.paganlinux.eu</a> ·
+      <a href="/docs">{t(locale, 'nav.docs')}</a>
+    </p>
+    <p style="margin-top:0.5rem;">{t(locale, 'footer.text')}</p>
+  </footer>
+</body>
+</html>
