@@ -1,5 +1,6 @@
 ---
-// pagports.paganlinux.eu — Strona główna z paginacją
+// pagports.paganlinux.eu — Strona główna z paginacją (prerender przy buildzie)
+export const prerender = true;
 import Nav from '../components/Nav.astro';
 import PortCard from '../components/PortCard.astro';
 import { listPorts } from '../lib/github';
