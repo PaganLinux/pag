@@ -5,5 +5,5 @@ export default defineConfig({
   site: 'https://paganlinux.eu',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
-  server: { port: 3001, host: '0.0.0.0' },
+  server: { port: 3004, host: '0.0.0.0' },
 });
