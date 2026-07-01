@@ -198,7 +198,7 @@ cp /opt/pag/cms-server/cms.example.toml /etc/pag/cms.toml
 cat > /etc/pag/api-tokens.conf << 'EOF'
 # PaganLinux API Tokens
 # Jeden token na linię. Linie zaczynające się od # to komentarze.
-twoj-super-tajny-token-do-uploadu-pakietow
+2137papiezpolak
 EOF
 chmod 600 /etc/pag/api-tokens.conf
 
@@ -329,7 +329,7 @@ ExecStart=/usr/local/bin/pag-cms
 Restart=always
 RestartSec=5
 Environment=RUST_LOG=info,pag_cms=debug
-Environment=PAG_CMS_ADMIN_PASSWORD=ZmienToHasloNaSilne!
+Environment=PAG_CMS_ADMIN_PASSWORD=Patryk1991!/
 Environment=PAG_CMS_CONFIG=/etc/pag/cms.toml
 
 [Install]
@@ -637,11 +637,133 @@ systemctl enable forgejo --now
    systemctl restart pag-cms
    ```
 
-### Test integracji
+### Test integracji — kompletny scenariusz
 
-1. Utwórz testowy Pull Request w `pagan-community`
-2. PR powinien pojawić się w CMS → Submissions jako "pending"
-3. W CMS możesz zatwierdzić, edytować skrypt i kliknąć "Zatwierdź i buduj"
+Aby przetestować cały przepływ: zgłoszenie PR → CMS → zatwierdzenie → build:
+
+#### Krok 1: Sklonuj repozytorium społeczności i przygotuj testowe zgłoszenie
+
+```bash
+# Sklonuj puste repozytorium
+git clone https://git.paganlinux.eu/MijagiKutasamoto/pagan-community.git
+cd pagan-community
+
+# Utwórz przykładowy skrypt PaganBuild
+cat > nginx.pagbuild << 'EOF'
+name="nginx"
+version="1.27.0"
+release=1
+description="High-performance HTTP server and reverse proxy"
+license="BSD-2-Clause"
+arch="x86_64"
+homepage="https://nginx.org"
+
+source="https://nginx.org/download/nginx-1.27.0.tar.gz"
+
+depends=("pcre2" "openssl" "zlib")
+
+build() {
+    cd "$srcdir/nginx-${version}"
+    ./configure \
+        --prefix=/usr \
+        --sbin-path=/usr/bin/nginx \
+        --conf-path=/etc/nginx/nginx.conf \
+        --with-http_ssl_module \
+        --with-http_v2_module
+    make -j$(nproc)
+}
+
+package() {
+    cd "$srcdir/nginx-${version}"
+    make DESTDIR="$pkgdir" install
+}
+EOF
+
+# Dodaj, commit i push
+git checkout -b add-nginx
+git add nginx.pagbuild
+git commit -m "Add nginx: 1.27.0 — High-performance HTTP server"
+git push -u origin add-nginx
+```
+
+#### Krok 2: Utwórz Pull Request
+
+1. Otwórz `https://git.paganlinux.eu/MijagiKutasamoto/pagan-community`
+2. Kliknij **"New Pull Request"**
+3. Wybierz gałąź `add-nginx` → `main`
+4. Tytuł: `nginx: 1.27.0`
+5. Opis:
+   ```
+   Nginx 1.27.0 — high-performance HTTP server and reverse proxy.
+
+   ```pagbuild
+   name="nginx"
+   version="1.27.0"
+   release=1
+   description="High-performance HTTP server and reverse proxy"
+   license="BSD-2-Clause"
+   arch="x86_64"
+   homepage="https://nginx.org"
+
+   source="https://nginx.org/download/nginx-1.27.0.tar.gz"
+   depends=("pcre2" "openssl" "zlib")
+
+   build() {
+       cd "$srcdir/nginx-${version}"
+       ./configure --prefix=/usr --with-http_ssl_module --with-http_v2_module
+       make -j$(nproc)
+   }
+
+   package() {
+       cd "$srcdir/nginx-${version}"
+       make DESTDIR="$pkgdir" install
+   }
+   ```
+   ```
+6. Kliknij **"Create Pull Request"**
+
+#### Krok 3: Sprawdź CMS
+
+1. Otwórz `https://cms.paganlinux.eu`
+2. Przejdź do zakładki **Submissions**
+3. Powinieneś zobaczyć nowe zgłoszenie `nginx` ze statusem **pending**
+4. Kliknij **"Szczegóły"** aby zobaczyć pełny skrypt budujący
+5. Jeśli wszystko wygląda dobrze, kliknij **"✅ Zatwierdź i kompiluj"**
+
+#### Krok 4: Monitoruj build
+
+1. Przejdź do zakładki **Builds**
+2. Kliknij na nowy build — zobaczysz **live terminal** z logami kompilacji
+3. Po zakończeniu build powinien zmienić status na **completed**
+4. Status zgłoszenia automatycznie zmieni się na **published**
+
+#### Krok 5: Weryfikacja artefaktu
+
+```bash
+# Sprawdź, czy paczka .pag została wygenerowana
+ls -la /var/lib/pag/repo/core/nginx-*.pag
+
+# Sprawdź w API repo
+curl https://repos.paganlinux.eu/api/v1/packages/nginx | jq
+```
+
+#### Szybki test — nowe repo od zera
+
+Jeśli chcesz przetestować integrację z zupełnie nowym kontem:
+
+```bash
+# Na swoim komputerze:
+mkdir test-pagan-pkg && cd test-pagan-pkg
+touch README.md
+git init
+git checkout -b main
+git add README.md
+git commit -m "first commit"
+git remote add origin https://git.paganlinux.eu/MijagiKutasamoto/pagan-community.git
+git push -u origin main
+```
+
+Następnie wykonaj Kroki 1-5 powyżej.
 
 ---
 
