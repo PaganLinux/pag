@@ -5,7 +5,7 @@ const GITHUB_API = 'https://api.github.com';
 const REPO_OWNER = import.meta.env.PAGPORTS_REPO_OWNER || 'PaganLinux';
 const REPO_NAME = import.meta.env.PAGPORTS_REPO_NAME || 'pagports';
 const BRANCH = import.meta.env.PAGPORTS_BRANCH || 'main';
-const GITHUB_TOKEN = import.meta.env.GITHUB_TOKEN || '';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 
 export interface PortEntry {
   name: string;
