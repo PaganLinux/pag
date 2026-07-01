@@ -4,6 +4,7 @@ import { isAuthenticated } from '../../../lib/auth';
 import { exec } from 'node:child_process';
 
 export const prerender = false;
+export const csrf = false;
 
 export const POST: APIRoute = async ({ request, redirect }) => {
   if (!isAuthenticated(request)) {
