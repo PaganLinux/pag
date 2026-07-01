@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Video Decode and Presentation API
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libvdpau
+pkgver=1.5
+pkgrel=0
+pkgdesc="Video Decode and Presentation API"
+url="https://gitlab.freedesktop.org/vdpau/libvdpau"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc xorgproto libx11-dev libxext-dev"
+depends="xorgproto libx11 libxext"
+subpackages="libvdpau-dev"
+source="https://gitlab.freedesktop.org/vdpau/libvdpau/-/archive/1.5/libvdpau-1.5.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

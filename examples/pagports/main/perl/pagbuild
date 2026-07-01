@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Perl programming language
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=perl
+pkgver=5.40.0
+pkgrel=0
+pkgdesc="Perl programming language"
+url="https://www.perl.org/"
+arch="x86_64"
+license="GPL-1.0-or-later OR Artistic-1.0"
+makedepends="gcc make"
+depends=""
+subpackages="perl-doc"
+source="https://www.cpan.org/src/5.0/perl-5.40.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./Configure -des -Dprefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

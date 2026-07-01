@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# PulseAudio sound server
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=pulseaudio
+pkgver=17.0
+pkgrel=0
+pkgdesc="PulseAudio sound server"
+url="https://www.freedesktop.org/wiki/Software/PulseAudio/"
+arch="x86_64"
+license="LGPL-2.1-or-later"
+makedepends="meson ninja gcc dbus-dev"
+depends="dbus"
+subpackages="pulseaudio-dev"
+source="https://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-17.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr -Ddaemon=false && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Hyprland graphics utilities
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=hyprgraphics
+pkgver=0.1.1
+pkgrel=0
+pkgdesc="Hyprland graphics utilities"
+url="https://github.com/hyprwm/hyprgraphics"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="cmake gcc make"
+depends="cairo pixman"
+subpackages="hyprgraphics-dev"
+source="https://github.com/hyprwm/hyprgraphics/archive/v0.1.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

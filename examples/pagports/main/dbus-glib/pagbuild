@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# GLib bindings for D-Bus
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=dbus-glib
+pkgver=0.112
+pkgrel=0
+pkgdesc="GLib bindings for D-Bus"
+url="https://dbus.freedesktop.org/doc/dbus-glib/"
+arch="x86_64"
+license="AFL-2.1 OR GPL-2.0-or-later"
+makedepends="gcc make pkgconfig dbus-dev"
+depends="dbus"
+subpackages="dbus-glib-dev"
+source="https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.112.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

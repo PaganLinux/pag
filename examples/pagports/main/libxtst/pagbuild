@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# X Test extension library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libxtst
+pkgver=1.2.5
+pkgrel=0
+pkgdesc="X Test extension library"
+url="https://www.x.org/"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make xorgproto libx11-dev libxext-dev libxi-dev"
+depends="xorgproto libx11 libxext libxi"
+subpackages="libxtst-dev"
+source="https://www.x.org/releases/individual/lib/libXtst-1.2.5.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

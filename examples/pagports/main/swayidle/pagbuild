@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Idle management daemon for Wayland
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=swayidle
+pkgver=1.8.0
+pkgrel=0
+pkgdesc="Idle management daemon for Wayland"
+url="https://github.com/swaywm/swayidle"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev wayland-protocols"
+depends="wayland"
+source="https://github.com/swaywm/swayidle/archive/1.8.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

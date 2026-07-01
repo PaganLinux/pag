@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Dynamic display configuration for Wayland
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=kanshi
+pkgver=1.7.0
+pkgrel=0
+pkgdesc="Dynamic display configuration for Wayland"
+url="https://sr.ht/~emersion/kanshi/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev"
+depends="wayland"
+source="https://git.sr.ht/~emersion/kanshi/archive/v1.7.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

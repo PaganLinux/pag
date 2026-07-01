@@ -1,8 +1,5 @@
-# PAGBUILD for PaganLinux package repository
-# Meta-package: KDE Applications 26.04.2
-#
-# Poprawiona wersja — zgodna z parserem pagbuild
-# Zmienne jako stringi (nie bash array), subpakiety przez subpackages
+# PaganLinux Build Script (pagbuild)
+# KDE Applications meta package
 
 maintainer="PaganLinux Team <team@paganlinux.eu>"
 pkgname=kde-applications
@@ -12,52 +9,13 @@ pkgdesc="KDE Applications meta package"
 url="https://kde.org/applications/"
 arch="x86_64"
 license="GPL-3.0-or-later"
-
-# Meta-pakiet — tylko zależności runtime, zero build-deps
 makedepends=""
-depends="
-    kde-applications-accessibility
-    kde-applications-admin
-    kde-applications-base
-    kde-applications-edu
-    kde-applications-games
-    kde-applications-graphics
-    kde-applications-multimedia
-    kde-applications-network
-    kde-applications-pim
-    kde-applications-sdk
-    kde-applications-utils
-    kde-applications-webdev
-    glibc
-    systemd
-"
-
-# Subpakiety — każdy będzie budowany osobno z własnego pagbuild
-# Tu tylko deklarujemy, że ten meta-pakiet je grupuje
-subpackages="
-    kde-applications-accessibility
-    kde-applications-admin
-    kde-applications-base
-    kde-applications-edu
-    kde-applications-games
-    kde-applications-graphics
-    kde-applications-multimedia
-    kde-applications-network
-    kde-applications-pim
-    kde-applications-sdk
-    kde-applications-utils
-    kde-applications-webdev
-"
-
-# Brak źródeł — meta-pakiet
+depends=""
 source=""
 builddir="$srcdir"
 
-# Meta-pakiet nie potrzebuje build() ani check()
-# package() tworzy tylko katalog — wszystko jest w zależnościach
 package() {
     mkdir -p "$pkgdir"
 }
 
-# sha512sums — puste dla meta-pakietu
-sha512sums=""
+# sha512sums=""

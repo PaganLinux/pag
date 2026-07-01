@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# X Display Manager Control Protocol library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libxdmcp
+pkgver=1.1.5
+pkgrel=0
+pkgdesc="X Display Manager Control Protocol library"
+url="https://www.x.org/"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make xorgproto"
+depends="xorgproto"
+subpackages="libxdmcp-dev"
+source="https://www.x.org/releases/individual/lib/libXdmcp-1.1.5.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

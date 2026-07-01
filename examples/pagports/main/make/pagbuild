@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# GNU Make build tool
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=make
+pkgver=4.4.1
+pkgrel=0
+pkgdesc="GNU Make build tool"
+url="https://www.gnu.org/software/make/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="gcc"
+depends=""
+source="https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# POSIX capabilities library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libcap
+pkgver=2.70
+pkgrel=0
+pkgdesc="POSIX capabilities library"
+url="https://sites.google.com/site/fullycapable/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make"
+depends=""
+subpackages="libcap-dev"
+source="https://git.kernel.org/pub/scm/linux/kernel/git/morgan/libcap.git/snapshot/libcap-2.70.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make prefix=/usr
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

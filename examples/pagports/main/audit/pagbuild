@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Linux audit framework
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=audit
+pkgver=4.0.1
+pkgrel=0
+pkgdesc="Linux audit framework"
+url="https://people.redhat.com/sgrubb/audit/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="gcc make"
+depends=""
+subpackages="audit-dev"
+source="https://people.redhat.com/sgrubb/audit/audit-4.0.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

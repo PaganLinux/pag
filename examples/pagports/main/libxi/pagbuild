@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# X Input extension library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libxi
+pkgver=1.8.1
+pkgrel=0
+pkgdesc="X Input extension library"
+url="https://www.x.org/"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make xorgproto libx11-dev libxext-dev libxfixes-dev"
+depends="xorgproto libx11 libxext libxfixes"
+subpackages="libxi-dev"
+source="https://www.x.org/releases/individual/lib/libXi-1.8.1.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

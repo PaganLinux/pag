@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Qt6 SVG module
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=qt6-svg
+pkgver=6.7.2
+pkgrel=0
+pkgdesc="Qt6 SVG module"
+url="https://www.qt.io/"
+arch="x86_64"
+license="LGPL-3.0-only OR GPL-3.0-only"
+makedepends="cmake gcc make ninja qt6-base-dev"
+depends="qt6-base"
+source="https://download.qt.io/official_releases/qt/6.7/6.7.2/submodules/qtsvg-everywhere-src-6.7.2.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

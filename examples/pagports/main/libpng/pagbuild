@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# PNG reference library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libpng
+pkgver=1.6.43
+pkgrel=0
+pkgdesc="PNG reference library"
+url="http://www.libpng.org/pub/png/libpng.html"
+arch="x86_64"
+license="libpng"
+makedepends="gcc make zlib-dev"
+depends="zlib"
+subpackages="libpng-dev"
+source="https://download.sourceforge.net/libpng/libpng-1.6.43.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

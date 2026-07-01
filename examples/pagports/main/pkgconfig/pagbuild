@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# pkg-config implementation (pkgconf)
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=pkgconfig
+pkgver=2.1.1
+pkgrel=0
+pkgdesc="pkg-config implementation (pkgconf)"
+url="https://github.com/pkgconf/pkgconf"
+arch="x86_64"
+license="ISC"
+makedepends="meson ninja gcc"
+depends=""
+source="https://github.com/pkgconf/pkgconf/archive/pkgconf-2.1.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Multitouch Protocol Translation Library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=mtdev
+pkgver=1.1.7
+pkgrel=0
+pkgdesc="Multitouch Protocol Translation Library"
+url="https://github.com/whot/mtdev"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make"
+depends=""
+subpackages="mtdev-dev"
+source="https://github.com/whot/mtdev/archive/v1.1.7.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./autogen.sh --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

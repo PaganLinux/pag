@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Screen locker for Wayland
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=swaylock
+pkgver=1.7.2
+pkgrel=0
+pkgdesc="Screen locker for Wayland"
+url="https://github.com/swaywm/swaylock"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev wayland-protocols cairo-dev pango-dev"
+depends="wayland cairo pango"
+source="https://github.com/swaywm/swaylock/archive/v1.7.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

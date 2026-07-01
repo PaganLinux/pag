@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Hyprland configuration language
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=hyprlang
+pkgver=0.5.3
+pkgrel=0
+pkgdesc="Hyprland configuration language"
+url="https://github.com/hyprwm/hyprlang"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="cmake gcc make"
+depends=""
+subpackages="hyprlang-dev"
+source="https://github.com/hyprwm/hyprlang/archive/v0.5.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Standalone logind implementation
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=elogind
+pkgver=255.5
+pkgrel=0
+pkgdesc="Standalone logind implementation"
+url="https://github.com/elogind/elogind"
+arch="x86_64"
+license="LGPL-2.1-or-later"
+makedepends="meson ninja gcc"
+depends=""
+subpackages="elogind-dev"
+source="https://github.com/elogind/elogind/archive/v255.5.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

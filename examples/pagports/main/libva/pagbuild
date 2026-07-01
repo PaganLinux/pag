@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Video Acceleration API
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libva
+pkgver=2.21.0
+pkgrel=0
+pkgdesc="Video Acceleration API"
+url="https://github.com/intel/libva"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc libdrm-dev libx11-dev"
+depends="libdrm libx11"
+subpackages="libva-dev"
+source="https://github.com/intel/libva/archive/2.21.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

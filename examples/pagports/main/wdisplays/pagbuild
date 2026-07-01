@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# GUI display configurator for wlroots
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=wdisplays
+pkgver=1.1.1
+pkgrel=0
+pkgdesc="GUI display configurator for wlroots"
+url="https://github.com/artizirk/wdisplays"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev wlroots-dev gtk+3.0-dev"
+depends="wayland wlroots gtk+3.0"
+source="https://github.com/artizirk/wdisplays/archive/1.1.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

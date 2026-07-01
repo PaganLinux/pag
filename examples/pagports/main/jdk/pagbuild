@@ -1,0 +1,27 @@
+# PaganLinux Build Script (pagbuild)
+# OpenJDK Java Development Kit
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=jdk
+pkgver=22.0.2
+pkgrel=0
+pkgdesc="OpenJDK Java Development Kit"
+url="https://openjdk.org/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make"
+depends=""
+subpackages="jdk-jre"
+source="https://github.com/openjdk/jdk22u/archive/jdk-VER-ga.tar.gz"
+builddir="$srcdir"
+
+build() {
+    bash configure --prefix=/usr --with-jvm-variants=server
+    make images
+}
+
+package() {
+    cp -a build/linux-*/images/jdk/* "$pkgdir"/usr/
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# JSON implementation in C
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=json-c
+pkgver=0.17
+pkgrel=0
+pkgdesc="JSON implementation in C"
+url="https://github.com/json-c/json-c"
+arch="x86_64"
+license="MIT"
+makedepends="cmake gcc make"
+depends=""
+subpackages="json-c-dev"
+source="https://github.com/json-c/json-c/archive/json-c-0.17.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

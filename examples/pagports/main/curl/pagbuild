@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# URL retrieval library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=curl
+pkgver=8.9.1
+pkgrel=0
+pkgdesc="URL retrieval library"
+url="https://curl.se/"
+arch="x86_64"
+license="curl"
+makedepends="gcc make openssl-dev"
+depends="openssl"
+subpackages="curl-dev"
+source="https://curl.se/download/curl-8.9.1.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr --with-openssl && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

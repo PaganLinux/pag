@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Lightweight Display Manager
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=lightdm
+pkgver=1.32.0
+pkgrel=0
+pkgdesc="Lightweight Display Manager"
+url="https://github.com/canonical/lightdm"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="gcc make pkgconfig"
+depends=""
+source="https://github.com/canonical/lightdm/archive/1.32.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

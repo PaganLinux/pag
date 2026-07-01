@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Network Security Services
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=nss
+pkgver=3.103
+pkgrel=0
+pkgdesc="Network Security Services"
+url="https://developer.mozilla.org/docs/Mozilla/Projects/NSS"
+arch="x86_64"
+license="MPL-2.0"
+makedepends="gcc make"
+depends="nspr"
+subpackages="nss-dev"
+source="https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_103_RTM/src/nss-3.103.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make -C nss BUILD_OPT=1 USE_SYSTEM_ZLIB=1 NSS_USE_SYSTEM_SQLITE=1
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Linux kernel headers
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=linux-headers
+pkgver=6.10
+pkgrel=0
+pkgdesc="Linux kernel headers"
+url="https://kernel.org/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make"
+depends=""
+source="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.10.tar.xz"
+builddir="$srcdir"
+
+build() {
+    make headers_install INSTALL_HDR_PATH=/usr
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

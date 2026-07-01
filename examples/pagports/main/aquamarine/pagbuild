@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Hyprland rendering backend library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=aquamarine
+pkgver=0.4.2
+pkgrel=0
+pkgdesc="Hyprland rendering backend library"
+url="https://github.com/hyprwm/aquamarine"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="cmake gcc make wayland-dev"
+depends="wayland"
+subpackages="aquamarine-dev"
+source="https://github.com/hyprwm/aquamarine/archive/v0.4.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

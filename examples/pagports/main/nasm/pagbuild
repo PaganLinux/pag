@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# NASM assembler
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=nasm
+pkgver=2.16.03
+pkgrel=0
+pkgdesc="NASM assembler"
+url="https://www.nasm.us/"
+arch="x86_64"
+license="BSD-2-Clause"
+makedepends="gcc make"
+depends=""
+source="https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/nasm-2.16.03.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

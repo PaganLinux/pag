@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# KDE Simple Text Editor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=kwrite
+pkgver=24.05.2
+pkgrel=0
+pkgdesc="KDE Simple Text Editor"
+url="https://apps.kde.org/kwrite/"
+arch="x86_64"
+license="LGPL-2.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev"
+depends="qt6-base"
+source="https://download.kde.org/stable/release-service/24.05.2/src/kwrite-24.05.2.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

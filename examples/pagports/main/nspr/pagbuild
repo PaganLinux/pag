@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Netscape Portable Runtime
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=nspr
+pkgver=4.35
+pkgrel=0
+pkgdesc="Netscape Portable Runtime"
+url="https://developer.mozilla.org/docs/Mozilla/Projects/NSPR"
+arch="x86_64"
+license="MPL-2.0"
+makedepends="gcc make"
+depends=""
+subpackages="nspr-dev"
+source="https://ftp.mozilla.org/pub/nspr/releases/v4.35/src/nspr-4.35.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

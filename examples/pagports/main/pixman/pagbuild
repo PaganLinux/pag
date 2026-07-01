@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Pixel manipulation library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=pixman
+pkgver=0.43.4
+pkgrel=0
+pkgdesc="Pixel manipulation library"
+url="https://pixman.org/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc"
+depends=""
+subpackages="pixman-dev"
+source="https://cairographics.org/releases/pixman-0.43.4.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

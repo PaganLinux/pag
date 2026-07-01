@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# XML parser library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=expat
+pkgver=2.6.2
+pkgrel=0
+pkgdesc="XML parser library"
+url="https://libexpat.github.io/"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make"
+depends=""
+subpackages="expat-dev"
+source="https://github.com/libexpat/libexpat/releases/download/R_2_6_2/expat-2.6.2.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

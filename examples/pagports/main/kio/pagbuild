@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# KDE Input/Output framework
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=kio
+pkgver=6.4.0
+pkgrel=0
+pkgdesc="KDE Input/Output framework"
+url="https://api.kde.org/frameworks/kio/html/"
+arch="x86_64"
+license="LGPL-2.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev"
+depends="qt6-base"
+subpackages="kio-dev"
+source="https://download.kde.org/stable/frameworks/6.4.0/kio-6.4.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Hyprland utility library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=hyprutils
+pkgver=0.2.3
+pkgrel=0
+pkgdesc="Hyprland utility library"
+url="https://github.com/hyprwm/hyprutils"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="cmake gcc make"
+depends=""
+subpackages="hyprutils-dev"
+source="https://github.com/hyprwm/hyprutils/archive/v0.2.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

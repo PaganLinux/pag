@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Hyprland cursor utility
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=hyprcursor
+pkgver=0.1.10
+pkgrel=0
+pkgdesc="Hyprland cursor utility"
+url="https://github.com/hyprwm/hyprcursor"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="cmake gcc make"
+depends=""
+subpackages="hyprcursor-dev"
+source="https://github.com/hyprwm/hyprcursor/archive/v0.1.10.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

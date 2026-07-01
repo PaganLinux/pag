@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# PulseAudio Volume Control
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=pavucontrol
+pkgver=5.0
+pkgrel=0
+pkgdesc="PulseAudio Volume Control"
+url="https://freedesktop.org/software/pulseaudio/pavucontrol/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="meson ninja gcc gtk+3.0-dev pulseaudio-dev"
+depends="gtk+3.0 pulseaudio"
+source="https://freedesktop.org/software/pulseaudio/pavucontrol/pavucontrol-5.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""
