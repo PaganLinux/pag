@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Hardware monitoring tools
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=lm_sensors
+pkgver=3.6.0
+pkgrel=0
+pkgdesc="Hardware monitoring tools"
+url="https://github.com/lm-sensors/lm-sensors"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="gcc make bison flex"
+depends=""
+source="https://github.com/lm-sensors/lm-sensors/archive/V3-6-0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,23 @@
+# PaganLinux Build Script (pagbuild)
+# Discord messaging client
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=discord
+pkgver=0.0.57
+pkgrel=0
+pkgdesc="Discord messaging client"
+url="https://discord.com/"
+arch="x86_64"
+license="custom:proprietary"
+makedepends=""
+depends="gtk+3.0 nss nspr libx11 libxcb libxcomposite libxdamage libxext libxfixes libxrandr libxrender libxtst"
+source="https://dl.discordapp.net/apps/linux/0.0.57/discord-0.0.57.tar.gz"
+builddir="$srcdir"
+
+# Binary package — no build step
+build() {
+    mkdir -p "$pkgdir"/usr/bin
+    cp -a * "$pkgdir"/usr/
+}
+
+# sha512sums=""

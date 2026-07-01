@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Vulkan/OpenGL overlay for FPS/metrics
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=mangohud
+pkgver=0.7.2
+pkgrel=0
+pkgdesc="Vulkan/OpenGL overlay for FPS/metrics"
+url="https://github.com/flightlessmango/MangoHud"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc python3-mako mesa-dev"
+depends="mesa"
+source="https://github.com/flightlessmango/MangoHud/archive/v0.7.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

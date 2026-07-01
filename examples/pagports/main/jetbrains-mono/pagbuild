@@ -1,0 +1,21 @@
+# PaganLinux Build Script (pagbuild)
+# JetBrains Mono font
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=jetbrains-mono
+pkgver=2.304
+pkgrel=0
+pkgdesc="JetBrains Mono font"
+url="https://www.jetbrains.com/lp/mono/"
+arch="x86_64"
+license="OFL-1.1"
+makedepends=""
+depends=""
+source="https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip"
+builddir="$srcdir"
+
+package() {
+    mkdir -p "$pkgdir"/usr/share/fonts/jetbrains-mono && unzip -o "$srcdir"/JetBrainsMono-VER.zip -d "$pkgdir"/usr/share/fonts/jetbrains-mono/
+}
+
+# sha512sums=""

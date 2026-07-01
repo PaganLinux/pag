@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Window switcher and application launcher
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=rofi
+pkgver=1.7.5
+pkgrel=0
+pkgdesc="Window switcher and application launcher"
+url="https://github.com/davatorium/rofi"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc libx11-dev libxcb-dev cairo-dev pango-dev"
+depends="libx11 libxcb cairo pango"
+source="https://github.com/davatorium/rofi/archive/1.7.5.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

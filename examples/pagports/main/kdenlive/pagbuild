@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# KDE Non-linear video editor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=kdenlive
+pkgver=24.05.2
+pkgrel=0
+pkgdesc="KDE Non-linear video editor"
+url="https://kdenlive.org/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev qt6-declarative-dev"
+depends="qt6-base qt6-declarative ffmpeg"
+source="https://download.kde.org/stable/release-service/24.05.2/src/kdenlive-24.05.2.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

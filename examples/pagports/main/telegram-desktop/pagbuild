@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Telegram Desktop client
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=telegram-desktop
+pkgver=5.3.2
+pkgrel=0
+pkgdesc="Telegram Desktop client"
+url="https://desktop.telegram.org/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev qt6-svg-dev qt6-wayland-dev"
+depends="qt6-base qt6-svg qt6-wayland openssl"
+source="https://github.com/telegramdesktop/tdesktop/archive/v5.3.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

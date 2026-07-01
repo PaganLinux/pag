@@ -1,11 +1,11 @@
 # PaganLinux Build Script (pagbuild)
-# Hyperextensible Vim-based text editor
+# Hyperextensible Vim-based text editor (updated)
 
 maintainer="PaganLinux Team <team@paganlinux.eu>"
 pkgname=neovim
 pkgver=0.10.1
-pkgrel=0
-pkgdesc="Hyperextensible Vim-based text editor"
+pkgrel=1
+pkgdesc="Hyperextensible Vim-based text editor (updated)"
 url="https://neovim.io/"
 arch="x86_64"
 license="Apache-2.0"

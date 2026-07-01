@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Ultra-fast grep alternative
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=ripgrep
+pkgver=14.1.1
+pkgrel=0
+pkgdesc="Ultra-fast grep alternative"
+url="https://github.com/BurntSushi/ripgrep"
+arch="x86_64"
+license="MIT OR Unlicense"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/BurntSushi/ripgrep/archive/14.1.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/rg "$pkgdir"/usr/bin/rg
+}
+
+# sha512sums=""

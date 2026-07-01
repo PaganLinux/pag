@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Screen brightness control
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=brightnessctl
+pkgver=0.5.1
+pkgrel=0
+pkgdesc="Screen brightness control"
+url="https://github.com/Hummer12007/brightnessctl"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make"
+depends=""
+source="https://github.com/Hummer12007/brightnessctl/archive/0.5.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    install -Dm755 brightnessctl "$pkgdir"/usr/bin/brightnessctl
+}
+
+# sha512sums=""

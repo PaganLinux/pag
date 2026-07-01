@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# WireGuard VPN tools
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=wireguard-tools
+pkgver=1.0.20210914
+pkgrel=0
+pkgdesc="WireGuard VPN tools"
+url="https://www.wireguard.com/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make"
+depends=""
+source="https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-1.0.20210914.tar.xz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

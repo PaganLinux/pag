@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Zig programming language
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=zig
+pkgver=0.13.0
+pkgrel=0
+pkgdesc="Zig programming language"
+url="https://ziglang.org/"
+arch="x86_64"
+license="MIT"
+makedepends="cmake gcc make ninja"
+depends=""
+source="https://ziglang.org/download/0.13.0/zig-0.13.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

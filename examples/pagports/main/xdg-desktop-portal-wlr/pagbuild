@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# XDG Desktop Portal for wlroots
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=xdg-desktop-portal-wlr
+pkgver=0.8.0
+pkgrel=0
+pkgdesc="XDG Desktop Portal for wlroots"
+url="https://github.com/emersion/xdg-desktop-portal-wlr"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev"
+depends="wayland xdg-desktop-portal"
+source="https://github.com/emersion/xdg-desktop-portal-wlr/archive/v0.8.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,23 @@
+# PaganLinux Build Script (pagbuild)
+# Steam gaming platform
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=steam
+pkgver=1.0.0.79
+pkgrel=0
+pkgdesc="Steam gaming platform"
+url="https://store.steampowered.com/"
+arch="x86_64"
+license="custom:proprietary"
+makedepends=""
+depends="libx11 libxcb mesa vulkan-loader"
+source="https://repo.steampowered.com/steam/pool/steam/s/steam/steam_latest_amd64.deb"
+builddir="$srcdir"
+
+# Binary package — no build step
+build() {
+    mkdir -p "$pkgdir"/usr/bin
+    ar x "$srcdir"/*.deb && tar -xf data.tar.* -C "$pkgdir"/
+}
+
+# sha512sums=""

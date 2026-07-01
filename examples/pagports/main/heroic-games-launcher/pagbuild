@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Epic/GOG games launcher
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=heroic-games-launcher
+pkgver=2.14.1
+pkgrel=0
+pkgdesc="Epic/GOG games launcher"
+url="https://heroicgameslauncher.com/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="nodejs npm"
+depends=""
+source="https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/archive/v2.14.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    npm install && npm run build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

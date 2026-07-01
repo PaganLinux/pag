@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Fast file synchronization tool
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=rsync
+pkgver=3.3.0
+pkgrel=0
+pkgdesc="Fast file synchronization tool"
+url="https://rsync.samba.org/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="gcc make"
+depends=""
+source="https://rsync.samba.org/ftp/rsync/rsync-3.3.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

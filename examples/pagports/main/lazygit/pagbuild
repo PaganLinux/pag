@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Terminal UI for git commands
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=lazygit
+pkgver=0.43.1
+pkgrel=0
+pkgdesc="Terminal UI for git commands"
+url="https://github.com/jesseduffield/lazygit"
+arch="x86_64"
+license="MIT"
+makedepends="go"
+depends="git"
+source="https://github.com/jesseduffield/lazygit/archive/v0.43.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    go build
+}
+
+package() {
+    install -Dm755 lazygit "$pkgdir"/usr/bin/lazygit
+}
+
+# sha512sums=""

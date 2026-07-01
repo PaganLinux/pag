@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# AppStream metadata library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=appstream
+pkgver=1.0.3
+pkgrel=0
+pkgdesc="AppStream metadata library"
+url="https://www.freedesktop.org/wiki/Distributions/AppStream/"
+arch="x86_64"
+license="LGPL-2.1-or-later"
+makedepends="meson ninja gcc"
+depends=""
+source="https://github.com/ximion/appstream/archive/v1.0.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

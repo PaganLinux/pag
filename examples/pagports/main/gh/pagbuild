@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# GitHub CLI tool
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=gh
+pkgver=2.55.0
+pkgrel=0
+pkgdesc="GitHub CLI tool"
+url="https://cli.github.com/"
+arch="x86_64"
+license="MIT"
+makedepends="go"
+depends="git"
+source="https://github.com/cli/cli/archive/v2.55.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    install -Dm755 bin/gh "$pkgdir"/usr/bin/gh
+}
+
+# sha512sums=""

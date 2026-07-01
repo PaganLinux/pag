@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Power management for Linux
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=tlp
+pkgver=1.7.0
+pkgrel=0
+pkgdesc="Power management for Linux"
+url="https://linrunner.de/tlp"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends=""
+depends=""
+source="https://github.com/linrunner/TLP/archive/1.7.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

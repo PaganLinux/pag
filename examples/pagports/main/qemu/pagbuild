@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# QEMU machine emulator and virtualizer
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=qemu
+pkgver=9.0.2
+pkgrel=0
+pkgdesc="QEMU machine emulator and virtualizer"
+url="https://www.qemu.org/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make ninja python3 mesa-dev libcap-dev"
+depends="mesa"
+source="https://download.qemu.org/qemu-9.0.2.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

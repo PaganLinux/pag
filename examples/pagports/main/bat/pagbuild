@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Cat clone with syntax highlighting
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=bat
+pkgver=0.24.0
+pkgrel=0
+pkgdesc="Cat clone with syntax highlighting"
+url="https://github.com/sharkdp/bat"
+arch="x86_64"
+license="MIT OR Apache-2.0"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/sharkdp/bat/archive/v0.24.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/bat "$pkgdir"/usr/bin/bat
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Use any Linux distribution inside terminal
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=distrobox
+pkgver=1.7.2
+pkgrel=0
+pkgdesc="Use any Linux distribution inside terminal"
+url="https://github.com/89luca89/distrobox"
+arch="x86_64"
+license="GPL-3.0-only"
+makedepends=""
+depends="podman"
+source="https://github.com/89luca89/distrobox/archive/1.7.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./install --prefix=/usr
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

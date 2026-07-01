@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Network downloader
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=wget
+pkgver=1.24.5
+pkgrel=0
+pkgdesc="Network downloader"
+url="https://www.gnu.org/software/wget/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="gcc make openssl-dev"
+depends="openssl"
+source="https://ftp.gnu.org/gnu/wget/wget-1.24.5.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr --with-ssl=openssl && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

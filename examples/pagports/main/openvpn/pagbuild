@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# OpenVPN client and server
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=openvpn
+pkgver=2.6.12
+pkgrel=0
+pkgdesc="OpenVPN client and server"
+url="https://openvpn.net/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make openssl-dev"
+depends="openssl"
+source="https://swupdate.openvpn.org/community/releases/openvpn-2.6.12.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

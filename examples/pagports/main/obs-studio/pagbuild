@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# OBS Studio streaming/recording software
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=obs-studio
+pkgver=30.2.3
+pkgrel=0
+pkgdesc="OBS Studio streaming/recording software"
+url="https://obsproject.com/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev mesa-dev wayland-dev libx11-dev libxcb-dev"
+depends="qt6-base mesa wayland libx11 libxcb ffmpeg"
+source="https://github.com/obsproject/obs-studio/archive/30.2.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

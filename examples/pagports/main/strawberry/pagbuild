@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Music player and collection organizer
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=strawberry
+pkgver=1.1.3
+pkgrel=0
+pkgdesc="Music player and collection organizer"
+url="https://www.strawberrymusicplayer.org/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev"
+depends="qt6-base gstreamer"
+source="https://github.com/strawberrymusicplayer/strawberry/archive/1.1.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

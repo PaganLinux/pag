@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Visual Studio Code editor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=vscode
+pkgver=1.92.0
+pkgrel=0
+pkgdesc="Visual Studio Code editor"
+url="https://code.visualstudio.com/"
+arch="x86_64"
+license="MIT"
+makedepends="nodejs npm git python3"
+depends="gtk+3.0 nss nspr libx11 libxcb"
+source="https://github.com/microsoft/vscode/archive/1.92.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    npm install && npm run compile
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

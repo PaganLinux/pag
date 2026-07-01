@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Cross-shell prompt
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=starship
+pkgver=1.20.1
+pkgrel=0
+pkgdesc="Cross-shell prompt"
+url="https://starship.rs/"
+arch="x86_64"
+license="ISC"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/starship/starship/archive/v1.20.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/starship "$pkgdir"/usr/bin/starship
+}
+
+# sha512sums=""

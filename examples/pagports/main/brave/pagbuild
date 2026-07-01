@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Brave web browser
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=brave
+pkgver=1.68.128
+pkgrel=0
+pkgdesc="Brave web browser"
+url="https://brave.com/"
+arch="x86_64"
+license="MPL-2.0"
+makedepends="rust gcc make nodejs"
+depends="gtk+3.0 nss nspr libx11"
+source="https://github.com/brave/brave-browser/archive/v1.68.128.tar.gz"
+builddir="$srcdir"
+
+build() {
+    npm install && npm run build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Terminal UI for Docker
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=lazydocker
+pkgver=0.23.3
+pkgrel=0
+pkgdesc="Terminal UI for Docker"
+url="https://github.com/jesseduffield/lazydocker"
+arch="x86_64"
+license="MIT"
+makedepends="go"
+depends=""
+source="https://github.com/jesseduffield/lazydocker/archive/v0.23.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    go build
+}
+
+package() {
+    install -Dm755 lazydocker "$pkgdir"/usr/bin/lazydocker
+}
+
+# sha512sums=""

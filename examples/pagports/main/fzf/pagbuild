@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Command-line fuzzy finder
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=fzf
+pkgver=0.54.3
+pkgrel=0
+pkgdesc="Command-line fuzzy finder"
+url="https://github.com/junegunn/fzf"
+arch="x86_64"
+license="MIT"
+makedepends="go"
+depends=""
+source="https://github.com/junegunn/fzf/archive/v0.54.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    install -Dm755 target/fzf "$pkgdir"/usr/bin/fzf
+}
+
+# sha512sums=""

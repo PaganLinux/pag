@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# GPU-accelerated terminal emulator
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=wezterm
+pkgver=20240203
+pkgrel=0
+pkgdesc="GPU-accelerated terminal emulator"
+url="https://wezfurlong.org/wezterm/"
+arch="x86_64"
+license="MIT"
+makedepends="rust cargo"
+depends="fontconfig mesa wayland libx11 libxcb"
+source="https://github.com/wez/wezterm/archive/20240203.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/wezterm "$pkgdir"/usr/bin/wezterm
+}
+
+# sha512sums=""

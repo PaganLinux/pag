@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# System restore tool
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=timeshift
+pkgver=24.06.1
+pkgrel=0
+pkgdesc="System restore tool"
+url="https://github.com/linuxmint/timeshift"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="meson ninja gcc"
+depends=""
+source="https://github.com/linuxmint/timeshift/archive/24.06.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

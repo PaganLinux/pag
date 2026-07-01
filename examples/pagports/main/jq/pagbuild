@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Command-line JSON processor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=jq
+pkgver=1.7.1
+pkgrel=0
+pkgdesc="Command-line JSON processor"
+url="https://jqlang.github.io/jq/"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make"
+depends=""
+source="https://github.com/jqlang/jq/archive/jq-1.7.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    autoreconf -fi && ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

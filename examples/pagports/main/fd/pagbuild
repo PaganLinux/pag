@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Simple, fast find alternative
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=fd
+pkgver=10.1.0
+pkgrel=0
+pkgdesc="Simple, fast find alternative"
+url="https://github.com/sharkdp/fd"
+arch="x86_64"
+license="MIT OR Apache-2.0"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/sharkdp/fd/archive/v10.1.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/fd "$pkgdir"/usr/bin/fd
+}
+
+# sha512sums=""

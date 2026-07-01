@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Docker container runtime
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=docker
+pkgver=27.1.1
+pkgrel=0
+pkgdesc="Docker container runtime"
+url="https://www.docker.com/"
+arch="x86_64"
+license="Apache-2.0"
+makedepends="go"
+depends=""
+subpackages="docker-compose"
+source="https://github.com/moby/moby/archive/v27.1.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

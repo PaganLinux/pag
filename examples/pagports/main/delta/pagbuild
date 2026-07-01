@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Git diff viewer with syntax highlighting
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=delta
+pkgver=0.17.0
+pkgrel=0
+pkgdesc="Git diff viewer with syntax highlighting"
+url="https://github.com/dandavison/delta"
+arch="x86_64"
+license="MIT"
+makedepends="rust cargo"
+depends="git"
+source="https://github.com/dandavison/delta/archive/0.17.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/delta "$pkgdir"/usr/bin/delta
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# More intuitive du
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=dust
+pkgver=1.1.1
+pkgrel=0
+pkgdesc="More intuitive du"
+url="https://github.com/bootandy/dust"
+arch="x86_64"
+license="Apache-2.0"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/bootandy/dust/archive/v1.1.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/dust "$pkgdir"/usr/bin/dust
+}
+
+# sha512sums=""

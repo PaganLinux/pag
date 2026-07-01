@@ -1,0 +1,23 @@
+# PaganLinux Build Script (pagbuild)
+# Vivaldi web browser
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=vivaldi
+pkgver=6.8.3381
+pkgrel=0
+pkgdesc="Vivaldi web browser"
+url="https://vivaldi.com/"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends=""
+depends="gtk+3.0 nss nspr libx11 libxcb"
+source="https://downloads.vivaldi.com/stable/vivaldi-stable-6.8.3381-amd64.deb"
+builddir="$srcdir"
+
+# Binary package — no build step
+build() {
+    mkdir -p "$pkgdir"/usr/bin
+    ar x "$srcdir"/*.deb && tar -xf data.tar.* -C "$pkgdir"/
+}
+
+# sha512sums=""

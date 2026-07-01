@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# NCurses disk usage analyzer
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=ncdu
+pkgver=2.5
+pkgrel=0
+pkgdesc="NCurses disk usage analyzer"
+url="https://dev.yorhel.nl/ncdu"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make zig"
+depends=""
+source="https://dev.yorhel.nl/download/ncdu-2.5.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Video transcoder
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=handbrake
+pkgver=1.8.2
+pkgrel=0
+pkgdesc="Video transcoder"
+url="https://handbrake.fr/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make nasm yasm"
+depends=""
+source="https://github.com/HandBrake/HandBrake/archive/1.8.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

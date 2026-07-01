@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# E-book library manager
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=calibre
+pkgver=7.16.0
+pkgrel=0
+pkgdesc="E-book library manager"
+url="https://calibre-ebook.com/"
+arch="x86_64"
+license="GPL-3.0-only"
+makedepends="python3"
+depends="python3 qt6-base"
+source="https://github.com/kovidgoyal/calibre/archive/v7.16.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    python3 setup.py build
+}
+
+package() {
+    python3 setup.py install --root="$pkgdir"
+}
+
+# sha512sums=""

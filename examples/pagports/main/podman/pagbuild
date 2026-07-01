@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Podman container engine
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=podman
+pkgver=5.1.2
+pkgrel=0
+pkgdesc="Podman container engine"
+url="https://podman.io/"
+arch="x86_64"
+license="Apache-2.0"
+makedepends="go gcc make"
+depends=""
+source="https://github.com/containers/podman/archive/v5.1.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

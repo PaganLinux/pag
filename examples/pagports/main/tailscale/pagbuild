@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Tailscale VPN mesh network
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=tailscale
+pkgver=1.72.0
+pkgrel=0
+pkgdesc="Tailscale VPN mesh network"
+url="https://tailscale.com/"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="go"
+depends=""
+source="https://github.com/tailscale/tailscale/archive/v1.72.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    go build -o tailscale ./cmd/tailscale && go build -o tailscaled ./cmd/tailscaled
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Fast and easy-to-use status bar
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=polybar
+pkgver=3.7.1
+pkgrel=0
+pkgdesc="Fast and easy-to-use status bar"
+url="https://polybar.github.io/"
+arch="x86_64"
+license="MIT"
+makedepends="cmake gcc make ninja libx11-dev libxcb-dev cairo-dev"
+depends="libx11 libxcb cairo"
+source="https://github.com/polybar/polybar/archive/3.7.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

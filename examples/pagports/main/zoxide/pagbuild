@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Smarter cd command
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=zoxide
+pkgver=0.9.4
+pkgrel=0
+pkgdesc="Smarter cd command"
+url="https://github.com/ajeetdsouza/zoxide"
+arch="x86_64"
+license="MIT"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/ajeetdsouza/zoxide/archive/v0.9.4.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/zoxide "$pkgdir"/usr/bin/zoxide
+}
+
+# sha512sums=""

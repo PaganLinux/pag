@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Open gaming platform
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=lutris
+pkgver=0.5.17
+pkgrel=0
+pkgdesc="Open gaming platform"
+url="https://lutris.net/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="python3"
+depends="python3 gtk+3.0"
+source="https://github.com/lutris/lutris/archive/v0.5.17.tar.gz"
+builddir="$srcdir"
+
+build() {
+    python3 setup.py build
+}
+
+package() {
+    python3 setup.py install --root="$pkgdir"
+}
+
+# sha512sums=""

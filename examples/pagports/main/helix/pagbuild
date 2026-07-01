@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Post-modern modal text editor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=helix
+pkgver=24.07
+pkgrel=0
+pkgdesc="Post-modern modal text editor"
+url="https://helix-editor.com/"
+arch="x86_64"
+license="MPL-2.0"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/helix-editor/helix/archive/24.07.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/hx "$pkgdir"/usr/bin/hx
+}
+
+# sha512sums=""

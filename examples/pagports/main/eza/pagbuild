@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Modern replacement for ls
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=eza
+pkgver=0.19.0
+pkgrel=0
+pkgdesc="Modern replacement for ls"
+url="https://github.com/eza-community/eza"
+arch="x86_64"
+license="MIT"
+makedepends="rust cargo"
+depends=""
+source="https://github.com/eza-community/eza/archive/v0.19.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/eza "$pkgdir"/usr/bin/eza
+}
+
+# sha512sums=""

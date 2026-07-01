@@ -1,0 +1,21 @@
+# PaganLinux Build Script (pagbuild)
+# Fira Code monospace font with ligatures
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=fira-code
+pkgver=6.2
+pkgrel=0
+pkgdesc="Fira Code monospace font with ligatures"
+url="https://github.com/tonsky/FiraCode"
+arch="x86_64"
+license="OFL-1.1"
+makedepends=""
+depends=""
+source="https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
+builddir="$srcdir"
+
+package() {
+    mkdir -p "$pkgdir"/usr/share/fonts/fira-code && unzip -o "$srcdir"/Fira_Code_vVER.zip -d "$pkgdir"/usr/share/fonts/fira-code/
+}
+
+# sha512sums=""

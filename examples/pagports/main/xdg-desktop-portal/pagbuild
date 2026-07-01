@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Desktop integration portal
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=xdg-desktop-portal
+pkgver=1.18.4
+pkgrel=0
+pkgdesc="Desktop integration portal"
+url="https://github.com/flatpak/xdg-desktop-portal"
+arch="x86_64"
+license="LGPL-2.1-or-later"
+makedepends="meson ninja gcc"
+depends=""
+source="https://github.com/flatpak/xdg-desktop-portal/archive/1.18.4.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

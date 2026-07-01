@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# 3D creation suite
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=blender
+pkgver=4.2.1
+pkgrel=0
+pkgdesc="3D creation suite"
+url="https://www.blender.org/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="cmake gcc make ninja python3 mesa-dev"
+depends="mesa python3"
+source="https://download.blender.org/source/blender-4.2.1.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Lightweight X11 compositor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=picom
+pkgver=12.3
+pkgrel=0
+pkgdesc="Lightweight X11 compositor"
+url="https://github.com/yshui/picom"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc libx11-dev libxcb-dev libxext-dev pixman-dev"
+depends="libx11 libxcb libxext pixman mesa"
+source="https://github.com/yshui/picom/archive/v12.3.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

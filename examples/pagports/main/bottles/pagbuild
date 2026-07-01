@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Run Windows software on Linux
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=bottles
+pkgver=51.13
+pkgrel=0
+pkgdesc="Run Windows software on Linux"
+url="https://usebottles.com/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="python3 meson ninja"
+depends="python3 gtk+3.0"
+source="https://github.com/bottlesdevs/Bottles/archive/51.13.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""
