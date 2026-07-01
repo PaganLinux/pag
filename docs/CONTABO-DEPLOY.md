@@ -1,6 +1,20 @@
-# 🚀 PaganLinux — Poradnik Deployu na Contabo
+# 🚀 PaganLinux — Poradnik Deployu na Nowy VPS Contabo (Ubuntu)
 
-Kompletna instrukcja: od wyczyszczenia serwera po w pełni działający ekosystem PaganLinux.
+Kompletna instrukcja: od świeżego Ubuntu 24.04 na Contabo do w pełni działającego ekosystemu PaganLinux.
+Wszystkie komendy — kopiuj i wklejaj po kolei. Zero zbędnych kroków.
+
+> ⏱️ **Czas instalacji:** ~20 minut (zależy od szybkości VPS)
+
+**Przegląd krok po kroku:**
+1. [Logowanie i sprawdzenie](#-krok-1-logowanie-i-pierwsze-sprawdzenie)
+2. [Aktualizacja + Rust + Node.js + PM2](#-krok-2-aktualizacja-systemu-i-podstawowe-narzędzia)
+3. [DNS + Firewall](#-krok-3-konfiguracja-dns-i-firewalla)
+4. [Klonowanie repo + budowanie](#-krok-4-klonowanie-i-budowanie-projektu)
+5. [Serwer repozytorium (API)](#-krok-5-uruchomienie-serwera-repozytorium)
+6. [Strony WWW (Astro SSR)](#-krok-6-budowanie-i-uruchomienie-stron-www)
+7. [Nginx + SSL](#-krok-7-konfiguracja-nginx-reverse-proxy--ssl)
+8. [Weryfikacja](#-krok-8-weryfikacja)
+9. [Pierwszy pakiet .pag](#-krok-9-dodawanie-pakietów-do-repozytorium)
 
 ---
 
@@ -8,52 +22,31 @@ Kompletna instrukcja: od wyczyszczenia serwera po w pełni działający ekosyste
 
 | Składnik | Minimum | Zalecane |
 |----------|---------|----------|
-| Serwer | Contabo VPS S | Contabo VPS M/L |
-| RAM | 4 GB | 8 GB |
+| Serwer | Contabo VPS S (4 vCPU, 8 GB RAM) | Contabo VPS M/L |
 | Dysk | 50 GB SSD | 100+ GB SSD (na pakiety .pag) |
-| System | Ubuntu 24.04 LTS | Ubuntu 24.04 LTS |
+| System | **Ubuntu 24.04 LTS** (świeża instalacja) | Ubuntu 24.04 LTS |
 | Domeny | paganlinux.eu, repos.paganlinux.eu, pagports.paganlinux.eu |
 
 ---
 
-## 🔴 Krok 0: Wyczyszczenie serwera (jeśli był używany)
+## 🟢 Krok 1: Logowanie i pierwsze sprawdzenie
 
 ```bash
-# === ZALOGUJ SIĘ PRZEZ SSH ===
-ssh root@twoj-serwer.contabo.com
+# Zaloguj się przez SSH (hasło jest w mailu od Contabo)
+ssh root@<IP_TWOJEGO_SERWERA>
 
-# === 1. Zatrzymaj wszystkie serwisy ===
-systemctl stop nginx apache2 docker podman 2>/dev/null
-systemctl disable nginx apache2 docker podman 2>/dev/null
+# Przy pierwszym logowaniu Ubuntu poprosi o zmianę hasła — zmień na silne
 
-# === 2. Usuń stare pakiety (opcjonalnie — pełne czyszczenie) ===
-# UWAGA: to usuwa wszystko! Upewnij się że masz backup
-apt purge -y nginx apache2 docker.io docker-ce podman nodejs 2>/dev/null
-apt autoremove -y
-apt autoclean
-
-# === 3. Wyczyść dane aplikacji ===
-rm -rf /var/www/*
-rm -rf /etc/nginx /etc/apache2
-rm -rf /var/lib/docker /var/lib/pag
-rm -rf /opt/*
-
-# === 4. Wyczyść logi ===
-journalctl --vacuum-time=1d
-truncate -s 0 /var/log/syslog /var/log/kern.log 2>/dev/null
-
-# === 5. Sprawdź stan dysku ===
-df -h
-free -h
-
-# === 6. (opcjonalnie) Przeinstaluj system przez panel Contabo ===
-# Wejdź w VPS Control Panel → Reinstall → Ubuntu 24.04
-# To najszybszy sposób na czysty start
+# Sprawdź czy system jest świeży
+lsb_release -a        # powinno: Ubuntu 24.04 LTS
+df -h                  # sprawdź miejsce na dysku
+free -h                # sprawdź RAM
+uname -a               # wersja kernela
 ```
 
 ---
 
-## 🟢 Krok 1: Instalacja podstawowych narzędzi
+## 🟢 Krok 2: Aktualizacja systemu i podstawowe narzędzia
 
 ```bash
 # Aktualizacja systemu
@@ -68,26 +61,28 @@ apt install -y \
   nginx certbot python3-certbot-nginx \
   ufw
 
-# Instalacja Rust (dla budowania pag, pagbuild, repo-server)
+# === Instalacja Rust (dla pag, pagbuild, repo-server) ===
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME/.cargo/env"
 
-# Instalacja Node.js 22 LTS (dla stron Astro)
+# === Instalacja Node.js 22 LTS (dla stron Astro) ===
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 apt install -y nodejs
 
-# Instalacja PM2 (process manager)
+# === Instalacja PM2 (process manager dla Node) ===
 npm install -g pm2
 
-# Weryfikacja
-rustc --version   # powinno pokazać 1.80+
-node --version    # powinno pokazać 22.x
+# === Weryfikacja ===
+rustc --version        # powinno: 1.80+
 cargo --version
+node --version         # powinno: 22.x
+npm --version
+pm2 --version
 ```
 
 ---
 
-## 🟢 Krok 2: Konfiguracja DNS i Firewalla
+## 🟢 Krok 3: Konfiguracja DNS i Firewalla
 
 ### DNS (w panelu Contabo / Cloudflare / gdziekolwiek):
 
@@ -111,7 +106,7 @@ ufw status
 
 ---
 
-## 🟢 Krok 3: Klonowanie i budowanie projektu
+## 🟢 Krok 4: Klonowanie i budowanie projektu
 
 ```bash
 # Sklonuj repozytorium
@@ -119,7 +114,7 @@ cd /opt
 git clone https://github.com/PaganLinux/pag.git
 cd pag
 
-# === 3a. Budowanie menedżera pag ===
+# === 4a. Budowanie menedżera pag ===
 cd cli
 cargo build --release
 cp target/release/pag /usr/local/bin/
@@ -131,13 +126,13 @@ pag init -c /etc/pag/config.toml
 
 cd /opt/pag
 
-# === 3b. Budowanie pagbuild ===
+# === 4b. Budowanie pagbuild ===
 cd pagbuild
 cargo build --release
 cp target/release/pagbuild /usr/local/bin/
 cd /opt/pag
 
-# === 3c. Budowanie repo-servera ===
+# === 4c. Budowanie repo-servera ===
 cd repo-server
 cargo build --release
 cp target/release/pag-repo /usr/local/bin/
@@ -151,7 +146,7 @@ pag-repo --version
 
 ---
 
-## 🟢 Krok 4: Uruchomienie serwera repozytorium
+## 🟢 Krok 5: Uruchomienie serwera repozytorium
 
 ```bash
 # Katalog na pakiety
@@ -190,24 +185,24 @@ systemctl status pag-repo
 
 ---
 
-## 🟢 Krok 5: Budowanie i uruchomienie stron WWW
+## 🟢 Krok 6: Budowanie i uruchomienie stron WWW
 
 ```bash
 cd /opt/pag/web
 
-# === 5a. paganlinux.eu (port 3001) ===
+# === 6a. paganlinux.eu (port 3001) ===
 cd main
 npm install
 npm run build
 cd /opt/pag/web
 
-# === 5b. repos.paganlinux.eu (port 3002) ===
+# === 6b. repos.paganlinux.eu (port 3002) ===
 cd repos
 npm install
 npm run build
 cd /opt/pag/web
 
-# === 5c. pagports.paganlinux.eu (port 3003) ===
+# === 6c. pagports.paganlinux.eu (port 3003) ===
 cd ports
 npm install
 npm run build
@@ -224,7 +219,7 @@ pm2 startup systemd
 
 ---
 
-## 🟢 Krok 6: Konfiguracja Nginx (reverse proxy + SSL)
+## 🟢 Krok 7: Konfiguracja Nginx (reverse proxy + SSL)
 
 ```bash
 # === paganlinux.eu ===
@@ -328,7 +323,7 @@ echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'" | cr
 
 ---
 
-## 🟢 Krok 7: Weryfikacja
+## 🟢 Krok 8: Weryfikacja
 
 ```bash
 # Sprawdź czy wszystkie serwisy działają
@@ -347,7 +342,7 @@ pag stats
 
 ---
 
-## 🟢 Krok 8: Dodawanie pakietów do repozytorium
+## 🟢 Krok 9: Dodawanie pakietów do repozytorium
 
 ```bash
 # Zbuduj pakiet z pagports
