@@ -14,7 +14,7 @@ path = "src/main.rs"
 # Web framework
 axum = { version = "0.8", features = ["macros", "multipart"] }
 tower = "0.5"
-tower-http = { version = "0.6", features = ["fs", "cors", "trace", "compression-gzip", "compression-brotli"] }
+tower-http = { version = "0.6", features = ["fs", "cors", "trace", "compression-gzip", "compression-br"] }
 
 # Async
 tokio = { version = "1.42", features = ["full"] }
