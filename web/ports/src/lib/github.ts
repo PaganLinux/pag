@@ -64,10 +64,10 @@ interface GhContent {
   size: number;
 }
 
-// Pobiera listę portów (katalogów z plikiem pagbuild) — zoptymalizowane
+// Pobiera listę portów — 1 tree + batch po 20 równolegle (Git Blobs API)
 export async function listPorts(dir: string = ''): Promise<PortEntry[]> {
   try {
-    // 1. Pobierz całe drzewo (1 zapytanie API zamiast 231)
+    // 1. Pobierz całe drzewo (1 zapytanie)
     const { tree } = await ghFetch<{ tree: GhTreeItem[] }>(
       `/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${BRANCH}?recursive=1`
     );
@@ -76,27 +76,42 @@ export async function listPorts(dir: string = ''): Promise<PortEntry[]> {
       item => item.type === 'blob' && item.path.endsWith('/pagbuild')
     );
 
-    // 2. Mapuj tylko nazwy z drzewa — bez pobierania zawartości
-    const ports: PortEntry[] = pagbuildFiles.map(file => {
-      const parts = file.path.split('/');
-      const portName = parts.length >= 2 ? parts[parts.length - 2] : file.path.replace('/pagbuild', '');
+    // 2. Pobierz zawartość batchami po 20 równolegle (używając SHA z drzewa)
+    const BATCH = 20;
+    const ports: PortEntry[] = [];
 
-      return {
-        name: portName,
-        path: file.path,
-        version: '?',
-        release: 1,
-        description: '',
-        license: '',
-        arch: 'x86_64',
-        maintainer: null,
-        url: null,
-        depends: [],
-        makedepends: [],
-        sha: file.sha,
-        size: file.size || 0,
-      };
-    });
+    for (let i = 0; i < pagbuildFiles.length; i += BATCH) {
+      const batch = pagbuildFiles.slice(i, i + BATCH);
+      const results = await Promise.allSettled(
+        batch.map(async (file): Promise<PortEntry> => {
+          const parts = file.path.split('/');
+          const portName = parts.length >= 2 ? parts[parts.length - 2] : file.path.replace('/pagbuild', '');
+          const blob = await ghFetch<{ content: string; encoding: string; sha: string; size: number }>(
+            `/repos/${REPO_OWNER}/${REPO_NAME}/git/blobs/${file.sha}`
+          );
+          const text = Buffer.from(blob.content, 'base64').toString('utf-8');
+          const meta = parsePagbuildMeta(text);
+          return {
+            name: portName,
+            path: file.path,
+            version: meta.pkgver || '?',
+            release: meta.pkgrel || 1,
+            description: meta.pkgdesc || '',
+            license: meta.license || 'custom',
+            arch: meta.arch || 'x86_64',
+            maintainer: meta.maintainer || null,
+            url: meta.url || null,
+            depends: meta.depends || [],
+            makedepends: meta.makedepends || [],
+            sha: file.sha,
+            size: file.size || 0,
+          };
+        })
+      );
+      for (const r of results) {
+        if (r.status === 'fulfilled') ports.push(r.value);
+      }
+    }
 
     return ports.sort((a, b) => a.name.localeCompare(b.name));
   } catch {
