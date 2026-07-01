@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Qt6 base libraries
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=qt6-base
+pkgver=6.7.2
+pkgrel=0
+pkgdesc="Qt6 base libraries"
+url="https://www.qt.io/"
+arch="x86_64"
+license="LGPL-3.0-only OR GPL-3.0-only"
+makedepends="cmake gcc make ninja mesa-dev libx11-dev libxcb-dev libxext-dev libxrender-dev libxrandr-dev libxi-dev fontconfig-dev freetype-dev harfbuzz-dev pango-dev dbus-dev openssl-dev"
+depends="mesa libx11 libxcb libxext fontconfig freetype harfbuzz pango dbus openssl"
+subpackages="qt6-base-dev qt6-base-mysql qt6-base-postgresql"
+source="https://download.qt.io/official_releases/qt/6.7/6.7.2/submodules/qtbase-everywhere-src-6.7.2.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr -DFEATURE_system_zlib=ON && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

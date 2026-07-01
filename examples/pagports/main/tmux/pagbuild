@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Terminal multiplexer
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=tmux
+pkgver=3.4
+pkgrel=0
+pkgdesc="Terminal multiplexer"
+url="https://github.com/tmux/tmux"
+arch="x86_64"
+license="ISC"
+makedepends="gcc make"
+depends=""
+source="https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

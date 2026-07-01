@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Mozilla Thunderbird email client
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=thunderbird
+pkgver=128.0
+pkgrel=0
+pkgdesc="Mozilla Thunderbird email client"
+url="https://www.thunderbird.net/"
+arch="x86_64"
+license="MPL-2.0"
+makedepends="rust cargo nodejs gcc make mesa-dev libx11-dev dbus-dev gtk+3.0-dev"
+depends="mesa libx11 dbus gtk+3.0 nss"
+source="https://ftp.mozilla.org/pub/thunderbird/releases/128.0/source/thunderbird-128.0.source.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./mach build
+}
+
+package() {
+    ./mach install
+}
+
+# sha512sums=""

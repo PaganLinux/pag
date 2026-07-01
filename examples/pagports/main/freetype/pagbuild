@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# FreeType font rendering library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=freetype
+pkgver=2.13.2
+pkgrel=0
+pkgdesc="FreeType font rendering library"
+url="https://freetype.org/"
+arch="x86_64"
+license="FTL OR GPL-2.0-or-later"
+makedepends="meson ninja gcc libpng-dev"
+depends="libpng"
+subpackages="freetype-dev"
+source="https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr -Ddefault_library=shared && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

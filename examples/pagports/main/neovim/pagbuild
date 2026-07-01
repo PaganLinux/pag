@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Hyperextensible Vim-based text editor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=neovim
+pkgver=0.10.1
+pkgrel=0
+pkgdesc="Hyperextensible Vim-based text editor"
+url="https://neovim.io/"
+arch="x86_64"
+license="Apache-2.0"
+makedepends="cmake gcc make ninja"
+depends=""
+source="https://github.com/neovim/neovim/archive/v0.10.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

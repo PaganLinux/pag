@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# KDE Plasma Workspace
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=plasma-workspace
+pkgver=6.1.3
+pkgrel=0
+pkgdesc="KDE Plasma Workspace"
+url="https://kde.org/plasma-desktop/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev qt6-declarative-dev kwin-dev mesa-dev wayland-dev"
+depends="qt6-base qt6-declarative kwin mesa wayland"
+subpackages="plasma-workspace-dev"
+source="https://download.kde.org/stable/plasma/6.1.3/plasma-workspace-6.1.3.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

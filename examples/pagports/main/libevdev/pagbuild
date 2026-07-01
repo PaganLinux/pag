@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Event device library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libevdev
+pkgver=1.13.2
+pkgrel=0
+pkgdesc="Event device library"
+url="https://gitlab.freedesktop.org/libevdev/libevdev"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc"
+depends=""
+subpackages="libevdev-dev"
+source="https://gitlab.freedesktop.org/libevdev/libevdev/-/archive/1.13.2/libevdev-1.13.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# KDE Window Manager
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=kwin
+pkgver=6.1.3
+pkgrel=0
+pkgdesc="KDE Window Manager"
+url="https://kde.org/plasma-desktop/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="cmake gcc make ninja qt6-base-dev qt6-wayland-dev mesa-dev wayland-dev wayland-protocols libx11-dev libxcb-dev libinput-dev"
+depends="qt6-base qt6-wayland mesa wayland libx11 libxcb libinput"
+subpackages="kwin-dev"
+source="https://download.kde.org/stable/plasma/6.1.3/kwin-6.1.3.tar.xz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

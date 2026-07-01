@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Node.js JavaScript runtime
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=nodejs
+pkgver=22.7.0
+pkgrel=0
+pkgdesc="Node.js JavaScript runtime"
+url="https://nodejs.org/"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make python3"
+depends=""
+subpackages="nodejs-dev nodejs-npm"
+source="https://nodejs.org/dist/v22.7.0/node-v22.7.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

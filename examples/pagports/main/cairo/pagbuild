@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# 2D graphics library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=cairo
+pkgver=1.18.0
+pkgrel=0
+pkgdesc="2D graphics library"
+url="https://cairographics.org/"
+arch="x86_64"
+license="LGPL-2.1-only OR MPL-1.1"
+makedepends="meson ninja gcc pixman-dev libpng-dev freetype-dev fontconfig-dev"
+depends="pixman libpng freetype fontconfig"
+subpackages="cairo-dev cairo-gobject"
+source="https://cairographics.org/releases/cairo-1.18.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

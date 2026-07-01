@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Highly customizable Wayland bar
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=waybar
+pkgver=0.10.4
+pkgrel=0
+pkgdesc="Highly customizable Wayland bar"
+url="https://github.com/Alexays/Waybar"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev gtk+3.0-dev jsoncpp-dev"
+depends="wayland gtk+3.0 jsoncpp"
+source="https://github.com/Alexays/Waybar/archive/0.10.4.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

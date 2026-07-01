@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Select a region in Wayland compositor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=slurp
+pkgver=1.5.0
+pkgrel=0
+pkgdesc="Select a region in Wayland compositor"
+url="https://github.com/emersion/slurp"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev cairo-dev"
+depends="wayland cairo"
+source="https://github.com/emersion/slurp/archive/v1.5.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

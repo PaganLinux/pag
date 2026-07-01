@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Input device library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libinput
+pkgver=1.26.0
+pkgrel=0
+pkgdesc="Input device library"
+url="https://gitlab.freedesktop.org/libinput/libinput"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc libevdev-dev mtdev-dev"
+depends="libevdev mtdev"
+subpackages="libinput-dev"
+source="https://gitlab.freedesktop.org/libinput/libinput/-/archive/1.26.0/libinput-1.26.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

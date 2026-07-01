@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Fast, lightweight Wayland terminal
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=foot
+pkgver=1.18.1
+pkgrel=0
+pkgdesc="Fast, lightweight Wayland terminal"
+url="https://codeberg.org/dnkl/foot"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev wayland-protocols pixman-dev fontconfig-dev"
+depends="wayland pixman fontconfig"
+subpackages="foot-terminfo"
+source="https://codeberg.org/dnkl/foot/archive/1.18.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# VLC media player
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=vlc
+pkgver=3.0.21
+pkgrel=0
+pkgdesc="VLC media player"
+url="https://www.videolan.org/vlc/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="gcc make qt6-base-dev"
+depends="qt6-base"
+source="https://download.videolan.org/vlc/3.0.21/vlc-3.0.21.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

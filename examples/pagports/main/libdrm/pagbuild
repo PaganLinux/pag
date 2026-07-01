@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Direct Rendering Manager library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libdrm
+pkgver=2.4.122
+pkgrel=0
+pkgdesc="Direct Rendering Manager library"
+url="https://gitlab.freedesktop.org/mesa/drm"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc"
+depends=""
+subpackages="libdrm-dev"
+source="https://dri.freedesktop.org/libdrm/libdrm-2.4.122.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

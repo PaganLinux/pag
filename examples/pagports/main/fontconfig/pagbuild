@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Font configuration library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=fontconfig
+pkgver=2.15.0
+pkgrel=0
+pkgdesc="Font configuration library"
+url="https://www.freedesktop.org/wiki/Software/fontconfig/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc freetype-dev expat-dev"
+depends="freetype expat"
+subpackages="fontconfig-dev"
+source="https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.15.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

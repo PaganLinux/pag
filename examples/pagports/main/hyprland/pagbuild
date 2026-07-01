@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Dynamic tiling Wayland compositor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=hyprland
+pkgver=0.42.0
+pkgrel=0
+pkgdesc="Dynamic tiling Wayland compositor"
+url="https://hyprland.org/"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="cmake gcc make pkgconfig wayland-dev wayland-protocols libinput-dev mesa-dev libxcb-dev pango-dev cairo-dev hyprlang-dev hyprcursor-dev hyprgraphics-dev hyprutils-dev aquamarine-dev"
+depends="wayland libinput mesa libxcb pango cairo hyprlang hyprcursor hyprgraphics hyprutils aquamarine"
+source="https://github.com/hyprwm/Hyprland/archive/v0.42.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

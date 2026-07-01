@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# X.Org combined protocol headers
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=xorgproto
+pkgver=2024.1
+pkgrel=0
+pkgdesc="X.Org combined protocol headers"
+url="https://xorg.freedesktop.org/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja"
+depends=""
+source="https://xorg.freedesktop.org/archive/individual/proto/xorgproto-2024.1.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

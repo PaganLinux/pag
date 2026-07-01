@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# X protocol C-language Binding
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=libxcb
+pkgver=1.17.0
+pkgrel=0
+pkgdesc="X protocol C-language Binding"
+url="https://xcb.freedesktop.org/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc xcb-proto libxau-dev"
+depends="xcb-proto libxau"
+subpackages="libxcb-dev"
+source="https://xorg.freedesktop.org/archive/individual/lib/libxcb-1.17.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Modular Wayland compositor library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=wlroots
+pkgver=0.18.0
+pkgrel=0
+pkgdesc="Modular Wayland compositor library"
+url="https://gitlab.freedesktop.org/wlroots/wlroots"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev wayland-protocols libinput-dev mesa-dev libx11-dev libxcb-dev pixman-dev"
+depends="wayland wayland-protocols libinput mesa libx11 libxcb pixman"
+subpackages="wlroots-dev"
+source="https://gitlab.freedesktop.org/wlroots/wlroots/-/archive/0.18.0/wlroots-0.18.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr -Dexamples=false && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

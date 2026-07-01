@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# QML-based display manager
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=sddm
+pkgver=0.21.0
+pkgrel=0
+pkgdesc="QML-based display manager"
+url="https://github.com/sddm/sddm"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="cmake gcc make qt6-base-dev qt6-declarative-dev"
+depends="qt6-base qt6-declarative"
+source="https://github.com/sddm/sddm/archive/v0.21.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build
+}
+
+package() {
+    cmake --install build --prefix="$pkgdir"/usr
+}
+
+# sha512sums=""

@@ -1,0 +1,21 @@
+# PaganLinux Build Script (pagbuild)
+# Noto fonts family
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=noto-fonts
+pkgver=24.8.1
+pkgrel=0
+pkgdesc="Noto fonts family"
+url="https://fonts.google.com/noto"
+arch="x86_64"
+license="OFL-1.1"
+makedepends=""
+depends=""
+source="https://github.com/notofonts/noto-fonts/archive/refs/tags/v24.8.1.tar.gz"
+builddir="$srcdir"
+
+package() {
+    mkdir -p "$pkgdir"/usr/share/fonts/noto && cp -a fonts/* "$pkgdir"/usr/share/fonts/noto/
+}
+
+# sha512sums=""

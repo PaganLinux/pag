@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Go programming language
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=go
+pkgver=1.23.0
+pkgrel=0
+pkgdesc="Go programming language"
+url="https://go.dev/"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="gcc make"
+depends=""
+subpackages="go-doc"
+source="https://go.dev/dl/go1.23.0.src.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cd src && ./make.bash
+}
+
+package() {
+    cp -a bin "$pkgdir"/usr/
+}
+
+# sha512sums=""

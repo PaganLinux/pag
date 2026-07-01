@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# X server for Wayland
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=xwayland
+pkgver=24.1.0
+pkgrel=0
+pkgdesc="X server for Wayland"
+url="https://wayland.freedesktop.org/xserver.html"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev wayland-protocols mesa-dev libdrm-dev pixman-dev xorgproto"
+depends="wayland mesa libdrm pixman xorgproto"
+source="https://gitlab.freedesktop.org/xorg/xserver/-/archive/xwayland-24.1.0/xserver-xwayland-24.1.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

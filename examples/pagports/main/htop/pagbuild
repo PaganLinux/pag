@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Interactive process viewer
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=htop
+pkgver=3.3.0
+pkgrel=0
+pkgdesc="Interactive process viewer"
+url="https://htop.dev/"
+arch="x86_64"
+license="GPL-2.0-or-later"
+makedepends="gcc make"
+depends=""
+source="https://github.com/htop-dev/htop/archive/3.3.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./autogen.sh && ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

@@ -1,0 +1,27 @@
+# PAGBUILD for PaganLinux package repository
+# adbtuifm - A TUI File Manager for Android Debug Bridge (ADB)
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=adbtuifm
+pkgver=0.5.8
+pkgrel=20
+pkgdesc="A TUI File Manager for Android Debug Bridge (ADB)"
+url="https://github.com/darkhz/adbtuifm"
+arch="x86_64"
+license="MIT"
+makedepends="go"
+source="https://github.com/darkhz/adbtuifm/archive/refs/tags/v$pkgver.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cd "$builddir"
+    go build -v .
+}
+
+package() {
+    install -Dm0755 "$builddir/$pkgname" -t "$pkgdir"/usr/bin
+}
+
+sha512sums="
+SKIP
+"

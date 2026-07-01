@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Chromium web browser
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=chromium
+pkgver=128.0.6613.84
+pkgrel=0
+pkgdesc="Chromium web browser"
+url="https://www.chromium.org/"
+arch="x86_64"
+license="BSD-3-Clause"
+makedepends="rust cargo nodejs gcc make ninja python3 mesa-dev libx11-dev libxcb-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev dbus-dev gtk+3.0-dev nss-dev"
+depends="mesa libx11 libxcb libxext libxrender libxrandr dbus gtk+3.0 nss"
+source="https://commondatastorage.googleapis.com/chromium-browser-official/chromium-128.0.6613.84.tar.xz"
+builddir="$srcdir"
+
+build() {
+    gn gen out/Release && ninja -C out/Release chrome
+}
+
+package() {
+    install -Dm755 out/Release/chrome "$pkgdir"/usr/bin/chromium
+}
+
+# sha512sums=""

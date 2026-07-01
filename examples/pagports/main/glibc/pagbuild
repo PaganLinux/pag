@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# GNU C Library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=glibc
+pkgver=2.40
+pkgrel=0
+pkgdesc="GNU C Library"
+url="https://www.gnu.org/software/libc/"
+arch="x86_64"
+license="LGPL-2.1-or-later"
+makedepends="bison gcc make linux-headers"
+depends=""
+subpackages="glibc-dev glibc-locales glibc-utils"
+source="https://ftp.gnu.org/gnu/glibc/glibc-2.40.tar.xz"
+builddir="$srcdir"
+
+build() {
+    mkdir -p build && cd build && ../configure --prefix=/usr --enable-stack-protector=strong && make
+}
+
+package() {
+    cd build && make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

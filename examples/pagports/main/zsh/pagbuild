@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Z shell
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=zsh
+pkgver=5.9
+pkgrel=0
+pkgdesc="Z shell"
+url="https://www.zsh.org/"
+arch="x86_64"
+license="MIT"
+makedepends="gcc make"
+depends=""
+subpackages="zsh-doc"
+source="https://sourceforge.net/projects/zsh/files/zsh/5.9/zsh-5.9.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

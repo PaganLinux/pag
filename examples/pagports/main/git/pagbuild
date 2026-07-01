@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Distributed version control system
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=git
+pkgver=2.46.0
+pkgrel=0
+pkgdesc="Distributed version control system"
+url="https://git-scm.com/"
+arch="x86_64"
+license="GPL-2.0-only"
+makedepends="gcc make curl-dev expat-dev"
+depends="curl expat"
+subpackages="git-doc git-bash-completion"
+source="https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.46.0.tar.xz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

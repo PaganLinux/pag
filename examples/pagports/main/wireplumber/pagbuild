@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# PipeWire session manager
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=wireplumber
+pkgver=0.5.5
+pkgrel=0
+pkgdesc="PipeWire session manager"
+url="https://pipewire.org/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc pipewire-dev"
+depends="pipewire"
+source="https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0.5.5/wireplumber-0.5.5.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

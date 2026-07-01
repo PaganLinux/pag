@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Meson build system
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=meson
+pkgver=1.5.1
+pkgrel=0
+pkgdesc="Meson build system"
+url="https://mesonbuild.com/"
+arch="x86_64"
+license="Apache-2.0"
+makedepends="python3"
+depends="python3 ninja"
+source="https://github.com/mesonbuild/meson/archive/1.5.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    python3 setup.py build
+}
+
+package() {
+    python3 setup.py install --root="$pkgdir"
+}
+
+# sha512sums=""

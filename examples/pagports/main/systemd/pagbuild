@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# System and service manager
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=systemd
+pkgver=256.2
+pkgrel=0
+pkgdesc="System and service manager"
+url="https://systemd.io/"
+arch="x86_64"
+license="LGPL-2.1-or-later"
+makedepends="meson ninja gcc gperf libcap-dev libmount-dev"
+depends="dbus libcap util-linux"
+subpackages="systemd-dev systemd-udev systemd-homed systemd-boot"
+source="https://github.com/systemd/systemd/archive/v256.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr -Dsysvinit-path= -Defi=false && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

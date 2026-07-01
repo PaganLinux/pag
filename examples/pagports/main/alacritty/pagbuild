@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# GPU-accelerated terminal emulator
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=alacritty
+pkgver=0.13.2
+pkgrel=0
+pkgdesc="GPU-accelerated terminal emulator"
+url="https://alacritty.org/"
+arch="x86_64"
+license="Apache-2.0"
+makedepends="rust cargo cmake gcc make fontconfig-dev"
+depends="fontconfig"
+source="https://github.com/alacritty/alacritty/archive/v0.13.2.tar.gz"
+builddir="$srcdir"
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -Dm755 target/release/alacritty "$pkgdir"/usr/bin/alacritty
+}
+
+# sha512sums=""

@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# GNU Bourne Again Shell
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=bash
+pkgver=5.2.32
+pkgrel=0
+pkgdesc="GNU Bourne Again Shell"
+url="https://www.gnu.org/software/bash/"
+arch="x86_64"
+license="GPL-3.0-or-later"
+makedepends="gcc make"
+depends=""
+subpackages="bash-doc bash-completion"
+source="https://ftp.gnu.org/gnu/bash/bash-5.2.32.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

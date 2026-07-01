@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# Text shaping library
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=harfbuzz
+pkgver=9.0.0
+pkgrel=0
+pkgdesc="Text shaping library"
+url="https://harfbuzz.github.io/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc freetype-dev"
+depends="freetype"
+subpackages="harfbuzz-dev harfbuzz-icu"
+source="https://github.com/harfbuzz/harfbuzz/archive/9.0.0.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

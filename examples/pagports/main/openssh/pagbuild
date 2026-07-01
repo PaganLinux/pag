@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# OpenSSH client and server
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=openssh
+pkgver=9.8p1
+pkgrel=0
+pkgdesc="OpenSSH client and server"
+url="https://www.openssh.com/"
+arch="x86_64"
+license="BSD"
+makedepends="gcc make"
+depends="openssl"
+subpackages="openssh-server openssh-client"
+source="https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.8p1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    ./configure --prefix=/usr && make
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+# sha512sums=""

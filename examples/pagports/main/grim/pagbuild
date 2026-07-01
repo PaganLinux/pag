@@ -1,0 +1,25 @@
+# PaganLinux Build Script (pagbuild)
+# Grab images from Wayland compositor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=grim
+pkgver=1.4.1
+pkgrel=0
+pkgdesc="Grab images from Wayland compositor"
+url="https://sr.ht/~emersion/grim/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wayland-dev wayland-protocols"
+depends="wayland"
+source="https://git.sr.ht/~emersion/grim/archive/v1.4.1.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

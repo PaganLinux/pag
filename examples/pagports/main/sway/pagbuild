@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# i3-compatible Wayland compositor
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=sway
+pkgver=1.9
+pkgrel=0
+pkgdesc="i3-compatible Wayland compositor"
+url="https://swaywm.org/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc wlroots-dev wayland-protocols json-c-dev pango-dev cairo-dev"
+depends="wlroots wayland json-c pango cairo swaybg"
+subpackages="sway-doc"
+source="https://github.com/swaywm/sway/archive/1.9.tar.gz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""

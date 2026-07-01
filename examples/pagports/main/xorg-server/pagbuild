@@ -1,0 +1,26 @@
+# PaganLinux Build Script (pagbuild)
+# X.Org X server
+
+maintainer="PaganLinux Team <team@paganlinux.eu>"
+pkgname=xorg-server
+pkgver=21.1.13
+pkgrel=0
+pkgdesc="X.Org X server"
+url="https://www.x.org/"
+arch="x86_64"
+license="MIT"
+makedepends="meson ninja gcc xorgproto libx11-dev libxext-dev libxrender-dev libxrandr-dev libxfixes-dev libxi-dev libxtst-dev libxdamage-dev libxcomposite-dev mesa-dev libdrm-dev pixman-dev"
+depends="xorgproto libx11 libxext libxrender libxrandr libxfixes libxi libxtst libxdamage libxcomposite mesa libdrm pixman"
+subpackages="xorg-server-dev xorg-server-xwayland"
+source="https://www.x.org/releases/individual/xserver/xorg-server-21.1.13.tar.xz"
+builddir="$srcdir"
+
+build() {
+    meson setup build -Dprefix=/usr -Dxwayland=true && ninja -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C build install
+}
+
+# sha512sums=""
