@@ -79,7 +79,7 @@ export async function listPorts(dir: string = ''): Promise<PortEntry[]> {
     // Dla każdego pagbuild, pobierz metadane
     const ports: PortEntry[] = [];
 
-    for (const file of pagbuildFiles.slice(0, 100)) { // Limit do 100
+    for (const file of pagbuildFiles) {
       const portName = file.path.split('/').slice(-2, -1)[0] || file.path.replace('/pagbuild', '');
       try {
         const content = await ghFetch<GhContent>(
