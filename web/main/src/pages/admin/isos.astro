@@ -1,0 +1,53 @@
+---
+// Admin — Zarządzanie ISO
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+const isos = [
+  { name: 'paganlinux-2025.01-x86_64.iso', size: '2.1 GB', uploaded: '2025-01-15', downloads: 1250 },
+  { name: 'paganlinux-2025.06-minimal.iso', size: '890 MB', uploaded: '2025-06-01', downloads: 340 },
+];
+---
+<AdminLayout>
+  <h1>💿 Obrazy ISO</h1>
+  <p class="subtitle">Zarządzaj obrazami instalacyjnymi PaganLinux</p>
+
+  <div style="margin-bottom:1.5rem;">
+    <form method="POST" action="/admin/api/upload-iso" enctype="multipart/form-data">
+      <label class="upload-zone" style="display:block;cursor:pointer;">
+        <div style="font-size:2rem;margin-bottom:0.5rem;">📁</div>
+        <div>Upuść plik ISO lub kliknij aby wybrać</div>
+        <div style="font-size:0.8rem;margin-top:0.3rem;">Maks. 4 GB</div>
+        <input type="file" name="iso" accept=".iso" style="display:none;" />
+      </label>
+      <button type="submit" class="admin-btn primary" style="margin-top:0.8rem;">📤 Wyślij ISO</button>
+    </form>
+  </div>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Nazwa pliku</th>
+        <th>Rozmiar</th>
+        <th>Data uploadu</th>
+        <th>Pobrań</th>
+        <th>Akcje</th>
+      </tr>
+    </thead>
+    <tbody>
+      {isos.length === 0 ? (
+        <tr><td colspan="5" class="empty">Brak obrazów ISO. Wgraj pierwszy powyżej ↑</td></tr>
+      ) : isos.map(iso => (
+        <tr>
+          <td><strong>{iso.name}</strong></td>
+          <td>{iso.size}</td>
+          <td>{iso.uploaded}</td>
+          <td>{iso.downloads}</td>
+          <td style="display:flex;gap:0.3rem;">
+            <a href={`/iso/${iso.name}`} class="admin-btn small">🔗 Link</a>
+            <button class="admin-btn small danger">🗑️ Usuń</button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</AdminLayout>

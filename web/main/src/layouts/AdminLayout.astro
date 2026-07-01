@@ -1,0 +1,49 @@
+---
+// Layout panelu administracyjnego z sidebar nawigacją
+import { isAuthenticated } from '../lib/auth';
+import '../styles/admin.css';
+
+const url = new URL(Astro.request.url);
+const currentPath = url.pathname;
+
+if (!isAuthenticated(Astro.request)) {
+  return Astro.redirect('/admin/login');
+}
+
+const navItems = [
+  { href: '/admin', label: '📊 Dashboard', icon: '📊' },
+  { href: '/admin/packages', label: '📦 Pakiety', icon: '📦' },
+  { href: '/admin/ports', label: '🏗️ Porty / Build', icon: '🏗️' },
+  { href: '/admin/isos', label: '💿 ISO', icon: '💿' },
+  { href: '/admin/builds', label: '🔄 Historia budowania', icon: '🔄' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaganLinux Admin</title>
+</head>
+<body class="admin-body">
+  <nav class="admin-sidebar">
+    <div class="admin-brand">🐺 PaganLinux <span>CMS</span></div>
+    <ul class="admin-nav">
+      {navItems.map(item => (
+        <li>
+          <a href={item.href} class={currentPath === item.href ? 'active' : ''}>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="admin-footer">
+      <a href="/admin/logout">🚪 Wyloguj</a>
+    </div>
+  </nav>
+  <main class="admin-content">
+    <slot />
+  </main>
+</body>
+</html>
