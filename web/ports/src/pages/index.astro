@@ -1,11 +1,14 @@
 ---
-// pagports.paganlinux.eu — Strona główna
+// pagports.paganlinux.eu — Strona główna z paginacją
 import Nav from '../components/Nav.astro';
 import PortCard from '../components/PortCard.astro';
 import { listPorts } from '../lib/github';
 
 const url = new URL(Astro.request.url);
 const query = url.searchParams.get('q') || '';
+const sort = url.searchParams.get('sort') || 'name';
+const page = parseInt(url.searchParams.get('page') || '1');
+const perPage = 10;
 
 let ports = [];
 let error = null;
@@ -14,7 +17,6 @@ try {
   ports = await listPorts();
 } catch (e) {
   error = '⚠️ GitHub API niedostępny — pokazuję dane demonstracyjne';
-  ports = []; // Fallback jest wbudowany w listPorts
 }
 
 if (query) {
@@ -23,6 +25,18 @@ if (query) {
     p.description.toLowerCase().includes(query.toLowerCase())
   );
 }
+
+// Sortowanie
+if (sort === 'name') ports.sort((a, b) => a.name.localeCompare(b.name));
+else if (sort === 'version') ports.sort((a, b) => b.version.localeCompare(a.version));
+else if (sort === 'license') ports.sort((a, b) => a.license.localeCompare(b.license));
+
+const total = ports.length;
+const totalPages = Math.ceil(total / perPage);
+const start = (page - 1) * perPage;
+const paged = ports.slice(start, start + perPage);
+
+const pageUrl = (p: number) => `/?q=${query}&sort=${sort}&page=${p}`;
 ---
 
 <!DOCTYPE html>
@@ -111,6 +125,40 @@ if (query) {
       color: #f59e0b; font-size: 0.9rem;
     }
 
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;
+    }
+    .sort-controls {
+      display: flex; gap: 0.5rem; align-items: center;
+    }
+    .sort-link {
+      padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem;
+      text-decoration: none; color: #b0b0c0; border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .sort-link:hover, .sort-link.active {
+      background: var(--accent); border-color: var(--accent); color: white;
+    }
+
+    .pagination {
+      display: flex; gap: 0.4rem; justify-content: center;
+      align-items: center; margin-top: 2rem; flex-wrap: wrap;
+    }
+    .page-link {
+      padding: 0.45rem 0.8rem; border-radius: 6px;
+      border: 1px solid var(--border); color: var(--fg);
+      text-decoration: none; font-size: 0.9rem; transition: all 0.2s;
+    }
+    .page-link:hover { background: var(--accent); border-color: var(--accent); color: white; }
+    .page-link.current {
+      background: var(--accent); border-color: var(--accent);
+      color: white; font-weight: 600;
+    }
+    .page-info {
+      color: #808090; font-size: 0.85rem; margin-left: 0.5rem;
+    }
+
     .howto-section {
       margin-top: 3rem; padding: 2rem; background: var(--card);
       border: 1px solid var(--border); border-radius: var(--radius);
@@ -149,18 +197,23 @@ if (query) {
 
     {error && <div class="error-banner">{error}</div>}
 
-    <div class="stats-bar">
-      <div class="stat">
-        <span class="stat-num">{ports.length}</span>
-        <span class="stat-label">Portów</span>
+    <div class="toolbar">
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-num">{total}</span>
+          <span class="stat-label">Portów</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">{totalPages}</span>
+          <span class="stat-label">Stron</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-num">🌐</span>
-        <span class="stat-label">main / testing / community</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">🔄</span>
-        <span class="stat-label">Live z GitHub</span>
+
+      <div class="sort-controls">
+        <span style="color:#808090;font-size:0.85rem;">Sortuj:</span>
+        <a href={`/?q=${query}&sort=name`} class={`sort-link ${sort==='name'?'active':''}`}>Nazwa</a>
+        <a href={`/?q=${query}&sort=version`} class={`sort-link ${sort==='version'?'active':''}`}>Wersja</a>
+        <a href={`/?q=${query}&sort=license`} class={`sort-link ${sort==='license'?'active':''}`}>Licencja</a>
       </div>
     </div>
 
@@ -170,13 +223,28 @@ if (query) {
       <span class="branch-tab">community</span>
     </div>
 
-    {ports.length === 0 ? (
+    {paged.length === 0 ? (
       <p style="text-align:center;padding:3rem;color:#808090;">
-        {query ? '🔍 Brak wyników. Spróbuj innego zapytania.' : '📭 Ładowanie portów...'}
+        {query ? '🔍 Brak wyników.' : '📭 Ładowanie...'}
       </p>
     ) : (
       <div class="port-grid">
-        {ports.map(port => <PortCard port={port} />)}
+        {paged.map(port => <PortCard port={port} />)}
+      </div>
+    )}
+
+    {totalPages > 1 && (
+      <div class="pagination">
+        {page > 1 && <a href={pageUrl(page-1)} class="page-link">← Poprzednia</a>}
+        {Array.from({length: Math.min(totalPages, 7)}, (_, i) => {
+          const p = i + Math.max(1, page - 3);
+          if (p > totalPages) return null;
+          return p === page
+            ? <span class="page-link current">{p}</span>
+            : <a href={pageUrl(p)} class="page-link">{p}</a>;
+        })}
+        {page < totalPages && <a href={pageUrl(page+1)} class="page-link">Następna →</a>}
+        <span class="page-info">Strona {page} z {totalPages}</span>
       </div>
     )}
 
