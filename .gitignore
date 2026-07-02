@@ -3,11 +3,29 @@ cli/target/
 pagbuild/target/
 repo-server/target/
 cms-server/target/
+cms/backend/target/
+cms/worker/target/
 
 # Node / Astro
 web/*/node_modules/
 web/*/dist/
 web/*/.astro/
+web/node_modules/
+web/dist/
+web/.astro/
+cms/frontend/node_modules/
+cms/frontend/dist/
+
+# Database files
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+data/
+
+# Env secrets
+.env
+!.env.example
 
 # IDE
 .vscode/
@@ -18,5 +36,3 @@ web/*/.astro/
 # OS
 .DS_Store
 Thumbs.db
-
-# Cargo lock — keep for binary projects (committed)

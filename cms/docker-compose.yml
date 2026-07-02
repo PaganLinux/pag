@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  # ─── Backend API (Rust) ──────────────────────────────
+  cms-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=sqlite:data/pagancms.db?mode=rwc
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - JWT_EXPIRY_HOURS=24
+      - SERVER_ADDR=0.0.0.0:3000
+      - GITEA_API_URL=${GITEA_API_URL:-https://git.paganlinux.eu/api/v1}
+      - GITEA_TOKEN=${GITEA_TOKEN:-}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
+    volumes:
+      - cms-data:/app/data
+    restart: unless-stopped
+    networks:
+      - pagan-network
+
+  # ─── Frontend (React + Nginx) ────────────────────────
+  cms-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://cms-backend:3000/api/v1
+    depends_on:
+      - cms-backend
+    restart: unless-stopped
+    networks:
+      - pagan-network
+
+  # ─── Strona główna (Astro) ───────────────────────────
+  web:
+    build:
+      context: ../web
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3004
+    restart: unless-stopped
+    networks:
+      - pagan-network
+
+  # ─── Gitea (git.paganlinux.eu) ───────────────────────
+  gitea:
+    image: gitea/gitea:latest
+    ports:
+      - "3001:3000"
+      - "2222:22"
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__server__DOMAIN=git.paganlinux.eu
+      - GITEA__server__ROOT_URL=https://git.paganlinux.eu
+      - GITEA__server__SSH_DOMAIN=git.paganlinux.eu
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea/gitea.db
+    volumes:
+      - gitea-data:/data
+    restart: unless-stopped
+    networks:
+      - pagan-network
+
+  # ─── Redis (kolejka buildów) ─────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - pagan-network
+
+  # ─── Worker buildów (osobny proces backendu) ─────────
+  cms-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    environment:
+      - DATABASE_URL=sqlite:data/pagancms.db?mode=rwc
+      - REDIS_URL=redis://redis:6379
+      - GITEA_API_URL=${GITEA_API_URL:-https://git.paganlinux.eu/api/v1}
+      - GITEA_TOKEN=${GITEA_TOKEN:-}
+    depends_on:
+      - cms-backend
+      - redis
+    restart: unless-stopped
+    networks:
+      - pagan-network
+
+  # ─── Nginx reverse proxy ─────────────────────────────
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - cms-backend
+      - cms-frontend
+      - web
+      - gitea
+    restart: unless-stopped
+    networks:
+      - pagan-network
+
+volumes:
+  cms-data:
+  gitea-data:
+  redis-data:
+
+networks:
+  pagan-network:
+    driver: bridge

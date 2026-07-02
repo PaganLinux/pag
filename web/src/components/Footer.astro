@@ -1,0 +1,25 @@
+---
+// Komponent: Stopka
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+---
+
+<footer>
+  <div class="footer-inner">
+    <p>{t(locale, 'footer.text')}</p>
+    <p class="footer-small">{t(locale, 'footer.license')} · &copy; {new Date().getFullYear()} PaganLinux</p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+  }
+  .footer-inner { max-width: 600px; margin: 0 auto; }
+  .footer-small { margin-top: 0.5rem; font-size: 0.78rem; color: #505060; }
+</style>

@@ -1,0 +1,54 @@
+---
+// Komponent: Sekcja szybkiej instalacji
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+---
+
+<section class="install">
+  <h2>{t(locale, 'install.title')}</h2>
+  <p class="install-hint">{t(locale, 'install.hint')}</p>
+  <div class="code-block">
+    <pre><code><span class="comment">{t(locale, 'install.step1')}</span>
+<span class="cmd">$ curl -LO https://paganlinux.eu/iso/paganlinux-latest.iso</span>
+<span class="cmd">$ curl -LO https://paganlinux.eu/iso/paganlinux-latest.iso.sig</span>
+<span class="cmd">$ gpg --verify paganlinux-latest.iso.sig</span>
+
+<span class="comment">{t(locale, 'install.step2')}</span>
+<span class="cmd">$ curl -fsSL https://paganlinux.eu/install.sh | bash</span>
+<span class="cmd">$ sudo pag init && pag update</span>
+<span class="cmd">$ sudo pag install nginx postgresql redis</span>
+
+<span class="comment">{t(locale, 'install.step3')}</span>
+<span class="cmd">$ sudo pag repo add core https://repos.paganlinux.eu/core</span>
+<span class="cmd">$ sudo pag repo add extra https://repos.paganlinux.eu/extra</span></code></pre>
+  </div>
+</section>
+
+<style>
+  .install {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    max-width: 850px;
+    margin: 4rem auto;
+    padding: 2.5rem;
+  }
+  .install h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+  .install-hint { color: var(--fg-muted); margin-bottom: 1.2rem; }
+  .code-block {
+    background: #050508;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  .code-block pre {
+    padding: 1.2rem;
+    margin: 0;
+    font-family: 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.85rem;
+    line-height: 1.75;
+  }
+  .code-block .comment { color: #6b7280; }
+  .code-block .cmd { color: var(--green); }
+</style>

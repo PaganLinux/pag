@@ -1,0 +1,155 @@
+---
+// Pobierz PaganLinux — strona download
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/utils';
+import { LINKS } from '../lib/constants';
+
+const locale = Astro.currentLocale;
+
+// Dane releasów — w przyszłości z API
+const releases = [
+  {
+    version: '2025.07',
+    date: '2025-07-01',
+    isoSize: '2.1 GB',
+    archs: ['x86_64'],
+    sigUrl: '/iso/paganlinux-2025.07-x86_64.iso.sig',
+    notesUrl: '#',
+  },
+];
+---
+
+<BaseLayout
+  title={t(locale, 'dl.title')}
+  description={t(locale, 'dl.subtitle')}
+>
+  <section class="download-page">
+    <h1>{t(locale, 'dl.title')}</h1>
+    <p class="subtitle">{t(locale, 'dl.subtitle')}</p>
+
+    <div class="release-list">
+      {releases.map(rel => (
+        <div class="release-card">
+          <div class="release-header">
+            <h2>PaganLinux {rel.version}</h2>
+            <span class="badge">Latest</span>
+          </div>
+          <div class="release-meta">
+            <div>
+              <span class="meta-label">{t(locale, 'dl.released')}</span>
+              <span class="meta-value">{rel.date}</span>
+            </div>
+            <div>
+              <span class="meta-label">{t(locale, 'dl.isoSize')}</span>
+              <span class="meta-value">{rel.isoSize}</span>
+            </div>
+            <div>
+              <span class="meta-label">{t(locale, 'dl.archs')}</span>
+              <span class="meta-value">{rel.archs.join(', ')}</span>
+            </div>
+          </div>
+          <div class="release-actions">
+            <a href={`/iso/paganlinux-${rel.version}-x86_64.iso`} class="btn btn-primary">
+              📥 PaganLinux {rel.version} ISO
+            </a>
+            <a href={rel.sigUrl} class="btn btn-outline">{t(locale, 'dl.signature')}</a>
+            <a href={rel.notesUrl} class="btn btn-outline">{t(locale, 'dl.notes')}</a>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="alt-install">
+      <h2>{t(locale, 'dl.altTitle')}</h2>
+      <p>{t(locale, 'dl.altDesc')}</p>
+      <div class="code-block">
+        <pre><code><span class="cmd">$ curl -fsSL https://paganlinux.eu/install.sh | bash</span></code></pre>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .download-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .download-page h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    color: var(--fg-muted);
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+  }
+  .release-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .release-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+  }
+  .release-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.2rem;
+  }
+  .release-header h2 { font-size: 1.4rem; }
+  .badge {
+    background: var(--accent);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .release-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .meta-label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.15rem;
+  }
+  .meta-value { font-weight: 600; }
+  .release-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .alt-install {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .alt-install h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .alt-install p { color: var(--fg-muted); margin-bottom: 1rem; }
+  .code-block {
+    background: #050508;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  .code-block pre {
+    padding: 1.2rem;
+    margin: 0;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    line-height: 1.75;
+  }
+  .code-block .cmd { color: var(--green); }
+</style>

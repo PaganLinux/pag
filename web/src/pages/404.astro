@@ -1,0 +1,42 @@
+---
+// Strona 404 — multilang
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+---
+
+<BaseLayout
+  title={t(locale, '404.title')}
+  description={t(locale, '404.desc')}
+>
+  <section class="not-found">
+    <h1>404</h1>
+    <p>{t(locale, '404.desc')}</p>
+    <a href={locale === 'pl' ? '/' : `/${locale}`} class="btn btn-primary">
+      {t(locale, '404.back')}
+    </a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 8rem 2rem;
+  }
+  .not-found h1 {
+    font-size: 8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent2), #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .not-found p {
+    color: var(--fg-muted);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+</style>

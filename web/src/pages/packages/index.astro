@@ -1,0 +1,182 @@
+---
+// packages.paganlinux.eu — Repozytorium pakietów .pag
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from '../../i18n/utils';
+
+const locale = Astro.currentLocale;
+
+// Fetch packages from CMS API
+let packages: any[] = [];
+let error: string | null = null;
+
+try {
+  const apiBase = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+  const res = await fetch(`${apiBase}/packages?limit=200`);
+  if (res.ok) {
+    const data = await res.json();
+    packages = data.packages || [];
+  } else {
+    error = `API returned ${res.status}`;
+  }
+} catch (e: any) {
+  error = e.message;
+}
+
+function formatSize(bytes: number): string {
+  if (bytes >= 1_073_741_824) return (bytes / 1_073_741_824).toFixed(1) + ' GB';
+  if (bytes >= 1_048_576) return (bytes / 1_048_576).toFixed(1) + ' MB';
+  if (bytes >= 1024) return (bytes / 1024).toFixed(0) + ' KB';
+  return bytes + ' B';
+}
+---
+
+<BaseLayout
+  title={t(locale, 'pkgs.title')}
+  description={t(locale, 'pkgs.subtitle')}
+>
+  <section class="page">
+    <div class="page-header">
+      <h1>{t(locale, 'pkgs.title')}</h1>
+      <p class="subtitle">{t(locale, 'pkgs.subtitle')}</p>
+      <div class="controls">
+        <input
+          type="text"
+          id="pkgSearch"
+          placeholder={t(locale, 'pkgs.search')}
+          class="search-input"
+        />
+        <select id="archFilter" class="filter-select">
+          <option value="">{t(locale, 'pkgs.allArch')}</option>
+          <option value="x86_64">x86_64</option>
+          <option value="aarch64">aarch64</option>
+        </select>
+      </div>
+    </div>
+
+    {error && (
+      <div class="error-banner">
+        ⚠️ API niedostępne: {error}. <a href="https://cms.paganlinux.eu/packages">Przejdź do CMS</a>
+      </div>
+    )}
+
+    <div class="table-wrap" id="pkgsTable">
+      <table>
+        <thead>
+          <tr>
+            <th>{t(locale, 'pkgs.arch')}</th>
+            <th>{t(locale, 'pkgs.version')}</th>
+            <th>{t(locale, 'pkgs.size')}</th>
+            <th>{t(locale, 'pkgs.download')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {packages.map((p: any) => (
+            <tr data-arch={p.arch} data-name={p.name}>
+              <td>
+                <div class="pkg-name">{p.name}</div>
+                {p.description && <div class="pkg-desc">{p.description}</div>}
+              </td>
+              <td><code class="arch-tag">{p.arch}</code></td>
+              <td class="ver-cell">{p.version}-{p.release}</td>
+              <td class="size-cell">{p.pkg_size ? formatSize(p.pkg_size) : '—'}</td>
+              <td>
+                {p.pkg_url ? (
+                  <a href={p.pkg_url} class="btn btn-primary btn-sm" download>
+                    .pag
+                  </a>
+                ) : (
+                  <span class="text-muted">—</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {!error && packages.length === 0 && (
+        <div class="empty">
+          <p>{t(locale, 'pkgs.noResults')}</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const searchInput = document.getElementById('pkgSearch');
+  const archFilter = document.getElementById('archFilter');
+  const table = document.getElementById('pkgsTable');
+
+  function filterRows() {
+    const query = searchInput?.value.toLowerCase() || '';
+    const arch = archFilter?.value || '';
+    table?.querySelectorAll('tbody tr').forEach((row: any) => {
+      const name = row.dataset.name?.toLowerCase() || '';
+      const rowArch = row.dataset.arch || '';
+      const matchName = name.includes(query);
+      const matchArch = !arch || rowArch === arch;
+      row.style.display = matchName && matchArch ? '' : 'none';
+    });
+  }
+
+  searchInput?.addEventListener('input', filterRows);
+  archFilter?.addEventListener('change', filterRows);
+</script>
+
+<style>
+  .page { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem; }
+  .page-header { margin-bottom: 2.5rem; }
+  .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--fg-muted); font-size: 1.1rem; margin-bottom: 1.5rem; }
+  .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .search-input {
+    flex: 1; min-width: 200px; max-width: 400px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.75rem 1.2rem;
+    color: var(--fg); font-size: 1rem;
+  }
+  .search-input:focus { outline: none; border-color: var(--accent); }
+  .filter-select {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.75rem 1rem;
+    color: var(--fg); font-size: 0.9rem; cursor: pointer;
+  }
+
+  .table-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th {
+    text-align: left; padding: 0.8rem 1.2rem;
+    background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border);
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--fg-muted);
+  }
+  td { padding: 0.8rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background: rgba(255,255,255,0.02); }
+
+  .pkg-name { font-weight: 600; color: var(--fg); }
+  .pkg-desc { font-size: 0.82rem; color: var(--fg-muted); margin-top: 0.15rem; }
+  .arch-tag {
+    background: rgba(124,58,237,0.15); color: var(--accent2);
+    padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.8rem;
+  }
+  .ver-cell { font-family: monospace; color: var(--fg-muted); }
+  .size-cell { color: var(--fg-muted); }
+  .btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 7px; }
+
+  .error-banner {
+    background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 2rem;
+    color: #fca5a5; font-size: 0.9rem;
+  }
+  .error-banner a { color: #fca5a5; text-decoration: underline; }
+  .empty { text-align: center; padding: 4rem; color: var(--fg-muted); }
+  .text-muted { color: var(--fg-muted); }
+  @media (max-width: 600px) {
+    th:nth-child(3), td:nth-child(3),
+    th:nth-child(4), td:nth-child(4) { display: none; }
+  }
+</style>

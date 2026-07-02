@@ -1,0 +1,24 @@
+---
+// paganlinux.eu — Strona główna (multilang)
+// Astro automatycznie obsługuje routing /, /en/, /de/, /fr/, /es/, /it/
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import LiveStats from '../components/LiveStats.astro';
+import Features from '../components/Features.astro';
+import InstallSection from '../components/InstallSection.astro';
+import CTA from '../components/CTA.astro';
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+---
+
+<BaseLayout
+  title="PaganLinux"
+  description={t(locale, 'hero.subtitle2')}
+>
+  <Hero />
+  <LiveStats />
+  <Features />
+  <InstallSection />
+  <CTA />
+</BaseLayout>

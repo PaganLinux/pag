@@ -1,0 +1,55 @@
+---
+// Komponent: Sekcja Features (6 kart)
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+
+const features = [
+  { icon: '⚡', titleKey: 'features.fast.title', descKey: 'features.fast.desc' },
+  { icon: '🔐', titleKey: 'features.secure.title', descKey: 'features.secure.desc' },
+  { icon: '📦', titleKey: 'features.packages.title', descKey: 'features.packages.desc' },
+  { icon: '🏗️', titleKey: 'features.build.title', descKey: 'features.build.desc' },
+  { icon: '🌍', titleKey: 'features.i18n.title', descKey: 'features.i18n.desc' },
+  { icon: '🐧', titleKey: 'features.systemd.title', descKey: 'features.systemd.desc' },
+] as const;
+---
+
+<section class="features">
+  <h2>{t(locale, 'features.title')}</h2>
+  <div class="feature-grid">
+    {features.map(f => (
+      <div class="feature-card">
+        <span class="feature-icon">{f.icon}</span>
+        <h3>{t(locale, f.titleKey)}</h3>
+        <p>{t(locale, f.descKey)}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .features { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
+  .features h2 { text-align: center; font-size: 2rem; margin-bottom: 3rem; }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+  .feature-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .feature-card p { color: var(--fg-muted); font-size: 0.95rem; line-height: 1.65; }
+  @media (max-width: 768px) {
+    .feature-grid { grid-template-columns: 1fr; }
+  }
+</style>

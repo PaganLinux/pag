@@ -1,0 +1,94 @@
+---
+// Komponent: Przełącznik języka — używa Astro.currentLocale
+import { supportedLangs, type Lang } from '../i18n/languages';
+import { t, getLocalizedUrl, getNativeName } from '../i18n/utils';
+
+const currentLocale = (Astro.currentLocale || 'pl') as Lang;
+const currentUrl = new URL(Astro.request.url);
+---
+
+<div class="lang-switcher">
+  <button class="lang-btn" id="lang-btn" aria-label={t(currentLocale, 'lang.switcher')}>
+    <span class="lang-code">{currentLocale.toUpperCase()}</span>
+    <span class="lang-arrow">▼</span>
+  </button>
+  <ul class="lang-dropdown" id="lang-dropdown">
+    {supportedLangs.map(lang => (
+      <li>
+        <a
+          href={getLocalizedUrl(currentUrl, lang)}
+          class={lang === currentLocale ? 'active' : ''}
+        >
+          <span>{getNativeName(lang)}</span>
+          {lang === currentLocale && <span class="check">✓</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  const btn = document.getElementById('lang-btn');
+  const dropdown = document.getElementById('lang-dropdown');
+  if (btn && dropdown) {
+    btn.addEventListener('click', () => dropdown.classList.toggle('open'));
+    document.addEventListener('click', (e) => {
+      if (!btn.contains(e.target as Node) && !dropdown.contains(e.target as Node)) {
+        dropdown.classList.remove('open');
+      }
+    });
+  }
+</script>
+
+<style>
+  .lang-switcher { position: relative; }
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .lang-btn:hover { border-color: var(--accent2); }
+  .lang-code { font-family: monospace; }
+  .lang-arrow { font-size: 0.6rem; transition: transform 0.2s; }
+  .lang-btn:has(+ .lang-dropdown.open) .lang-arrow { transform: rotate(180deg); }
+
+  .lang-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    list-style: none;
+    min-width: 160px;
+    padding: 0.4rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 200;
+  }
+  .lang-dropdown.open { display: block; }
+
+  .lang-dropdown a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--fg);
+    text-decoration: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: background 0.15s;
+  }
+  .lang-dropdown a:hover { background: rgba(255, 255, 255, 0.06); }
+  .lang-dropdown a.active { color: var(--accent2); font-weight: 600; }
+  .check { color: var(--green); }
+</style>

@@ -1,0 +1,57 @@
+---
+// Komponent: Sekcja Hero
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+---
+
+<section class="hero">
+  <h1>{t(locale, 'hero.title')}</h1>
+  <p class="hero-lead">
+    {t(locale, 'hero.subtitle1')}<br/>
+    <strong>{t(locale, 'hero.subtitle2')}</strong><br/>
+    {t(locale, 'hero.subtitle3')}
+  </p>
+  <div class="hero-buttons">
+    <a href="/download" class="btn btn-primary">{t(locale, 'hero.cta.download')}</a>
+    <a href="/docs" class="btn btn-outline">{t(locale, 'hero.cta.docs')}</a>
+    <a href="https://repos.paganlinux.eu" class="btn btn-outline">{t(locale, 'hero.cta.repo')}</a>
+    <a href="https://github.com/PaganLinux/pag" class="btn btn-outline">{t(locale, 'hero.cta.github')}</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.18), transparent 65%);
+  }
+  .hero h1 {
+    font-size: 3.8rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent2) 0%, #ec4899 50%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+  .hero-lead {
+    font-size: 1.25rem;
+    color: var(--fg-muted);
+    max-width: 650px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+  .hero-lead strong { color: var(--accent2); }
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2.5rem; }
+    .hero-lead { font-size: 1.05rem; }
+  }
+</style>

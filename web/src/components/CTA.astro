@@ -1,0 +1,32 @@
+---
+// Komponent: Sekcja CTA (Call to Action)
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+---
+
+<section class="cta">
+  <h2>{t(locale, 'cta.title')}</h2>
+  <p>{t(locale, 'cta.desc')}</p>
+  <div class="cta-buttons">
+    <a href="/download" class="btn btn-primary">{t(locale, 'cta.download')}</a>
+    <a href="https://github.com/PaganLinux/pag" class="btn btn-outline">{t(locale, 'cta.github')}</a>
+    <a href="https://pagports.paganlinux.eu" class="btn btn-outline">{t(locale, 'cta.ports')}</a>
+  </div>
+</section>
+
+<style>
+  .cta {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: radial-gradient(ellipse at 50% 100%, rgba(124,58,237,0.12), transparent 60%);
+  }
+  .cta h2 { font-size: 2rem; margin-bottom: 1rem; }
+  .cta p { color: var(--fg-muted); margin-bottom: 2rem; }
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

@@ -1,0 +1,150 @@
+---
+// pagports.paganlinux.eu — Lista portów PAGBUILD
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from '../../i18n/utils';
+
+const locale = Astro.currentLocale;
+
+// Fetch ports from CMS API
+let ports: any[] = [];
+let error: string | null = null;
+
+try {
+  const apiBase = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+  const res = await fetch(`${apiBase}/ports`);
+  if (res.ok) {
+    ports = await res.json();
+  } else {
+    error = `API returned ${res.status}`;
+  }
+} catch (e: any) {
+  error = e.message;
+}
+
+const statusLabels: Record<string, string> = {
+  active: '🟢 Aktywny',
+  outdated: '🟡 Nieaktualny',
+  broken: '🔴 Uszkodzony',
+  archived: '⚫ Zarchiwizowany',
+};
+---
+
+<BaseLayout
+  title={t(locale, 'ports.title')}
+  description={t(locale, 'ports.subtitle')}
+>
+  <section class="page">
+    <div class="page-header">
+      <h1>{t(locale, 'ports.title')}</h1>
+      <p class="subtitle">{t(locale, 'ports.subtitle')}</p>
+      <div class="search-bar">
+        <input
+          type="text"
+          id="portSearch"
+          placeholder={t(locale, 'ports.search')}
+          class="search-input"
+        />
+      </div>
+    </div>
+
+    {error && (
+      <div class="error-banner">
+        ⚠️ API niedostępne: {error}. <a href="https://cms.paganlinux.eu">Przejdź do CMS</a>
+      </div>
+    )}
+
+    <div class="ports-grid" id="portsGrid">
+      {ports.map((p: any) => (
+        <div class="port-card" data-name={p.name} data-category={p.category || ''}>
+          <div class="port-header">
+            <h3>
+              <span class="port-icon">📦</span>
+              {p.name}
+            </h3>
+            <span class="status-badge status-{p.status}">{statusLabels[p.status] || p.status}</span>
+          </div>
+          {p.description && <p class="port-desc">{p.description}</p>}
+          <div class="port-meta">
+            {p.version && <span><strong>{t(locale, 'ports.version')}:</strong> {p.version}</span>}
+            {p.category && <span><strong>{t(locale, 'ports.category')}:</strong> {p.category}</span>}
+          </div>
+          <div class="port-actions">
+            <a href={`https://cms.paganlinux.eu/ports`} class="btn btn-outline btn-sm">
+              {t(locale, 'ports.viewPAGBUILD')}
+            </a>
+          </div>
+        </div>
+      ))}
+
+      {!error && ports.length === 0 && (
+        <div class="empty">
+          <p>{t(locale, 'ports.noResults')}</p>
+          <a href="https://cms.paganlinux.eu/ports" class="btn btn-primary">{t(locale, 'ports.create')}</a>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Client-side search filtering
+  const searchInput = document.getElementById('portSearch');
+  const grid = document.getElementById('portsGrid');
+  if (searchInput && grid) {
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      grid.querySelectorAll('.port-card').forEach((card: any) => {
+        const name = card.dataset.name?.toLowerCase() || '';
+        const category = card.dataset.category?.toLowerCase() || '';
+        card.style.display = name.includes(query) || category.includes(query) ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<style>
+  .page { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem; }
+  .page-header { margin-bottom: 2.5rem; }
+  .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--fg-muted); font-size: 1.1rem; margin-bottom: 2rem; }
+  .search-input {
+    width: 100%; max-width: 500px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.8rem 1.2rem;
+    color: var(--fg); font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { outline: none; border-color: var(--accent); }
+  .search-input::placeholder { color: #555; }
+
+  .error-banner {
+    background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px; padding: 1rem 1.5rem; margin-bottom: 2rem;
+    color: #fca5a5; font-size: 0.9rem;
+  }
+  .error-banner a { color: #fca5a5; text-decoration: underline; }
+
+  .ports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+  .port-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .port-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .port-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .port-header h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .port-icon { font-size: 1.3rem; }
+  .port-desc { color: var(--fg-muted); font-size: 0.9rem; margin-bottom: 0.75rem; line-height: 1.5; }
+  .port-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--fg-muted); margin-bottom: 1rem; flex-wrap: wrap; }
+  .port-meta strong { color: var(--fg); }
+  .port-actions { display: flex; gap: 0.5rem; }
+  .btn-sm { padding: 0.5rem 1rem; font-size: 0.82rem; border-radius: 8px; }
+  .status-badge { font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: 600; }
+  .status-active { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+  .status-outdated { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+  .status-broken { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .status-archived { background: rgba(107,114,128,0.15); color: #9ca3af; border: 1px solid rgba(107,114,128,0.3); }
+  .empty { text-align: center; padding: 4rem 1rem; color: var(--fg-muted); }
+  .empty p { margin-bottom: 1.5rem; font-size: 1.1rem; }
+  @media (max-width: 600px) { .ports-grid { grid-template-columns: 1fr; } }
+</style>

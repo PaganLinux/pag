@@ -1,0 +1,145 @@
+---
+// Dokumentacja PaganLinux
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/utils';
+
+const locale = Astro.currentLocale;
+
+const docCards = [
+  { icon: '🚀', titleKey: 'docs.quickstart', descKey: 'docs.quickstart.desc', href: '#' },
+  { icon: '📦', titleKey: 'docs.pag', descKey: 'docs.pag.desc', href: '#' },
+  { icon: '🏗️', titleKey: 'docs.build', descKey: 'docs.build.desc', href: '#' },
+  { icon: '⚙️', titleKey: 'docs.config', descKey: 'docs.config.desc', href: '#' },
+  { icon: '🌐', titleKey: 'docs.repo', descKey: 'docs.repo.desc', href: '#' },
+  { icon: '🔐', titleKey: 'docs.security', descKey: 'docs.security.desc', href: '#' },
+] as const;
+
+const cliCommands = [
+  { cmd: 'install', key: 'docs.cli.install' },
+  { cmd: 'remove', key: 'docs.cli.remove' },
+  { cmd: 'update', key: 'docs.cli.update' },
+  { cmd: 'search', key: 'docs.cli.search' },
+  { cmd: 'info', key: 'docs.cli.info' },
+  { cmd: 'list', key: 'docs.cli.list' },
+  { cmd: 'check', key: 'docs.cli.check' },
+  { cmd: 'clean', key: 'docs.cli.clean' },
+  { cmd: 'repo', key: 'docs.cli.repo' },
+  { cmd: 'flatpak', key: 'docs.cli.flatpak' },
+] as const;
+---
+
+<BaseLayout
+  title={t(locale, 'docs.title')}
+  description={t(locale, 'docs.subtitle')}
+>
+  <section class="docs-page">
+    <h1>{t(locale, 'docs.title')}</h1>
+    <p class="subtitle">{t(locale, 'docs.subtitle')}</p>
+
+    <!-- Karty dokumentacji -->
+    <div class="doc-grid">
+      {docCards.map(card => (
+        <a href={card.href} class="doc-card">
+          <span class="doc-icon">{card.icon}</span>
+          <h3>{t(locale, card.titleKey)}</h3>
+          <p>{t(locale, card.descKey)}</p>
+        </a>
+      ))}
+    </div>
+
+    <!-- Tabela komend CLI -->
+    <div class="cli-section">
+      <h2>{t(locale, 'docs.cli.title')}</h2>
+      <div class="cli-table-wrap">
+        <table class="cli-table">
+          <thead>
+            <tr>
+              <th>Komenda</th>
+              <th>Opis</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cliCommands.map(row => (
+              <tr>
+                <td><code>pag {row.cmd}</code></td>
+                <td>{t(locale, row.key)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .docs-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .docs-page h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .subtitle {
+    color: var(--fg-muted);
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+  }
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 4rem;
+  }
+  .doc-card {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .doc-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .doc-icon { font-size: 2rem; display: block; margin-bottom: 0.75rem; }
+  .doc-card h3 { font-size: 1.1rem; margin-bottom: 0.4rem; }
+  .doc-card p { color: var(--fg-muted); font-size: 0.9rem; line-height: 1.5; }
+
+  .cli-section h2 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+  .cli-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .cli-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .cli-table th {
+    text-align: left;
+    padding: 0.8rem 1.2rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-muted);
+  }
+  .cli-table td {
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .cli-table tr:last-child td { border-bottom: none; }
+  .cli-table code {
+    background: rgba(124,58,237,0.15);
+    color: var(--accent2);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+  }
+</style>
