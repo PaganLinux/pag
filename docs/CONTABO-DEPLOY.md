@@ -98,28 +98,32 @@ cd pag
 ## 🟢 Krok 7: Backend API (Rust)
 
 ```bash
-# Przygotuj katalogi i sekret JWT
-mkdir -p /var/lib/pagancms/data
+# Katalog na dane
+mkdir -p /var/lib/pagancms
 export JWT_SECRET=$(openssl rand -hex 64)
 
-# Plik .env (UWAGA: sqlite:/// z TRZEMA ukośnikami!)
-cat > /var/lib/pagancms/.env << 'EOF'
-JWT_SECRET=__WSTAW_TU_WYGENEROWANY_SECRET__
+# Plik .env
+cat > /var/lib/pagancms/.env << EOF
+JWT_SECRET=$JWT_SECRET
 JWT_EXPIRY_HOURS=72
-DATABASE_URL=sqlite:///var/lib/pagancms/data/pagancms.db
+DATABASE_URL=sqlite:///var/lib/pagancms/pagancms.db
 SERVER_ADDR=127.0.0.1:3000
 CORS_ORIGIN=https://cms.paganlinux.eu
 GITEA_API_URL=https://git.paganlinux.eu/api/v1
 GITEA_TOKEN=
 EOF
 
-# Wstaw wygenerowany secret
-sed -i "s/__WSTAW_TU_WYGENEROWANY_SECRET__/$JWT_SECRET/" /var/lib/pagancms/.env
 chmod 600 /var/lib/pagancms/.env
 
-# Kompilacja (~5-10 min na VPS)
+# Sprawdź czy plik poprawny
+cat /var/lib/pagancms/.env | grep DATABASE_URL
+
+# Kompilacja (~5-10 min)
 cd /opt/pag/cms/backend
 cargo build --release
+
+# Sprawdź czy binarek działa
+/opt/pag/cms/backend/target/release/pagan-cms --help 2>&1 || true
 
 # Systemd
 cat > /etc/systemd/system/pagancms-api.service << 'SYSTEMD'
@@ -141,16 +145,17 @@ WantedBy=multi-user.target
 SYSTEMD
 
 systemctl daemon-reload
+systemctl stop pagancms-api 2>/dev/null
 systemctl enable --now pagancms-api
 sleep 3
 
 # Test
 curl -s http://127.0.0.1:3000/api/v1/stats
-# Musi zwrócić: {"total_packages":0,"total_ports":0,...}
-```
+echo ""
 
-> **Jeśli nie zwraca JSON-a:** `journalctl -u pagancms-api -n 20 --no-pager`
-> Najczęstsze błędy: `unable to open database` → sprawdź czy URL ma `sqlite:///` (trzy ukośniki), `no such table` → usuń `rm /var/lib/pagancms/data/pagancms.db` i restart.
+# Jeśli pusto — debug:
+journalctl -u pagancms-api -n 10 --no-pager
+```
 
 ---
 
@@ -392,7 +397,7 @@ cd cms/frontend && npm install && npm run build && cp -r dist/* /var/www/cms/
 cd ../web && npm install && npm run build && systemctl restart paganlinux-web
 
 # Backup bazy
-cp /var/lib/pagancms/data/pagancms.db /root/backup-$(date +%Y%m%d).db
+cp /var/lib/pagancms/pagancms.db /root/backup-$(date +%Y%m%d).db
 
 # Porty
 ss -tlnp | grep -E '3000|3004|80|443'

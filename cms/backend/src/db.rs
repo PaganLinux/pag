@@ -5,15 +5,21 @@ use crate::config::Config;
 pub type DbPool = SqlitePool;
 
 pub async fn init_db(config: &Config) -> anyhow::Result<DbPool> {
-    // Wyciągnij ścieżkę pliku z URL sqlite:/sciezka, sqlite://sciezka, lub sqlite:///sciezka
+    // Wyciągnij ścieżkę pliku z URL sqlite:
     let db_path = config.database_url
         .strip_prefix("sqlite:///")
         .or_else(|| config.database_url.strip_prefix("sqlite://"))
         .or_else(|| config.database_url.strip_prefix("sqlite:"))
         .unwrap_or(&config.database_url);
-    if let Some(parent) = std::path::Path::new(db_path).parent() {
-        std::fs::create_dir_all(parent)?;
+
+    // Utwórz katalog nadrzędny jeśli nie istnieje
+    let path = std::path::Path::new(db_path);
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)
+            .map_err(|e| anyhow::anyhow!("Cannot create directory {:?}: {}", parent, e))?;
     }
+
+    tracing::info!("Database path: {} (resolved from: {})", db_path, config.database_url);
 
     let pool = SqlitePoolOptions::new()
         .max_connections(5)
