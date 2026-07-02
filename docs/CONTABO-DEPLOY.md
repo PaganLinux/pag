@@ -121,7 +121,7 @@ mkdir -p /var/lib/pagancms/data
 cat > /var/lib/pagancms/.env << EOF
 JWT_SECRET=$JWT_SECRET
 JWT_EXPIRY_HOURS=72
-DATABASE_URL=sqlite:/var/lib/pagancms/data/pagancms.db?mode=rwc
+DATABASE_URL=sqlite:/var/lib/pagancms/data/pagancms.db
 SERVER_ADDR=127.0.0.1:3000
 CORS_ORIGIN=https://cms.paganlinux.eu
 GITEA_API_URL=https://git.paganlinux.eu/api/v1
@@ -153,10 +153,21 @@ systemctl daemon-reload
 systemctl enable pagancms-api
 systemctl start pagancms-api
 
-# Sprawdź
+# Diagnostyka — sprawdź czy działa
 sleep 3
-curl -s http://127.0.0.1:3000/api/v1/stats
-# Powinno zwrócić JSON z liczbami
+echo "=== Status serwisu ==="
+systemctl status pagancms-api --no-pager -l
+
+echo "=== Test API ==="
+curl -v http://127.0.0.1:3000/api/v1/stats 2>&1
+
+echo "=== Jeśli nic nie zwraca, sprawdź logi ==="
+journalctl -u pagancms-api --no-pager -n 30
+
+# Najczęstsze problemy:
+# 1. "Address already in use" →kill $(lsof -t -i:3000)
+# 2. "Permission denied" →chown -R root:root /var/lib/pagancms
+# 3. "no such table" → API tworzy tabele automatycznie przy starcie
 ```
 
 ---

@@ -17,6 +17,11 @@ use tracing_subscriber;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    // Załaduj .env z bieżącego katalogu LUB ze ścieżki systemd
+    dotenvy::dotenv().ok();
+    // Fallback: spróbuj ścieżki produkcyjnej
+    dotenvy::from_filename("/var/lib/pagancms/.env").ok();
+
     // Inicjalizacja loggera
     tracing_subscriber::fmt::init();
 
