@@ -16,7 +16,7 @@ impl Config {
     pub fn from_env() -> Self {
         Self {
             database_url: env::var("DATABASE_URL")
-                .unwrap_or_else(|_| "sqlite:data/pagancms.db?mode=rwc".to_string()),
+                .unwrap_or_else(|_| "sqlite:data/pagancms.db".to_string()),
             jwt_secret: env::var("JWT_SECRET")
                 .unwrap_or_else(|_| "paganlinux-cms-secret-change-in-production".to_string()),
             jwt_expiry_hours: env::var("JWT_EXPIRY_HOURS")

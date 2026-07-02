@@ -121,7 +121,7 @@ mkdir -p /var/lib/pagancms/data
 cat > /var/lib/pagancms/.env << EOF
 JWT_SECRET=$JWT_SECRET
 JWT_EXPIRY_HOURS=72
-DATABASE_URL=sqlite:/var/lib/pagancms/data/pagancms.db
+DATABASE_URL=sqlite:///var/lib/pagancms/data/pagancms.db
 SERVER_ADDR=127.0.0.1:3000
 CORS_ORIGIN=https://cms.paganlinux.eu
 GITEA_API_URL=https://git.paganlinux.eu/api/v1
@@ -410,7 +410,7 @@ curl -X POST https://api.paganlinux.eu/api/v1/auth/register \
   -d '{
     "username": "admin",
     "email": "admin@paganlinux.eu",
-    "password": "ZMIEN_NA_SILNE_HASLO"
+    "password": "Patryk1991!/"
   }'
 ```
 
