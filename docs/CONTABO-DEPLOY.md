@@ -1,71 +1,63 @@
 # 🚀 PaganLinux — Deploy na Contabo VPS (Debian 13)
 
-Kompletna instrukcja: od świeżego Debiana 13 do działającego ekosystemu.
-Wszystkie komendy — kopiuj i wklejaj. ⏱️ ~30 minut.
-
-## 📋 Co instalujemy
-
-| Subdomena | Co to | Port |
-|-----------|-------|------|
-| `paganlinux.eu` | Strona główna (Astro SSR) | 3004 |
-| `cms.paganlinux.eu` | Panel admina (React SPA) | nginx static |
-| `pagports.paganlinux.eu` | Lista portów | przez nginx → 3004 |
-| `packages.paganlinux.eu` | Repozytorium .pag | przez nginx → 3004 |
-| `build.paganlinux.eu` | Kolejka buildów | przez nginx → 3004 |
-| `api.paganlinux.eu` | Backend API (Rust) | 3000 |
-| `git.paganlinux.eu` | Gitea | 3001 |
+Kompletna instrukcja: od czystego Debiana 13 do działającego ekosystemu PaganLinux.
+Wszystkie komendy kopiuj-wklejaj. ⏱️ ~30 minut.
 
 ---
 
-## 🟢 Krok 1: SSH i sprawdzenie systemu
+## 📋 Architektura
+
+| Subdomena | Co | Jak |
+|-----------|-----|-----|
+| `paganlinux.eu` | Strona główna | Astro SSR → port 3004 |
+| `cms.paganlinux.eu` | Panel admina | React SPA → nginx static |
+| `pagports.paganlinux.eu` | Lista portów PAGBUILD | nginx → Astro |
+| `packages.paganlinux.eu` | Repozytorium .pag | nginx → Astro |
+| `build.paganlinux.eu` | Kolejka buildów | nginx → Astro |
+| `api.paganlinux.eu` | Backend API | Rust → port 3000 |
+| `git.paganlinux.eu` | Gitea (opcjonalnie) | Docker → port 3001 |
+
+---
+
+## 🟢 Krok 1: SSH
 
 ```bash
 ssh root@<IP_SERWERA>
-
-cat /etc/debian_version   # powinno: 13.x
-df -h                      # sprawdź miejsce
-free -h                    # sprawdź RAM
+cat /etc/debian_version   # 13.x
+df -h && free -h           # sprawdź zasoby
 ```
 
 ---
 
-## 🟢 Krok 2: Aktualizacja i narzędzia
+## 🟢 Krok 2: Pakiety systemowe
 
 ```bash
 apt update && apt upgrade -y
-
-apt install -y \
-  curl wget git build-essential \
-  pkg-config libssl-dev \
-  nginx certbot python3-certbot-nginx \
-  ufw
+apt install -y curl wget git build-essential pkg-config libssl-dev nginx ufw
 ```
 
 ---
 
-## 🟢 Krok 3: Instalacja Rust
+## 🟢 Krok 3: Rust + Node.js
 
 ```bash
+# Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME/.cargo/env"
-rustc --version   # 1.80+
-```
 
----
-
-## 🟢 Krok 4: Instalacja Node.js 22
-
-```bash
+# Node.js 22
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 apt install -y nodejs
-node --version    # 22.x
+
+# Weryfikacja
+rustc --version && node --version
 ```
 
 ---
 
-## 🟢 Krok 5: DNS (ustaw w panelu domeny)
+## 🟢 Krok 4: DNS
 
-Wszystkie rekordy A → IP serwera:
+W panelu domeny ustaw rekordy A → IP serwera:
 
 ```
 paganlinux.eu
@@ -80,7 +72,7 @@ git.paganlinux.eu
 
 ---
 
-## 🟢 Krok 6: Firewall
+## 🟢 Krok 5: Firewall
 
 ```bash
 ufw default deny incoming
@@ -93,7 +85,7 @@ ufw --force enable
 
 ---
 
-## 🟢 Krok 7: Klonowanie repozytorium
+## 🟢 Krok 6: Klonowanie
 
 ```bash
 cd /opt
@@ -103,23 +95,16 @@ cd pag
 
 ---
 
-## 🟢 Krok 8: Budowanie backendu API (Rust)
+## 🟢 Krok 7: Backend API (Rust)
 
 ```bash
-cd /opt/pag/cms/backend
-
-# Wygeneruj silny secret JWT
+# Przygotuj katalogi i sekret JWT
+mkdir -p /var/lib/pagancms/data
 export JWT_SECRET=$(openssl rand -hex 64)
 
-# Kompilacja (może potrwać ~5-10 min na VPS)
-cargo build --release
-
-# Katalogi
-mkdir -p /var/lib/pagancms/data
-
-# Plik .env
-cat > /var/lib/pagancms/.env << EOF
-JWT_SECRET=$JWT_SECRET
+# Plik .env (UWAGA: sqlite:/// z TRZEMA ukośnikami!)
+cat > /var/lib/pagancms/.env << 'EOF'
+JWT_SECRET=__WSTAW_TU_WYGENEROWANY_SECRET__
 JWT_EXPIRY_HOURS=72
 DATABASE_URL=sqlite:///var/lib/pagancms/data/pagancms.db
 SERVER_ADDR=127.0.0.1:3000
@@ -128,12 +113,18 @@ GITEA_API_URL=https://git.paganlinux.eu/api/v1
 GITEA_TOKEN=
 EOF
 
+# Wstaw wygenerowany secret
+sed -i "s/__WSTAW_TU_WYGENEROWANY_SECRET__/$JWT_SECRET/" /var/lib/pagancms/.env
 chmod 600 /var/lib/pagancms/.env
 
-# Systemd service
+# Kompilacja (~5-10 min na VPS)
+cd /opt/pag/cms/backend
+cargo build --release
+
+# Systemd
 cat > /etc/systemd/system/pagancms-api.service << 'SYSTEMD'
 [Unit]
-Description=PaganCMS Backend API
+Description=PaganCMS API
 After=network.target
 
 [Service]
@@ -150,52 +141,41 @@ WantedBy=multi-user.target
 SYSTEMD
 
 systemctl daemon-reload
-systemctl enable pagancms-api
-systemctl start pagancms-api
-
-# Diagnostyka — sprawdź czy działa
+systemctl enable --now pagancms-api
 sleep 3
-echo "=== Status serwisu ==="
-systemctl status pagancms-api --no-pager -l
 
-echo "=== Test API ==="
-curl -v http://127.0.0.1:3000/api/v1/stats 2>&1
-
-echo "=== Jeśli nic nie zwraca, sprawdź logi ==="
-journalctl -u pagancms-api --no-pager -n 30
-
-# Najczęstsze problemy:
-# 1. "Address already in use" →kill $(lsof -t -i:3000)
-# 2. "Permission denied" →chown -R root:root /var/lib/pagancms
-# 3. "no such table" → API tworzy tabele automatycznie przy starcie
+# Test
+curl -s http://127.0.0.1:3000/api/v1/stats
+# Musi zwrócić: {"total_packages":0,"total_ports":0,...}
 ```
+
+> **Jeśli nie zwraca JSON-a:** `journalctl -u pagancms-api -n 20 --no-pager`
+> Najczęstsze błędy: `unable to open database` → sprawdź czy URL ma `sqlite:///` (trzy ukośniki), `no such table` → usuń `rm /var/lib/pagancms/data/pagancms.db` i restart.
 
 ---
 
-## 🟢 Krok 9: Budowanie Panelu Admina (React)
+## 🟢 Krok 8: Panel Admina (React)
 
 ```bash
 cd /opt/pag/cms/frontend
 npm install
 npm run build
-
 mkdir -p /var/www/cms
 cp -r dist/* /var/www/cms/
 ```
 
 ---
 
-## 🟢 Krok 10: Budowanie Stron (Astro)
+## 🟢 Krok 9: Strona WWW (Astro)
 
 ```bash
 cd /opt/pag/web
 npm install
 npm run build
 
-# Uruchomienie przez systemd
 cat > /etc/systemd/system/paganlinux-web.service << 'SYSTEMD'
 [Unit]
-Description=PaganLinux Web Server
+Description=PaganLinux Web
 After=network.target
 
 [Service]
@@ -214,34 +194,28 @@ WantedBy=multi-user.target
 SYSTEMD
 
 systemctl daemon-reload
-systemctl enable paganlinux-web
-systemctl start paganlinux-web
-
-# Sprawdź
+systemctl enable --now paganlinux-web
 sleep 2
 curl -s http://127.0.0.1:3004/ | head -3
 ```
 
 ---
 
-## 🟢 Krok 11: Worker buildów
+## 🟢 Krok 10: Worker buildów
 
 ```bash
 cd /opt/pag/cms/worker
 cargo build --release
-
 mkdir -p /var/lib/pagancms/build-workspace
 
 cat > /etc/systemd/system/pagancms-worker.service << 'SYSTEMD'
 [Unit]
-Description=PaganCMS Build Worker
-After=network.target pagancms-api.service
+Description=PaganCMS Worker
+After=pagancms-api.service
 
 [Service]
 Type=simple
 User=root
-Environment="API_URL=http://127.0.0.1:3000/api/v1"
-Environment="BUILD_WORKSPACE=/var/lib/pagancms/build-workspace"
 ExecStart=/opt/pag/cms/worker/target/release/pagancms-worker
 Restart=always
 RestartSec=10
@@ -251,23 +225,20 @@ WantedBy=multi-user.target
 SYSTEMD
 
 systemctl daemon-reload
-systemctl enable pagancms-worker
-systemctl start pagancms-worker
+systemctl enable --now pagancms-worker
 ```
 
 ---
 
-## 🟢 Krok 12: Nginx (reverse proxy)
+## 🟢 Krok 11: Nginx
 
 ```bash
 rm -f /etc/nginx/sites-enabled/default
 
 cat > /etc/nginx/sites-available/paganlinux << 'NGINX'
-# ─── paganlinux.eu ────────────────────────────
 server {
     listen 80;
     server_name paganlinux.eu www.paganlinux.eu;
-
     location / {
         proxy_pass http://127.0.0.1:3004;
         proxy_http_version 1.1;
@@ -276,31 +247,24 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 
-# ─── cms.paganlinux.eu ────────────────────────
 server {
     listen 80;
     server_name cms.paganlinux.eu;
-
     root /var/www/cms;
     index index.html;
-
     location / {
         try_files $uri $uri/ /index.html;
     }
-
     location /api/ {
         proxy_pass http://127.0.0.1:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 
-# ─── pagports.paganlinux.eu ──────────────────
 server {
     listen 80;
     server_name pagports.paganlinux.eu;
@@ -308,57 +272,44 @@ server {
         proxy_pass http://127.0.0.1:3004;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 
-# ─── packages.paganlinux.eu ──────────────────
 server {
     listen 80;
     server_name packages.paganlinux.eu;
     location / {
         proxy_pass http://127.0.0.1:3004;
         proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 
-# ─── build.paganlinux.eu ─────────────────────
 server {
     listen 80;
     server_name build.paganlinux.eu;
     location / {
         proxy_pass http://127.0.0.1:3004;
         proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 
-# ─── api.paganlinux.eu ───────────────────────
 server {
     listen 80;
     server_name api.paganlinux.eu;
     location / {
         proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 
-# ─── git.paganlinux.eu ───────────────────────
 server {
     listen 80;
     server_name git.paganlinux.eu;
     location / {
         proxy_pass http://127.0.0.1:3001;
         proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 NGINX
@@ -369,16 +320,21 @@ nginx -t && systemctl reload nginx
 
 ---
 
-## 🟢 Krok 13: SSL (Let's Encrypt)
+## 🟢 Krok 12: SSL
 
 ```bash
-certbot --nginx -d paganlinux.eu -d www.paganlinux.eu
-certbot --nginx -d cms.paganlinux.eu
-certbot --nginx -d pagports.paganlinux.eu
-certbot --nginx -d packages.paganlinux.eu
-certbot --nginx -d build.paganlinux.eu
-certbot --nginx -d api.paganlinux.eu
-certbot --nginx -d git.paganlinux.eu
+# Spróbuj pluginu nginx (jeśli nie działa → metoda standalone poniżej)
+apt install -y python3-certbot-nginx 2>/dev/null
+
+certbot --nginx -d paganlinux.eu -d www.paganlinux.eu 2>/dev/null || {
+    # Fallback — metoda standalone
+    systemctl stop nginx
+    for domain in paganlinux.eu cms.paganlinux.eu pagports.paganlinux.eu packages.paganlinux.eu build.paganlinux.eu api.paganlinux.eu git.paganlinux.eu; do
+        certbot certonly --standalone -d $domain --non-interactive --agree-tos -m admin@paganlinux.eu
+    done
+    systemctl start nginx
+    # Dodaj ręcznie listen 443 ssl do każdego bloku server w nginx
+}
 
 # Auto-renewal
 echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'" | crontab -
@@ -386,65 +342,69 @@ echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'" | cr
 
 ---
 
-## 🟢 Krok 14: Weryfikacja
+## 🟢 Krok 13: Weryfikacja
 
 ```bash
-systemctl status pagancms-api pagancms-worker paganlinux-web nginx
+systemctl status pagancms-api paganlinux-web pagancms-worker nginx --no-pager
 
-# Test API
-curl -s https://api.paganlinux.eu/api/v1/stats
+# API (powinno zwrócić JSON)
+curl -s http://127.0.0.1:3000/api/v1/stats
 
-# Test stron
-curl -s https://paganlinux.eu | head -3
-curl -s https://cms.paganlinux.eu | head -3
-curl -s https://pagports.paganlinux.eu | head -3
+# Strona główna
+curl -s http://127.0.0.1:3004/ | head -3
+
+# CMS
+curl -s http://127.0.0.1/cms/ 2>/dev/null || echo "CMS: otwórz https://cms.paganlinux.eu"
 ```
 
 ---
 
-## 🟢 Krok 15: Pierwsze konto admina CMS
+## 🟢 Krok 14: Konto admina
 
 ```bash
-curl -X POST https://api.paganlinux.eu/api/v1/auth/register \
+curl -X POST http://127.0.0.1:3000/api/v1/auth/register \
   -H "Content-Type: application/json" \
-  -d '{
-    "username": "admin",
-    "email": "admin@paganlinux.eu",
-    "password": "Patryk1991!/"
-  }'
+  -d '{"username":"admin","email":"admin@paganlinux.eu","password":"TWOJE_SILNE_HASLO"}'
 ```
 
-Teraz otwórz `https://cms.paganlinux.eu` i zaloguj się.
+Otwórz `https://cms.paganlinux.eu` i zaloguj się.
 
 ---
 
-## 🛠️ Zarządzanie na co dzień
+## 🛠️ Codzienne zarządzanie
 
 ```bash
-# Logi na żywo
+# Status wszystkich serwisów
+systemctl status pagancms-api paganlinux-web pagancms-worker nginx
+
+# Logi
 journalctl -u pagancms-api -f
 journalctl -u paganlinux-web -f
-journalctl -u pagancms-worker -f
 
 # Restart
 systemctl restart pagancms-api
 systemctl restart paganlinux-web
-systemctl restart nginx
 
-# Porty — co nasłuchuje
-ss -tlnp | grep -E '3000|3004|80|443'
+# Aktualizacja kodu
+cd /opt/pag && git pull
+cd cms/backend && cargo build --release && systemctl restart pagancms-api
+cd cms/frontend && npm install && npm run build && cp -r dist/* /var/www/cms/
+cd ../web && npm install && npm run build && systemctl restart paganlinux-web
 
 # Backup bazy
 cp /var/lib/pagancms/data/pagancms.db /root/backup-$(date +%Y%m%d).db
+
+# Porty
+ss -tlnp | grep -E '3000|3004|80|443'
 ```
 
 ---
 
 ## ⚠️ Checklist przed produkcją
 
-- [ ] Zmień `JWT_SECRET` w `/var/lib/pagancms/.env`
-- [ ] Zmień hasło admina CMS
-- [ ] Dodaj swap: `fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile`
-- [ ] Włącz auto-aktualizacje: `apt install unattended-upgrades -y`
-- [ ] Skonfiguruj Gitea (jeśli potrzebne): `docker run -d --name gitea -p 3001:3000 -v /var/lib/gitea:/data gitea/gitea:latest`
-- [ ] Ustaw limity logów: `journalctl --vacuum-size=500M`
+- [ ] `JWT_SECRET` ustawiony na silny losowy string
+- [ ] Hasło admina zmienione
+- [ ] Swap: `fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile`
+- [ ] Auto-aktualizacje: `apt install unattended-upgrades -y`
+- [ ] Logi: `journalctl --vacuum-size=500M`
+- [ ] Gitea (opcjonalnie): `docker run -d --name gitea -p 3001:3000 -v /var/lib/gitea:/data gitea/gitea:latest`
