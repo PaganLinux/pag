@@ -195,7 +195,7 @@ npm run build
 # Uruchomienie przez systemd
 cat > /etc/systemd/system/paganlinux-web.service << 'SYSTEMD'
 [Unit]
-Description=PaganLinux Web Server (Astro SSR)
+Description=PaganLinux Web Server
 After=network.target
 
 [Service]
