@@ -1,0 +1,52 @@
+# ────────────────────────────────────────────────────────────────────────────────
+# checkver.toml — Konfiguracja sprawdzania aktualności pakietu
+# Ten plik definiuje źródła do automatycznego sprawdzania nowych wersji
+# ────────────────────────────────────────────────────────────────────────────────
+
+[package]
+name = "7zip"
+version = "24.08"
+description = "Wieloplatformowy archiwizer plików"
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Źródła sprawdzania wersji (można podać wiele)
+# ────────────────────────────────────────────────────────────────────────────────
+
+[[sources]]
+type = "github"
+url = "https://github.com/ip7z/7zip"
+version_regex = "v(\\d+\\.\\d+)"
+branch = "main"
+
+# Przykład dla GitLab
+# [[sources]]
+# type = "gitlab"
+# url = "https://gitlab.com/example/project"
+# version_regex = "v(\\d+\\.\\d+\\.\\d+)"
+
+# Przykład dla PyPI
+# [[sources]]
+# type = "pypi"
+# url = "https://pypi.org/project/requests"
+
+# Przykład dla crates.io
+# [[sources]]
+# type = "cratesio"
+# url = "https://crates.io/crates/serde"
+
+# Przykład dla git (sprawdza tagi)
+# [[sources]]
+# type = "git"
+# url = "https://git.example.com/project.git"
+# version_regex = "v?(\\d+\\.\\d+)"
+# branch = "main"
+
+[check]
+# Jak często sprawdzać (w godzinach)
+interval_hours = 24
+
+# Ignoruj pre-release (beta, rc, alpha)
+ignore_prerelease = true
+
+# Opcjonalny regex do filtrowania wersji
+# version_filter = "^\\d+\\.\\d+$"

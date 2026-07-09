@@ -1,0 +1,19 @@
+# Pliki generowane przez kompilator Rust
+target/
+
+# Pliki tymczasowe
+*.tmp
+*.swp
+
+# Pliki konfiguracyjne IDE
+.idea/
+.vscode/
+
+# Wirtualne środowisko Pythona
+.venv/
+
+# Pliki logów
+*.log
+
+# Pliki cache
+**/cache/

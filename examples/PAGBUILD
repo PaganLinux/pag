@@ -1,0 +1,148 @@
+# ────────────────────────────────────────────────────────────────────────────────
+# PAGBUILD — Przykładowy plik budowania dla PaganLinux
+# Format kompatybilny 1:1 z PKGBUILD Arch Linux
+# ────────────────────────────────────────────────────────────────────────────────
+
+# Nazwa pakietu
+pkgname=7zip
+
+# Wersja pakietu
+pkgver=24.08
+
+# Numer wydania (budowania dla tej wersji)
+pkgrel=1
+
+# Opis pakietu
+pkgdesc="Wieloplatformowy archiwizer plików o wysokim współczynniku kompresji"
+
+# Obsługiwane architektury ('any' dla niezależnych od architektury)
+arch=(x86_64 aarch64)
+
+# URL projektu upstream
+url="https://www.7-zip.org/"
+
+# Licencje SPDX
+license=(LGPL-2.1-or-later BSD-3-Clause unRAR)
+
+# Grupa (opcjonalne)
+groups=(compression archivers)
+
+# Zależności
+depends=(
+    gcc-libs
+    glibc
+)
+
+# Opcjonalne zależności
+optdepends=(
+    "gtk3: interfejs graficzny"
+    "desktop-file-utils: integracja z menu"
+)
+
+# Zależności wymagane do budowania
+makedepends=(
+    gcc
+    make
+    git
+)
+
+# Zależności do testów
+checkdepends=()
+
+# Konflikty
+conflicts=(p7zip)
+
+# Zastępuje
+replaces=()
+
+# Dostarcza (wirtualne pakiety)
+provides=(p7zip)
+
+# Źródła do pobrania
+source=(
+    "https://github.com/ip7z/7zip/releases/download/v${pkgver}/7z${pkgver//./}-src.tar.xz"
+    "git+https://github.com/user/patches.git"
+)
+
+# Sumy kontrolne SHA256 źródeł (SKIP dla git)
+sha256sums=(
+    "SKIP"
+    "SKIP"
+)
+
+# Sumy kontrolne BLAKE3
+b3sums=(
+    "SKIP"
+    "SKIP"
+)
+
+# Pliki backup (nieusuwane przy deinstalacji)
+backup=()
+
+# Opcje budowania (usuń z listy aby wyłączyć)
+options=(
+    strip      # usuwaj symbole debugowania
+    docs       # buduj dokumentację
+    libtool    # usuwaj pliki .la
+    staticlibs # zachowaj biblioteki statyczne
+    emptydirs  # zachowaj puste katalogi
+    zipman     # kompresuj strony man
+    debug      # zachowaj symbole debugowania
+    !lto       # NIE używaj LTO
+)
+
+# Instalacyjny plik .install (opcjonalne)
+# install=7zip.install
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Funkcje budowania
+# ────────────────────────────────────────────────────────────────────────────────
+
+# Przygotowanie źródeł (opcjonalne)
+prepare() {
+    cd "${srcdir}/7zz-${pkgver}"
+
+    # Aplikuj łatki
+    for patch in "${srcdir}/patches/"*.patch; do
+        if [ -f "$patch" ]; then
+            patch -Np1 -i "$patch"
+        fi
+    done
+}
+
+# Budowanie
+build() {
+    cd "${srcdir}/7zz-${pkgver}"
+
+    # Kompilacja zoptymalizowana
+    make -j$(nproc) \
+        CFLAGS="${CFLAGS}" \
+        CXXFLAGS="${CXXFLAGS}" \
+        LDFLAGS="${LDFLAGS}"
+}
+
+# Testy (opcjonalne)
+check() {
+    cd "${srcdir}/7zz-${pkgver}"
+    make test || true
+}
+
+# Pakowanie
+package() {
+    cd "${srcdir}/7zz-${pkgver}"
+
+    # Instaluj binaria
+    install -Dm755 7zz "${pkgdir}/usr/bin/7zz"
+
+    # Dowiązania symboliczne
+    ln -sf 7zz "${pkgdir}/usr/bin/7z"
+    ln -sf 7zz "${pkgdir}/usr/bin/7za"
+    ln -sf 7zz "${pkgdir}/usr/bin/7zr"
+
+    # Dokumentacja
+    install -Dm644 DOC/License.txt "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+    install -Dm644 DOC/readme.txt "${pkgdir}/usr/share/doc/${pkgname}/README"
+
+    # Strony man
+    install -Dm644 DOC/MANUAL/*.1 -t "${pkgdir}/usr/share/man/man1/"
+}

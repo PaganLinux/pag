@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Uruchamianie testów przed commitem
+echo "Running tests before commit..."
+cargo test
+
+# Sprawdzanie formatowania kodu
+echo "Checking code formatting..."
+cargo fmt -- --check
+
+# Sprawdzanie stylu kodu
+echo "Checking code style..."
+cargo clippy
+
+# Jeśli wszystkie sprawdzenia zakończą się sukcesem, commit zostanie zatwierdzony
+if [ $? -eq 0 ]; then
+    echo "All checks passed. Proceeding with commit."
+    exit 0
+else
+    echo "Some checks failed. Commit aborted."
+    exit 1
+fi
