@@ -1,5 +1,4 @@
 // ────────────────────────────────────────────────────────────────────────────────
-// Pag — Lokalna baza danych pakietów (SQLite)
 // ────────────────────────────────────────────────────────────────────────────────
 
 use anyhow::{Context, Result};
@@ -7,6 +6,7 @@ use chrono::{DateTime, Utc};
 use rusqlite::{params, Connection};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
+use std::collections::HashMap;
 
 use crate::package::metadata::{InstallReason, PackageMetadata, PackageFile};
 
@@ -14,6 +14,7 @@ use crate::package::metadata::{InstallReason, PackageMetadata, PackageFile};
 pub struct LocalDatabase {
     conn: Mutex<Connection>,
     db_path: PathBuf,
+    cache: Mutex<HashMap<String, Option<PackageMetadata>>>,
 }
 
 impl LocalDatabase {
@@ -31,6 +32,7 @@ impl LocalDatabase {
         let db = LocalDatabase {
             conn: Mutex::new(conn),
             db_path,
+            cache: Mutex::new(HashMap::new()),
         };
 
         db.initialize_tables()?;
@@ -232,6 +234,11 @@ impl LocalDatabase {
         }
 
         tx.commit()?;
+
+        // Invalidate cache for this package
+        let mut cache = self.cache.lock().unwrap();
+        cache.remove(&metadata.name);
+
         Ok(())
     }
 
@@ -239,100 +246,130 @@ impl LocalDatabase {
     pub fn remove_package(&self, name: &str) -> Result<()> {
         let conn = self.conn.lock().unwrap();
         conn.execute("DELETE FROM packages WHERE name = ?1", params![name])?;
+
+        // Invalidate cache for this package
+        let mut cache = self.cache.lock().unwrap();
+        cache.remove(name);
+
         Ok(())
     }
 
-    /// Pobierz metadane pakietu
+
+    /// Pobierz metadane pakietu (z cache)
     pub fn get_package(&self, name: &str) -> Result<Option<PackageMetadata>> {
-        let conn = self.conn.lock().unwrap();
 
-        let mut stmt = conn.prepare(
-            "SELECT version, release, description, architecture, url,
-                    installed_size, archive_size, sha256, blake3, pgp_signer,
-                    build_date, install_date, install_reason, repository, verified
-             FROM packages WHERE name = ?1",
-        )?;
-
-        let result = stmt.query_row(params![name], |row| {
-            let install_reason: String = row.get(12)?;
-            Ok(PackageMetadata {
-                name: name.to_string(),
-                version: row.get(0)?,
-                release: row.get(1)?,
-                description: row.get(2)?,
-                architecture: row.get(3)?,
-                url: row.get(4)?,
-                installed_size: row.get(5)?,
-                archive_size: row.get(6)?,
-                sha256: row.get(7)?,
-                blake3: row.get(8)?,
-                pgp_signer: row.get(9)?,
-                build_date: row.get::<_, String>(10)?.parse().unwrap_or_else(|_| Utc::now()),
-                install_date: row.get::<_, Option<String>>(11)?
-                    .and_then(|s| s.parse().ok()),
-                install_reason: match install_reason.as_str() {
-                    "dependency" => InstallReason::Dependency,
-                    _ => InstallReason::Explicit,
-                },
-                repository: row.get(13)?,
-                verified: row.get::<_, i32>(14)? != 0,
-                license: vec![],    // wypełnione niżej
-                groups: vec![],
-                depends: vec![],
-                opt_depends: vec![],
-                makedepends: vec![],
-                checkdepends: vec![],
-                conflicts: vec![],
-                replaces: vec![],
-                provides: vec![],
-                files: vec![],
-                backup: vec![],
-                scripts: std::collections::HashMap::new(),
-                extra: std::collections::HashMap::new(),
-                pagbuild_source: None,
-            })
-        });
-
-        match result {
-            Ok(mut meta) => {
-                // Pobierz powiązane dane
-                meta.license = self.get_licenses_internal(&conn, name)?;
-                meta.groups = self.get_groups_internal(&conn, name)?;
-                meta.depends = self.get_deps_internal(&conn, name, "depends")?;
-                meta.opt_depends = self.get_deps_internal(&conn, name, "optdepends")?;
-                meta.makedepends = self.get_deps_internal(&conn, name, "makedepends")?;
-                meta.conflicts = self.get_deps_internal(&conn, name, "conflicts")?;
-                meta.provides = self.get_deps_internal(&conn, name, "provides")?;
-                meta.files = self.get_files_internal(&conn, name)?;
-                meta.backup = self.get_backups_internal(&conn, name)?;
-                Ok(Some(meta))
-            }
-            Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
-            Err(e) => Err(e.into()),
-        }
-    }
-
-    /// Listuj wszystkie zainstalowane pakiety
-    pub fn list_packages(&self) -> Result<Vec<PackageMetadata>> {
-        let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare("SELECT name FROM packages ORDER BY name")?;
-        let names: Vec<String> = stmt
-            .query_map([], |row| row.get(0))?
-            .filter_map(|r| r.ok())
-            .collect();
-
-        drop(stmt);
-        // Niestety nie możemy trzymać pożyczki conn i wołać get_package,
-        // więc pobieramy ręcznie
-        let mut packages = Vec::new();
-        for name in names {
-            if let Some(pkg) = self.get_package_with_conn(&conn, &name)? {
-                packages.push(pkg);
+        // Sprawdź cache
+        {
+            let cache = self.cache.lock().unwrap();
+            if let Some(entry) = cache.get(name) {
+                return Ok(entry.clone());
             }
         }
 
-        Ok(packages)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Jeśli nie ma w cache, pobierz z bazy
+        let result = self.get_package_uncached(name)?;
+
+        // Zapisz w cache
+        {
+            let mut cache = self.cache.lock().unwrap();
+            cache.insert(name.to_string(), result.clone());
+        }
+
+        Ok(result)
     }
+
+    /// Pobierz metadane pakietu (bez cache)
+    fn get_package_uncached(&self, name: &str) -> Result<Option<PackageMetadata>> {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /// Pobierz pakiet z istniejącym połączeniem
     fn get_package_with_conn(&self, conn: &Connection, name: &str) -> Result<Option<PackageMetadata>> {
@@ -363,7 +400,8 @@ impl LocalDatabase {
                 install_reason: match install_reason.as_str() {
                     "dependency" => InstallReason::Dependency,
                     _ => InstallReason::Explicit,
-                },
+
+                license: vec![],    // wypełnione niżej
                 repository: row.get(13)?,
                 verified: row.get::<_, i32>(14)? != 0,
                 license: vec![],
@@ -383,14 +421,24 @@ impl LocalDatabase {
             })
         });
 
-        match result {
-            Ok(mut meta) => {
-                meta.license = self.get_licenses_internal(conn, name)?;
-                meta.groups = self.get_groups_internal(conn, name)?;
-                meta.depends = self.get_deps_internal(conn, name, "depends")?;
-                meta.opt_depends = self.get_deps_internal(conn, name, "optdepends")?;
-                meta.makedepends = self.get_deps_internal(conn, name, "makedepends")?;
-                meta.conflicts = self.get_deps_internal(conn, name, "conflicts")?;
+
+
+
+
+
+
+
+
+                // Pobierz powiązane dane
+                meta.license = self.get_licenses_internal(&conn, name)?;
+                meta.groups = self.get_groups_internal(&conn, name)?;
+                meta.depends = self.get_deps_internal(&conn, name, "depends")?;
+                meta.opt_depends = self.get_deps_internal(&conn, name, "optdepends")?;
+                meta.makedepends = self.get_deps_internal(&conn, name, "makedepends")?;
+                meta.conflicts = self.get_deps_internal(&conn, name, "conflicts")?;
+                meta.provides = self.get_deps_internal(&conn, name, "provides")?;
+                meta.files = self.get_files_internal(&conn, name)?;
+                meta.backup = self.get_backups_internal(&conn, name)?;
                 meta.provides = self.get_deps_internal(conn, name, "provides")?;
                 meta.files = self.get_files_internal(conn, name)?;
                 meta.backup = self.get_backups_internal(conn, name)?;
@@ -398,46 +446,90 @@ impl LocalDatabase {
             }
             Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
             Err(e) => Err(e.into()),
-        }
-    }
 
-    /// Sprawdź czy pakiet jest installed
-    pub fn is_installed(&self, name: &str) -> Result<bool> {
-        let conn = self.conn.lock().unwrap();
-        let count: i32 = conn.query_row(
-            "SELECT COUNT(*) FROM packages WHERE name = ?1",
-            params![name],
-            |row| row.get(0),
-        )?;
-        Ok(count > 0)
-    }
 
-    /// Znajdź osierocone pakiety (zależności bez właściciela)
-    pub fn find_orphans(&self) -> Result<Vec<String>> {
-        let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare(
-            "SELECT p.name FROM packages p
-             WHERE p.install_reason = 'dependency'
-             AND p.name NOT IN (
-                 SELECT DISTINCT d.dependency FROM depends d
-                 WHERE d.dep_type = 'depends'
-                 AND d.dependency IN (SELECT name FROM packages)
-             )",
+    /// Listuj wszystkie zainstalowane pakiety
+    pub fn list_packages(&self) -> Result<Vec<PackageMetadata>> {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        let mut stmt = conn.prepare("SELECT name FROM packages ORDER BY name")?;
+        let names: Vec<String> = stmt
         )?;
 
         let orphans = stmt
             .query_map([], |row| row.get(0))?
-            .filter_map(|r| r.ok())
-            .collect();
 
-        Ok(orphans)
+
+        drop(stmt);
+        // Niestety nie możemy trzymać pożyczki conn i wołać get_package,
+        // więc pobieramy ręcznie
+        let mut packages = Vec::new();
+        for name in names {
+            if let Some(pkg) = self.get_package_with_conn(&conn, &name)? {
+                packages.push(pkg);
+            }
+        }
+
+
+
+
+        Ok(packages)
     }
 
+    /// Pobierz pakiet z istniejącym połączeniem
+    fn get_package_with_conn(&self, conn: &Connection, name: &str) -> Result<Option<PackageMetadata>> {
     /// Znajdź pakiety które zależą od danego
-    pub fn find_dependents(&self, name: &str) -> Result<Vec<String>> {
-        let conn = self.conn.lock().unwrap();
+
+
+            "SELECT version, release, description, architecture, url,
+                    installed_size, archive_size, sha256, blake3, pgp_signer,
+                    build_date, install_date, install_reason, repository, verified
+             FROM packages WHERE name = ?1",
         let mut stmt = conn.prepare(
             "SELECT DISTINCT package_name FROM depends
+        let result = stmt.query_row(params![name], |row| {
+            let install_reason: String = row.get(12)?;
+            Ok(PackageMetadata {
+                name: name.to_string(),
+                version: row.get(0)?,
+                release: row.get(1)?,
+                description: row.get(2)?,
+                architecture: row.get(3)?,
+                url: row.get(4)?,
+                installed_size: row.get(5)?,
+                archive_size: row.get(6)?,
+                sha256: row.get(7)?,
+                blake3: row.get(8)?,
+                pgp_signer: row.get(9)?,
+                build_date: row.get::<_, String>(10)?.parse().unwrap_or_else(|_| Utc::now()),
+                install_date: row.get::<_, Option<String>>(11)?
+                    .and_then(|s| s.parse().ok()),
+                install_reason: match install_reason.as_str() {
+                    "dependency" => InstallReason::Dependency,
+                    _ => InstallReason::Explicit,
+                },
+                repository: row.get(13)?,
              WHERE dependency LIKE ?1 AND dep_type = 'depends'",
         )?;
 
@@ -513,6 +605,9 @@ impl LocalDatabase {
             .query_map(params![name], |row| row.get(0))?
             .filter_map(|r| r.ok())
             .collect();
+        Ok(backups)
+    }
+}
         Ok(backups)
     }
 }

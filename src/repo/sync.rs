@@ -1,7 +1,3 @@
-// ────────────────────────────────────────────────────────────────────────────────
-// Pag — Synchronizacja repozytoriów
-// ────────────────────────────────────────────────────────────────────────────────
-
 use anyhow::{Context, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -267,3 +263,39 @@ pub fn search_packages<'a>(
 
     results
 }
+
+/// Rozwiąż zależności dla pakietu
+pub fn resolve_dependencies(
+    package_name: &str,
+    dbs: &[RepoDatabase],
+) -> Result<Vec<String>> {
+    let mut dependencies = Vec::new();
+    let mut visited = std::collections::HashSet::new();
+
+    fn resolve_recursive(
+        package_name: &str,
+        dbs: &[RepoDatabase],
+        dependencies: &mut Vec<String>,
+        visited: &mut std::collections::HashSet<String>,
+    ) -> Result<()> {
+        if visited.contains(package_name) {
+            return Ok(());
+        }
+        visited.insert(package_name.to_string());
+
+        if let Some((_, entry)) = find_package(package_name, dbs) {
+            for dep in &entry.depends {
+                if !dependencies.contains(dep) {
+                    dependencies.push(dep.clone());
+                    resolve_recursive(dep, dbs, dependencies, visited)?;
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    resolve_recursive(package_name, dbs, &mut dependencies, &mut visited)?;
+    Ok(dependencies)
+}
+

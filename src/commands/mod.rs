@@ -15,3 +15,4 @@ pub mod snapshot;
 pub mod clean;
 pub mod keyring;
 pub mod stats;
+pub mod kernel;

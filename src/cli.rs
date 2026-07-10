@@ -167,6 +167,12 @@ pub enum Commands {
 
     /// Show system statistics
     Stats,
+
+    /// Manage system kernel
+    Kernel {
+        #[command(subcommand)]
+        action: KernelCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -184,7 +190,7 @@ pub enum SnapshotCommand {
     },
 }
 
-#[derive(Subcommand)]
+[derive(Subcommand)]
 pub enum KeyringCommand {
     Import {
         path: String,
@@ -194,4 +200,20 @@ pub enum KeyringCommand {
         key_id: String,
     },
     Init,
+}
+
+#[derive(Subcommand)]
+pub enum KernelCommand {
+    /// Install a new kernel
+    Install {
+        version: String,
+    },
+    /// Remove an old kernel
+    Remove {
+        version: String,
+    },
+    /// List installed kernels
+    List,
+    /// Backup current kernel
+    Backup,
 }

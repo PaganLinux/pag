@@ -6,3 +6,4 @@ pub mod fs;
 pub mod net;
 pub mod lock;
 pub mod fmt;
+pub mod error;

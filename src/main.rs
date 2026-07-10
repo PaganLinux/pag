@@ -81,6 +81,9 @@ async fn main() {
         Commands::Stats => {
             commands::stats::run(&config, &cli).await
         }
+        Commands::Kernel { action } => {
+            commands::kernel::run(&config, action, &cli).await
+        }
     };
     if let Err(e) = result {
         if !cli.quiet {

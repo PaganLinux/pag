@@ -212,3 +212,29 @@ pub fn export_key(key_id: &str, output_path: &Path, keyring_dir: &Path) -> Resul
 
     Ok(())
 }
+
+/// Weryfikuj sumę kontrolną SHA256
+pub fn verify_sha256(file_path: &Path, expected_hash: &str) -> Result<bool> {
+    use sha2::{Sha256, Digest};
+
+    let mut file = std::fs::File::open(file_path)?;
+    let mut hasher = Sha256::new();
+    std::io::copy(&mut file, &mut hasher)?;
+    let hash = format!("{:x}", hasher.finalize());
+
+    Ok(hash == expected_hash)
+}
+
+/// Weryfikuj sumę kontrolną BLAKE3
+pub fn verify_blake3(file_path: &Path, expected_hash: &str) -> Result<bool> {
+    use blake3::Hasher;
+
+    let mut file = std::fs::File::open(file_path)?;
+    let mut hasher = Hasher::new();
+    std::io::copy(&mut file, &mut hasher)?;
+    let hash = hasher.finalize();
+    let hash_str = hash.to_hex().to_string();
+
+    Ok(hash_str == expected_hash)
+}
+
