@@ -243,16 +243,16 @@ CONFIG;
             
             // 3. Utwórz użytkownika admin
             $passwordHash = password_hash($adminPassword, PASSWORD_BCRYPT);
-            $pdo->exec("INSERT INTO `users` (username, password_hash, email, created_at) 
+            $pdo->exec("INSERT INTO `users` (username, password_hash, email) 
                         VALUES ('{$adminUsername}', '{$passwordHash}', '{$adminEmail}', NOW())");
             
             // 4. Utwórz domyślne ustawienia
-            $pdo->exec("INSERT INTO `settings` (site_title, site_description, theme, email, created_at, updated_at) 
-                        VALUES ('{$siteTitle}', '{$siteDescription}', 'light', '{$adminEmail}', NOW(), NOW())");
+            $pdo->exec("INSERT INTO `settings` (site_title, site_description, theme, email) 
+                        VALUES ('{$siteTitle}', '{$siteDescription}', 'light', '{$adminEmail}'");
             
             // 5. Utwórz domyślną treść "O mnie"
-            $pdo->exec("INSERT INTO `about` (title, content, created_at, updated_at) 
-                        VALUES ('O mnie', 'Od 10 lat łączę precyzję kodu z magią analogowej fotografii. Specjalizuję się w tworzeniu unikalnych doświadczeń webowych i dokumentowaniu świata przez obiektyw.', NOW(), NOW())");
+            $pdo->exec("INSERT INTO `about` (title, content) 
+                        VALUES ('O mnie', 'Od 10 lat łączę precyzję kodu z magią analogowej fotografii. Specjalizuję się w tworzeniu unikalnych doświadczeń webowych i dokumentowaniu świata przez obiektyw.'");
             
             // 6. Utwórz domyślne kategorie projektów
             $categories = [
@@ -275,7 +275,7 @@ CONFIG;
             ];
             
             foreach ($albums as $album) {
-                $pdo->exec("INSERT INTO `gallery_albums` (name, slug, created_at) 
+                $pdo->exec("INSERT INTO `gallery_albums` (name, slug) 
                             VALUES ('{$album[0]}', '{$album[1]}', NOW())");
             }
             
