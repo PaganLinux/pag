@@ -23,13 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Pobierz dane z formularza
     $dbHost = isset($_POST['db_host']) ? trim($_POST['db_host']) : 'localhost';
-    $dbName = isset($_POST['db_name']) ? trim($_POST['db_name']) : 'pag_portfolio';
-    $dbUser = isset($_POST['db_user']) ? trim($_POST['db_user']) : 'root';
-    $dbPass = isset($_POST['db_pass']) ? $_POST['db_pass'] : '';
+    $dbName = isset($_POST['db_name']) ? trim($_POST['db_name']) : 'mijsyspl_nowe';
+    $dbUser = isset($_POST['db_user']) ? trim($_POST['db_user']) : 'mijsyspl_nowe';
+    $dbPass = isset($_POST['db_pass']) ? $_POST['db_pass'] : 'FTCCn3wNNBRTEj86sW8e';
     $adminUsername = isset($_POST['admin_username']) ? trim($_POST['admin_username']) : 'admin';
-    $adminPassword = isset($_POST['admin_password']) ? $_POST['admin_password'] : '';
-    $adminEmail = isset($_POST['admin_email']) ? trim($_POST['admin_email']) : '';
-    $siteTitle = isset($_POST['site_title']) ? trim($_POST['site_title']) : 'Paweł Gajda | Portfolio';
+    $adminPassword = isset($_POST['admin_password']) ? $_POST['admin_password'] : 'Patryk1991!/';
+    $adminEmail = isset($_POST['admin_email']) ? trim($_POST['admin_email']) : 'admin@mijsys.pl';
+    $siteTitle = isset($_POST['site_title']) ? trim($_POST['site_title']) : 'Patryk Szkudlarek | Portfolio';
     $siteDescription = isset($_POST['site_description']) ? trim($_POST['site_description']) : 'Portfolio projektów webowych i fotografii';
     
     // Walidacja
@@ -59,6 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 /**
  * Konfiguracja główna portfolio
  */
+
+// USTAWIENIA CIASTECZEK SESJI (MUSZĄ BYĆ PRZED session_start!)
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 0);
+ini_set('session.cookie_samesite', 'Strict');
 
 // USTAWIENIA BAZY DANYCH
 define('DB_HOST', '{$dbHost}');
@@ -104,11 +109,6 @@ if (!isset(\$_SESSION['last_regeneration']) ||
     session_regenerate_id(true);
     \$_SESSION['last_regeneration'] = time();
 }
-
-// Ustawienia ciasteczek sesji
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 0);
-ini_set('session.cookie_samesite', 'Strict');
 CONFIG;
             
             file_put_contents(__DIR__ . '/../config.php', $configContent);
@@ -244,15 +244,15 @@ CONFIG;
             // 3. Utwórz użytkownika admin
             $passwordHash = password_hash($adminPassword, PASSWORD_BCRYPT);
             $pdo->exec("INSERT INTO `users` (username, password_hash, email) 
-                        VALUES ('{$adminUsername}', '{$passwordHash}', '{$adminEmail}', NOW())");
+                        VALUES ('{$adminUsername}', '{$passwordHash}', '{$adminEmail}')");
             
             // 4. Utwórz domyślne ustawienia
             $pdo->exec("INSERT INTO `settings` (site_title, site_description, theme, email) 
-                        VALUES ('{$siteTitle}', '{$siteDescription}', 'light', '{$adminEmail}'");
+                        VALUES ('{$siteTitle}', '{$siteDescription}', 'light', '{$adminEmail}')");
             
             // 5. Utwórz domyślną treść "O mnie"
             $pdo->exec("INSERT INTO `about` (title, content) 
-                        VALUES ('O mnie', 'Od 10 lat łączę precyzję kodu z magią analogowej fotografii. Specjalizuję się w tworzeniu unikalnych doświadczeń webowych i dokumentowaniu świata przez obiektyw.'");
+                        VALUES ('O mnie', 'Od 10 lat łączę precyzję kodu z magią analogowej fotografii. Specjalizuję się w tworzeniu unikalnych doświadczeń webowych i dokumentowaniu świata przez obiektyw.')");
             
             // 6. Utwórz domyślne kategorie projektów
             $categories = [
@@ -276,7 +276,7 @@ CONFIG;
             
             foreach ($albums as $album) {
                 $pdo->exec("INSERT INTO `gallery_albums` (name, slug) 
-                            VALUES ('{$album[0]}', '{$album[1]}', NOW())");
+                            VALUES ('{$album[0]}', '{$album[1]}')");
             }
             
             // 8. Utwórz katalog uploads
@@ -398,12 +398,12 @@ $csrfToken = $_SESSION['csrf_token'];
 // Domyslne wartosci formularza
 $defaults = [
     'db_host' => 'localhost',
-    'db_name' => 'pag_portfolio',
-    'db_user' => 'root',
-    'db_pass' => '',
+    'db_name' => 'mijsyspl_nowe',
+    'db_user' => 'mijsyspl_nowe',
+    'db_pass' => 'FTCCn3wNNBRTEj86sW8e',
     'admin_username' => 'admin',
-    'admin_email' => '',
-    'site_title' => 'Paweł Gajda | Web Developer + Photographer',
+    'admin_email' => 'admin@mijsys.pl',
+    'site_title' => 'Patryk Szkudlarek | Portfolio',
     'site_description' => 'Portfolio projektów webowych i fotografii'
 ];
 ?>
@@ -423,6 +423,7 @@ $defaults = [
             --color-ink: #1A1A1A;
             --color-highlight: #4A90E2;
             --color-warning: #D32F2F;
+            --spacing-xs: 0.5rem;
             --spacing-sm: 0.5rem;
             --spacing-md: 1rem;
             --spacing-lg: 1.5rem;
@@ -627,7 +628,7 @@ $defaults = [
 <body>
     <div class="install-container">
         <div class="install-header">
-            <div class="install-logo">🔨 PAWEŁ GAJDA</div>
+            <div class="install-logo">🔨 PATRYK SZKUDLAREK</div>
             <h1 class="install-title">INSTALACJA PORTFOLIO</h1>
             <p class="install-description">Wypełnij formularz, aby zainstalować system</p>
         </div>
@@ -635,7 +636,7 @@ $defaults = [
         <?php if (!empty($errors)): ?>
         <div style="background: rgba(211, 47, 47, 0.1); border: 1px solid var(--color-warning); border-radius: var(--radius-sm); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
             <?php foreach ($errors as $error): ?>
-            <p style="color: var(--color-warning); margin: 0;"><?php echo $error; ?></p>
+            <p style="color: var(--color-warning); margin: 0;"><?php echo htmlspecialchars($error); ?></p>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
@@ -654,7 +655,7 @@ $defaults = [
                                id="db_host" 
                                name="db_host"
                                class="install-form-input"
-                               value="<?php echo $defaults['db_host']; ?>"
+                               value="<?php echo htmlspecialchars($defaults['db_host']); ?>"
                                placeholder="localhost">
                     </div>
                     
@@ -664,7 +665,7 @@ $defaults = [
                                id="db_name" 
                                name="db_name"
                                class="install-form-input"
-                               value="<?php echo $defaults['db_name']; ?>"
+                               value="<?php echo htmlspecialchars($defaults['db_name']); ?>"
                                placeholder="pag_portfolio"
                                required>
                     </div>
@@ -677,7 +678,7 @@ $defaults = [
                                id="db_user" 
                                name="db_user"
                                class="install-form-input"
-                               value="<?php echo $defaults['db_user']; ?>"
+                               value="<?php echo htmlspecialchars($defaults['db_user']); ?>"
                                placeholder="root">
                     </div>
                     
@@ -687,7 +688,7 @@ $defaults = [
                                id="db_pass" 
                                name="db_pass"
                                class="install-form-input"
-                               value="<?php echo $defaults['db_pass']; ?>"
+                               value="<?php echo htmlspecialchars($defaults['db_pass']); ?>"
                                placeholder="Hasło do bazy">
                     </div>
                 </div>
@@ -704,7 +705,7 @@ $defaults = [
                                id="admin_username" 
                                name="admin_username"
                                class="install-form-input"
-                               value="<?php echo $defaults['admin_username']; ?>"
+                               value="<?php echo htmlspecialchars($defaults['admin_username']); ?>"
                                placeholder="admin"
                                required>
                     </div>
@@ -715,7 +716,7 @@ $defaults = [
                                id="admin_email" 
                                name="admin_email"
                                class="install-form-input"
-                               value="<?php echo $defaults['admin_email']; ?>"
+                               value="<?php echo htmlspecialchars($defaults['admin_email']); ?>"
                                placeholder="twój@email.com"
                                required>
                     </div>
@@ -756,7 +757,7 @@ $defaults = [
                            id="site_title" 
                            name="site_title"
                            class="install-form-input"
-                           value="<?php echo $defaults['site_title']; ?>"
+                           value="<?php echo htmlspecialchars($defaults['site_title']); ?>"
                            placeholder="Tytuł strony"
                            required>
                 </div>
@@ -766,7 +767,7 @@ $defaults = [
                     <textarea id="site_description" 
                               name="site_description"
                               class="install-form-textarea"
-                              placeholder="Opis strony (meta description)"><?php echo $defaults['site_description']; ?></textarea>
+                              placeholder="Opis strony (meta description)"><?php echo htmlspecialchars($defaults['site_description']); ?></textarea>
                 </div>
             </div>
             
