@@ -5,9 +5,9 @@
  */
 
 require_once 'config.php';
-require_once INCLUDES_PATH . 'db.php';
-require_once INCLUDES_PATH . 'functions.php';
-require_once INCLUDES_PATH . 'csrf.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/csrf.php';
 
 // Pobierz parametr strony z URL
 $page = isset($_GET['page']) ? trim($_GET['page']) : 'home';
@@ -67,55 +67,55 @@ $currentPageTitle = $pageTitles[$page] ?? ($settings['site_title'] ?? SITE_TITLE
 $currentPageDescription = $settings['site_description'] ?? SITE_DESCRIPTION;
 
 // Wczytanie nagłówka
-require_once INCLUDES_PATH . 'header.php';
+require_once __DIR__ . '/includes/header.php';
 
 // Wczytanie odpowiedniej strony
 switch ($page) {
     case 'projekty':
-        require_once TEMPLATES_PATH . 'projects.php';
+        require_once __DIR__ . '/templates/projects.php';
         break;
         
     case 'galeria':
-        require_once TEMPLATES_PATH . 'gallery.php';
+        require_once __DIR__ . '/templates/gallery.php';
         break;
         
     case 'o-mnie':
-        require_once TEMPLATES_PATH . 'about.php';
+        require_once __DIR__ . '/templates/about.php';
         break;
         
     case 'kontakt':
-        require_once TEMPLATES_PATH . 'contact.php';
+        require_once __DIR__ . '/templates/contact.php';
         break;
         
     case 'projekt':
         if ($slug) {
-            require_once TEMPLATES_PATH . 'project-detail.php';
+            require_once __DIR__ . '/templates/project-detail.php';
         } else {
             header("HTTP/1.1 404 Not Found");
-            require_once TEMPLATES_PATH . '404.php';
+            require_once __DIR__ . '/templates/404.php';
         }
         break;
         
     case 'album':
         if ($slug) {
-            require_once TEMPLATES_PATH . 'album-detail.php';
+            require_once __DIR__ . '/templates/album-detail.php';
         } else {
             header("HTTP/1.1 404 Not Found");
-            require_once TEMPLATES_PATH . '404.php';
+            require_once __DIR__ . '/templates/404.php';
         }
         break;
         
     default:
-        require_once TEMPLATES_PATH . 'hero.php';
-        require_once TEMPLATES_PATH . 'projects.php';
-        require_once TEMPLATES_PATH . 'gallery.php';
-        require_once TEMPLATES_PATH . 'about.php';
-        require_once TEMPLATES_PATH . 'contact.php';
+        require_once __DIR__ . '/templates/hero.php';
+        require_once __DIR__ . '/templates/projects.php';
+        require_once __DIR__ . '/templates/gallery.php';
+        require_once __DIR__ . '/templates/about.php';
+        require_once __DIR__ . '/templates/contact.php';
         break;
 }
 
 // Wczytanie stopki
-require_once INCLUDES_PATH . 'footer.php';
+require_once __DIR__ . '/includes/footer.php';
 
 /**
  * Funkcje obsługi AJAX
