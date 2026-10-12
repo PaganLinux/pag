@@ -1,0 +1,449 @@
+/* ============================================
+   PORTFOLIO - LIGHTBOX STYL
+   ============================================ */
+
+/* ============================================
+   LIGHTBOX - Podstawowy styl
+   ============================================ */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+}
+
+.lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Lightbox Close Button */
+.lightbox-close {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 50px;
+    height: 50px;
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    z-index: calc(var(--z-modal) + 1);
+}
+
+.lightbox-close:hover {
+    background: var(--color-highlight);
+    color: white;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.lightbox-close:focus {
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 2px;
+}
+
+/* Lightbox Navigation Buttons */
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    z-index: calc(var(--z-modal) + 1);
+}
+
+.lightbox-nav:hover {
+    background: var(--color-highlight);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-nav:focus {
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 2px;
+}
+
+.lightbox-prev {
+    left: var(--spacing-lg);
+}
+
+.lightbox-next {
+    right: var(--spacing-lg);
+}
+
+/* Lightbox Content */
+.lightbox-content {
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Lightbox Image Container */
+.lightbox-image-container {
+    max-width: 100%;
+    max-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Lightbox Image */
+.lightbox-image {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    transition: transform var(--transition-normal);
+}
+
+/* Lightbox Info */
+.lightbox-info {
+    color: var(--color-paper);
+    max-width: 600px;
+    padding: 0 var(--spacing-lg);
+}
+
+.lightbox-title {
+    font-family: var(--font-primary);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.3;
+}
+
+.lightbox-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-sm);
+}
+
+.lightbox-counter {
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+/* ============================================
+   LIGHTBOX - Animacje
+   ============================================ */
+
+/* Image Zoom In Animation */
+@keyframes lightboxZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.lightbox.active .lightbox-image {
+    animation: lightboxZoomIn 0.4s ease-out;
+}
+
+/* Image Slide Animation */
+@keyframes lightboxSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes lightboxSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+.lightbox-image.slide-in {
+    animation: lightboxSlideIn 0.4s ease-out;
+}
+
+.lightbox-image.slide-out {
+    animation: lightboxSlideOut 0.4s ease-out forwards;
+}
+
+/* ============================================
+   LIGHTBOX - Klawiatura i Dotyk
+   ============================================ */
+
+/* Touch Gestures */
+.lightbox-touch-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: calc(var(--z-modal) + 1);
+}
+
+.lightbox-touch-left {
+    width: 30%;
+    height: 100%;
+    cursor: w-resize;
+}
+
+.lightbox-touch-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    cursor: e-resize;
+}
+
+.lightbox-touch-middle {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    width: 40%;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* ============================================
+   LIGHTBOX - Zoom
+   ============================================ */
+
+.lightbox-zoomed {
+    cursor: zoom-out;
+}
+
+.lightbox-zoomed .lightbox-image {
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+    cursor: zoom-out;
+}
+
+.lightbox-zoom-in {
+    cursor: zoom-in;
+}
+
+/* ============================================
+   LIGHTBOX - Fullscreen
+   ============================================ */
+
+.lightbox-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.98);
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-fullscreen .lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* ============================================
+   LIGHTBOX - Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .lightbox {
+        padding: var(--spacing-md);
+    }
+    
+    .lightbox-close {
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    
+    .lightbox-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    
+    .lightbox-prev {
+        left: var(--spacing-md);
+    }
+    
+    .lightbox-next {
+        right: var(--spacing-md);
+    }
+    
+    .lightbox-content {
+        max-width: 95%;
+        max-height: 85%;
+    }
+    
+    .lightbox-image-container {
+        max-height: 70vh;
+    }
+    
+    .lightbox-info {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .lightbox-title {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .lightbox-nav {
+        display: none;
+    }
+    
+    .lightbox-content {
+        max-width: 100%;
+        max-height: 90%;
+    }
+    
+    .lightbox-image-container {
+        max-height: 75vh;
+    }
+}
+
+/* ============================================
+   LIGHTBOX - Dostępność
+   ============================================ */
+
+.lightbox[aria-hidden="false"] {
+    display: flex;
+}
+
+.lightbox[aria-hidden="true"] {
+    display: none;
+}
+
+.lightbox-close[aria-label],
+.lightbox-nav[aria-label] {
+    position: relative;
+}
+
+/* ============================================
+   LIGHTBOX - Tryb Ciemny
+   (Przeniesione do dark-mode.css, ale tutaj jako fallback)
+   ============================================ */
+
+/* Te style będą nadpisane przez dark-mode.css */
+.theme-dark .lightbox {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.theme-dark .lightbox-close {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .lightbox-nav {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .lightbox-info {
+    color: var(--color-ink);
+}
+
+/* ============================================
+   LIGHTBOX - Efekty dodatkowe
+   ============================================ */
+
+/* Blur Background */
+.lightbox-blur {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Glass Effect */
+.lightbox-glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* ============================================
+   LIGHTBOX - Przyciski na ekranie dotykowym
+   ============================================ */
+
+.lightbox-mobile-controls {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .lightbox-mobile-controls {
+        display: flex;
+        position: absolute;
+        bottom: var(--spacing-lg);
+        left: 50%;
+        transform: translateX(-50%);
+        gap: var(--spacing-lg);
+        z-index: calc(var(--z-modal) + 1);
+    }
+    
+    .lightbox-mobile-btn {
+        width: 40px;
+        height: 40px;
+        background: var(--color-wood-dark);
+        color: var(--color-paper);
+        border: none;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-fast);
+    }
+    
+    .lightbox-mobile-btn:hover {
+        background: var(--color-highlight);
+        color: white;
+    }
+}

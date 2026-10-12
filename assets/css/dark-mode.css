@@ -1,0 +1,658 @@
+/* ============================================
+   PORTFOLIO - TRYB CIEMNY
+   ============================================ */
+
+/* Zmienne dla trybu ciemnego */
+.theme-dark {
+    /* Kolory */
+    --color-wood: #8B5A2B;
+    --color-wood-light: #A06B39;
+    --color-wood-dark: #5C4033;
+    --color-metal: #707070;
+    --color-metal-light: #909090;
+    --color-metal-dark: #505050;
+    --color-highlight: #7BB3F0;
+    --color-highlight-light: #9CCBFC;
+    --color-highlight-dark: #4A90E2;
+    --color-paper: #1A1A1A;
+    --color-paper-dark: #2A2A2A;
+    --color-ink: #F8F4E6;
+    --color-ink-light: #D0C8B8;
+    --color-warning: #FF6B6B;
+    --color-success: #51CF66;
+    
+    /* Cienie */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================
+   NAVBAR - Tryb Ciemny
+   ============================================ */
+.theme-dark .navbar {
+    background: linear-gradient(180deg, 
+        rgba(26, 26, 26, 0.95) 0%, 
+        rgba(26, 26, 26, 0.9) 100%);
+}
+
+.theme-dark .navbar.scrolled {
+    background: rgba(26, 26, 26, 0.98);
+}
+
+.theme-dark .navbar-link:hover,
+.theme-dark .navbar-link.active {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .admin-link {
+    background: var(--color-highlight) !important;
+    color: var(--color-ink) !important;
+}
+
+.theme-dark .theme-toggle:hover {
+    background: var(--color-metal);
+}
+
+/* ============================================
+   HERO - Tryb Ciemny
+   ============================================ */
+.theme-dark .hero-section {
+    background: linear-gradient(135deg, 
+        var(--color-wood-dark) 0%, 
+        #1A1A1A 50%, 
+        var(--color-wood-dark) 100%);
+}
+
+.theme-dark .hero-title,
+.theme-dark .hero-subtitle,
+.theme-dark .hero-description,
+.theme-dark .scroll-indicator {
+    color: var(--color-ink);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.theme-dark .typing-text {
+    border-right-color: var(--color-ink);
+}
+
+/* ============================================
+   SEKCJE - Tryb Ciemny
+   ============================================ */
+.theme-dark .section-subtitle {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .section-title {
+    color: var(--color-wood);
+}
+
+/* ============================================
+   PROJEKTY - Tryb Ciemny
+   ============================================ */
+.theme-dark .project-card {
+    background: var(--color-paper-dark);
+}
+
+.theme-dark .project-card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.theme-dark .project-content {
+    color: var(--color-ink);
+}
+
+.theme-dark .project-category {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .project-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .project-description {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .tech-tag {
+    background: var(--color-paper);
+    color: var(--color-ink-light);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .project-link {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .project-link:hover {
+    background: var(--color-highlight-light);
+}
+
+.theme-dark .action-btn {
+    background: var(--color-paper-dark);
+    color: var(--color-ink);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .action-btn:hover {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .stat-item {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .stat-number {
+    color: var(--color-wood);
+}
+
+.theme-dark .stat-label {
+    color: var(--color-ink-light);
+}
+
+/* ============================================
+   GALERIA - Tryb Ciemny
+   ============================================ */
+.theme-dark .polaroid {
+    background: var(--color-paper-dark);
+}
+
+.theme-dark .polaroid:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.theme-dark .polaroid-inner {
+    background: var(--color-paper);
+}
+
+.theme-dark .polaroid-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .polaroid-description {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .polaroid-footer {
+    background: repeating-linear-gradient(
+        90deg,
+        var(--color-wood-dark) 0px,
+        var(--color-wood-dark) 10px,
+        var(--color-wood) 10px,
+        var(--color-wood) 20px
+    );
+}
+
+.theme-dark .album-badge {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .action-btn:hover {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+/* ============================================
+   LIGHTBOX - Tryb Ciemny
+   ============================================ */
+.theme-dark .lightbox {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+.theme-dark .lightbox-close {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .lightbox-close:hover {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .lightbox-nav {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .lightbox-nav:hover {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .lightbox-info {
+    color: var(--color-ink);
+}
+
+.theme-dark .lightbox-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .lightbox-description {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .lightbox-counter {
+    color: var(--color-ink-light);
+}
+
+/* ============================================
+   O MNIE - Tryb Ciemny
+   ============================================ */
+.theme-dark .about-section {
+    background: none;
+}
+
+.theme-dark .about-image {
+    filter: brightness(0.9) contrast(1.1);
+}
+
+.theme-dark .about-image-placeholder {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .placeholder-icon,
+.theme-dark .placeholder-text {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .about-description {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .about-section-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .skills-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .skill-item {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .skill-name {
+    color: var(--color-ink);
+}
+
+.theme-dark .achievement-item {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .achievement-number {
+    color: var(--color-wood);
+}
+
+.theme-dark .achievement-label {
+    color: var(--color-ink-light);
+}
+
+/* ============================================
+   KONTAKT - Tryb Ciemny
+   ============================================ */
+.theme-dark .contact-section {
+    background: none;
+}
+
+.theme-dark .contact-item {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .contact-icon {
+    color: var(--color-wood);
+}
+
+.theme-dark .contact-label {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .contact-value {
+    color: var(--color-ink);
+}
+
+.theme-dark .contact-value a {
+    color: var(--color-highlight);
+}
+
+.theme-dark .contact-value a:hover {
+    color: var(--color-highlight-light);
+}
+
+.theme-dark .social-item {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+    color: var(--color-ink);
+}
+
+.theme-dark .social-item:hover {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .paper-sheet {
+    background: var(--color-paper);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .paper-corner {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .form-input,
+.theme-dark .form-textarea {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+    color: var(--color-ink);
+}
+
+.theme-dark .form-input::placeholder,
+.theme-dark .form-textarea::placeholder {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .form-input:focus,
+.theme-dark .form-textarea:focus {
+    border-color: var(--color-highlight);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.theme-dark .form-label {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .form-error {
+    color: var(--color-warning);
+}
+
+.theme-dark .form-general-errors {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: var(--color-warning);
+}
+
+.theme-dark .form-success {
+    color: var(--color-ink);
+}
+
+.theme-dark .success-icon {
+    color: var(--color-success);
+}
+
+.theme-dark .success-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .success-text {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .btn-primary {
+    background: var(--color-wood);
+    color: var(--color-paper);
+}
+
+.theme-dark .btn-primary:hover {
+    background: var(--color-wood-light);
+}
+
+.theme-dark .btn-secondary {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .btn-secondary:hover {
+    background: var(--color-highlight-light);
+}
+
+.theme-dark .btn-outline {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-wood);
+}
+
+.theme-dark .btn-outline:hover {
+    background: var(--color-wood);
+    color: var(--color-paper);
+}
+
+/* ============================================
+   PROJECT DETAIL - Tryb Ciemny
+   ============================================ */
+.theme-dark .project-detail-section {
+    background: none;
+}
+
+.theme-dark .breadcrumb-link {
+    color: var(--color-highlight);
+}
+
+.theme-dark .breadcrumb-link:hover {
+    text-decoration-color: var(--color-highlight-light);
+}
+
+.theme-dark .breadcrumb-separator,
+.theme-dark .breadcrumb-current {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .detail-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .detail-category {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .detail-link {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .detail-link:hover {
+    background: var(--color-highlight-light);
+}
+
+.theme-dark .detail-short-description {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .detail-full-description {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .tech-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .tech-tag {
+    background: var(--color-paper-dark);
+    color: var(--color-ink-light);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .meta-item {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .meta-label {
+    color: var(--color-ink-light);
+}
+
+.theme-dark .meta-value {
+    color: var(--color-ink);
+}
+
+.theme-dark .related-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .related-project {
+    background: var(--color-paper-dark);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .related-title {
+    color: var(--color-ink);
+}
+
+.theme-dark .nav-link {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .nav-link:hover {
+    background: var(--color-wood);
+}
+
+/* ============================================
+   ERROR SECTION - Tryb Ciemny
+   ============================================ */
+.theme-dark .error-section {
+    background: linear-gradient(135deg, 
+        var(--color-wood-dark) 0%, 
+        #1A1A1A 100%);
+}
+
+.theme-dark .error-title,
+.theme-dark .error-message,
+.theme-dark .error-submessage {
+    color: var(--color-ink);
+}
+
+.theme-dark .error-icon {
+    color: var(--color-warning);
+}
+
+/* ============================================
+   FOOTER - Tryb Ciemny
+   ============================================ */
+.theme-dark .footer {
+    background: linear-gradient(135deg, 
+        var(--color-wood-dark) 0%, 
+        #1A1A1A 100%);
+}
+
+.theme-dark .tool-icon {
+    color: var(--color-metal-light);
+}
+
+.theme-dark .social-link {
+    background: var(--color-paper-dark);
+    color: var(--color-ink);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .social-link:hover {
+    background: var(--color-highlight);
+    color: var(--color-ink);
+}
+
+.theme-dark .footer-copyright p {
+    color: var(--color-ink-light);
+}
+
+/* ============================================
+   SEPARATOR - Tryb Ciemny
+   ============================================ */
+.theme-dark .separator-line {
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--color-metal) 50%, 
+        transparent 100%);
+}
+
+.theme-dark .separator-icon {
+    color: var(--color-metal-light);
+}
+
+/* ============================================
+   PRELOADER - Tryb Ciemny
+   ============================================ */
+.theme-dark #preloader {
+    background: var(--color-wood-dark);
+}
+
+.theme-dark .preloader-text {
+    color: var(--color-ink);
+}
+
+.theme-dark .preloader-bar {
+    background: var(--color-metal);
+}
+
+.theme-dark .preloader-bar-fill {
+    background: var(--color-highlight);
+}
+
+/* ============================================
+   CUSTOM CURSOR - Tryb Ciemny
+   ============================================ */
+.theme-dark .custom-cursor {
+    background: var(--color-highlight);
+    border-color: var(--color-highlight);
+}
+
+.theme-dark .custom-cursor::before {
+    border-color: var(--color-highlight);
+}
+
+/* ============================================
+   FILTRY - Tryb Ciemny
+   ============================================ */
+.theme-dark .filter-btn {
+    background: var(--color-paper-dark);
+    color: var(--color-ink);
+    border-color: var(--color-metal);
+}
+
+.theme-dark .filter-btn:hover {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+    border-color: var(--color-wood-dark);
+}
+
+.theme-dark .filter-btn.active {
+    background: var(--color-wood);
+    color: var(--color-paper);
+    border-color: var(--color-wood);
+}
+
+.theme-dark .filter-count {
+    color: var(--color-ink-light);
+}
+
+/* ============================================
+   NAWIGACJA - Tryb Ciemny
+   ============================================ */
+.theme-dark .navbar-link {
+    color: var(--color-ink);
+}
+
+.theme-dark .navbar-link:hover {
+    background: var(--color-wood-dark);
+    color: var(--color-paper);
+}
+
+.theme-dark .logo-text {
+    color: var(--color-ink);
+}
+
+.theme-dark .theme-icon {
+    color: var(--color-ink);
+}
+
+.theme-dark .theme-icon.active {
+    color: var(--color-highlight);
+}

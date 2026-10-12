@@ -1,0 +1,24 @@
+# ============================================
+# OCHRONA KATALOGU UPLOADS
+# ============================================
+
+# Zablokuj wykonywanie wszelkich skryptów
+<FilesMatch "\.(php|php5|phtml|phar|pl|py|jsp|asp|sh|cgi)$">
+    Require all denied
+</FilesMatch>
+
+# Zablokuj dostęp do ukrytych plików
+<FilesMatch "^\..*">
+    Require all denied
+</FilesMatch>
+
+# Zezwól tylko na określane typy plików
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|mp4|mov|pdf)$">
+    Require all granted
+</FilesMatch>
+
+# Zablokuj wszystkie inne pliki
+Require all denied
+
+# Wyłącz interpretację PHP
+php_flag engine off

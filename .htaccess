@@ -1,0 +1,128 @@
+# ============================================
+# PORTFOLIO - KONFIGURACJA APACHE
+# ============================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # ============================================
+    # PRZYJAZNE URL-E
+    # ============================================
+    
+    # Usuń rozszerzenie .php
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^(.*)$ $1.php [L]
+
+    # Obsługa ścieżek bez pliku (np. /projekty, /galeria)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^([^/]+)/?$ index.php?page=$1 [L,QSA]
+
+    # Obsługa podstron (np. /projekt/nazwa-projektu)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^([^/]+)/([^/]+)/?$ index.php?page=$1&slug=$2 [L,QSA]
+
+    # Obsługa panelu admina
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^admin/(.*)$ admin/index.php?admin_page=$1 [L,QSA]
+
+    # Przekierowanie z / na index.php
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteRule ^(.*)$ index.php [L]
+</IfModule>
+
+# ============================================
+# OCHRONA KATALOGU UPLOADS
+# ============================================
+<FilesMatch "\.(php|php5|phtml|phar)$">
+    Deny from all
+</FilesMatch>
+
+<Directory "/uploads">
+    # Zablokuj wykonywanie skryptów PHP
+    php_flag engine off
+    
+    # Zablokuj dostęp do plików .htaccess i .htpasswd
+    <FilesMatch "^\.ht">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+    
+    # Zezwól na dostęp do plików obrazów
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg)$">
+        Order allow,deny
+        Allow from all
+    </FilesMatch>
+</Directory>
+
+# ============================================
+# NAGŁÓWKI BEZPIECZEŃSTWA
+# ============================================
+<IfModule mod_headers.c>
+    # X-XSS-Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # X-Content-Type-Options
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # X-Frame-Options
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Referrer-Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content-Security-Policy (dostosuj w zależności od potrzeb)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; img-src 'self' data: fonts.gstatic.com; font-src 'self' fonts.googleapis.com fonts.gstatic.com; connect-src 'self'"
+    
+    # Remove server signature
+    Header always unset X-Powered-By
+</IfModule>
+
+# ============================================
+# KOMPRESOWANIE GZIP
+# ============================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript
+</IfModule>
+
+# ============================================
+# CACHE STATYCZNYCH PLIKÓW
+# ============================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+</IfModule>
+
+# ============================================
+# TYPY MIME
+# ============================================
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+    AddType font/woff2 .woff2
+</IfModule>
+
+# ============================================
+# PRZEKIEROWANIE HTTP -> HTTPS (w produkcji)
+# ============================================
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ============================================
+# PLIKI STATYCZNE (nie wymagają PHP)
+# ============================================
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|webp|svg|woff2|ico)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </IfModule>
+</FilesMatch>
