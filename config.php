@@ -8,9 +8,9 @@
 // USTAWIENIA BAZY DANYCH
 // ============================================
 define('DB_HOST', 'localhost');      // Host bazy danych
-define('DB_NAME', 'pag_portfolio');   // Nazwa bazy danych
-define('DB_USER', 'root');            // Użytkownik bazy danych
-define('DB_PASS', '');               // Hasło do bazy danych
+define('DB_NAME', 'mijsyspl_pag');   // Nazwa bazy danych
+define('DB_USER', 'mijsyspl_pag');    // Użytkownik bazy danych
+define('DB_PASS', 'TwojeHasloTu');    // Hasło do bazy danych - ZMIEŃ NA SWOJE!
 define('DB_CHARSET', 'utf8mb4');     // Kodowanie (obsługa emoji)
 
 // ============================================
@@ -18,7 +18,7 @@ define('DB_CHARSET', 'utf8mb4');     // Kodowanie (obsługa emoji)
 // ============================================
 define('SITE_TITLE', 'Paweł Gajda | Web Developer + Photographer');
 define('SITE_DESCRIPTION', 'Portfolio projektów webowych i fotografii - Paweł Gajda');
-define('SITE_URL', 'http://localhost/pag-portfolio'); // Zmień na swoją domenę
+define('SITE_URL', 'https://mijsys.pl/nowe'); // Zmień na swoją domenę
 
 // ============================================
 // USTAWIENIA ŚCIEŻEK
@@ -91,6 +91,13 @@ spl_autoload_register(function ($class) {
 });
 
 // ============================================
+// USTAWIENIA CIASTECZEK SESJI (MUSZĄ BYĆ PRZED session_start()!)
+// ============================================
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 0);     // Zmień na 1 w produkcji (HTTPS)
+ini_set('session.cookie_samesite', 'Strict');
+
+// ============================================
 // ROZPOCZĘCIE SESJI
 // ============================================
 session_name(SESSION_NAME);
@@ -102,8 +109,3 @@ if (!isset($_SESSION['last_regeneration']) ||
     session_regenerate_id(true);
     $_SESSION['last_regeneration'] = time();
 }
-
-// Ustawienia ciasteczek sesji
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 1);     // Włącz w produkcji (HTTPS)
-ini_set('session.cookie_samesite', 'Strict');
