@@ -402,7 +402,7 @@ function delete_project() {
         if ($project) {
             // Usuń okładkę
             if (!empty($project['cover_image'])) {
-                unlink(UPLOADS_PATH . 'projects/' . $project['cover_image']);
+                unlink(__DIR__ . "/../uploads/" . 'projects/' . $project['cover_image']);
             }
             
             // Usuń zdjęcia z galerii
@@ -410,7 +410,7 @@ function delete_project() {
                 $galleryImages = json_decode($project['gallery_images'], true);
                 if (is_array($galleryImages)) {
                     foreach ($galleryImages as $image) {
-                        unlink(UPLOADS_PATH . 'projects/' . $image);
+                        unlink(__DIR__ . "/../uploads/" . 'projects/' . $image);
                     }
                 }
             }
@@ -532,13 +532,13 @@ function upload_gallery_image() {
         
         // Generuj miniaturkę i WebP
         generate_thumbnail(
-            UPLOADS_PATH . 'gallery/' . $imageName,
-            UPLOADS_PATH . 'gallery/thumbs/' . pathinfo($imageName, PATHINFO_FILENAME) . '_thumb.' . pathinfo($imageName, PATHINFO_EXTENSION)
+            __DIR__ . "/../uploads/" . 'gallery/' . $imageName,
+            __DIR__ . "/../uploads/" . 'gallery/thumbs/' . pathinfo($imageName, PATHINFO_FILENAME) . '_thumb.' . pathinfo($imageName, PATHINFO_EXTENSION)
         );
         
         convert_to_webp(
-            UPLOADS_PATH . 'gallery/' . $imageName,
-            UPLOADS_PATH . 'gallery/webp/' . pathinfo($imageName, PATHINFO_FILENAME) . '.webp'
+            __DIR__ . "/../uploads/" . 'gallery/' . $imageName,
+            __DIR__ . "/../uploads/" . 'gallery/webp/' . pathinfo($imageName, PATHINFO_FILENAME) . '.webp'
         );
         
         header('Content-Type: application/json');
@@ -581,13 +581,13 @@ function delete_gallery_image() {
         if ($image) {
             // Usuń pliki
             if (!empty($image['image_path'])) {
-                unlink(UPLOADS_PATH . 'gallery/' . $image['image_path']);
+                unlink(__DIR__ . "/../uploads/" . 'gallery/' . $image['image_path']);
             }
             if (!empty($image['thumbnail_path'])) {
-                unlink(UPLOADS_PATH . 'gallery/' . $image['thumbnail_path']);
+                unlink(__DIR__ . "/../uploads/" . 'gallery/' . $image['thumbnail_path']);
             }
             if (!empty($image['webp_path'])) {
-                unlink(UPLOADS_PATH . 'gallery/' . $image['webp_path']);
+                unlink(__DIR__ . "/../uploads/" . 'gallery/' . $image['webp_path']);
             }
         }
         
@@ -963,7 +963,7 @@ function handle_image_upload($file, $subfolder) {
     $newFilename = generate_random_filename($fileExt);
     
     // Utwórz ścieżkę docelową
-    $targetPath = UPLOADS_PATH . ($subfolder ? $subfolder . '/' : '') . $newFilename;
+    $targetPath = __DIR__ . "/../uploads/" . ($subfolder ? $subfolder . '/' : '') . $newFilename;
     
     // Przenieś plik
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {

@@ -8,7 +8,7 @@ $project = get_project_by_slug($slug);
 
 if (!$project) {
     header("HTTP/1.1 404 Not Found");
-    require_once TEMPLATES_PATH . '404.php';
+    require_once __DIR__ . '/../templates/ '404.php';
     exit;
 }
 

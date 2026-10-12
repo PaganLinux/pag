@@ -103,7 +103,7 @@
                     Album: <?php echo escape_output($image['album_name'] ?? 'Brak'); ?>
                 </p>
                 <div class="gallery-item-meta">
-                    <span><?php echo format_file_size(filesize(UPLOADS_PATH . '/gallery/' . $image['image_path'])); ?></span>
+                    <span><?php echo format_file_size(filesize(__DIR__ . "/../../uploads/" . '/gallery/' . $image['image_path'])); ?></span>
                     <span><?php echo format_polish_date($image['created_at']); ?></span>
                 </div>
             </div>
